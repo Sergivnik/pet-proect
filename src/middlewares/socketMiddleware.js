@@ -90,8 +90,14 @@ export const socketMiddleware = (store) => (next) => (action) => {
   }
   if (!socket.hasListeners("createdApp")) {
     socket.on("createdApp", (data) => {
-      console.log("Отправлен pdf документ по Email через WebSocket New:", data);
+      console.log("Создана заявка через WebSocket New:", data);
       store.dispatch(createAppSuccess(data.id, data.appNumber));
+    });
+  }
+  if (!socket.hasListeners("sentEmail")) {
+    socket.on("sentEmail", (data) => {
+      console.log("Отправлен pdf документ по Email через WebSocket New:", data);
+      store.dispatch(sendEmailSuccess(data));
     });
   }
   if (!socket.hasListeners("madePaymentDriver")) {

@@ -1084,7 +1084,7 @@ module.exports.taskSendEmail = (req, res) => {
                   res.status(500);
                   res.json({ message: data.error });
                 } else {
-                  req.app.get("io").emit("sendedEmail", req.body.id);
+                  req.app.get("io").emit("sentEmail", req.body.id);
                   res.json(data);
                 }
               }
