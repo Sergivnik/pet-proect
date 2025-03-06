@@ -67,7 +67,8 @@ export const addDataDriverDebt = (data) => {
         body: data,
       })
       .then((res) => {
-        return dispatch(addDataDriverDebtSuccess(res.data, data));
+        console.log(res.data);
+        //return dispatch(addDataDriverDebtSuccess(res.data, data));
       })
       .catch((e) => {
         console.log(e.message);
@@ -202,8 +203,9 @@ export const delDriverPayment = (id) => {
     axios
       .delete(URL + "/delDriverPayment/" + id)
       .then((res) => {
-        dispatch(delDriverPaymentSuccessOrder(id));
-        dispatch(delDriverPaymentSuccessDriver(id));
+        console.log(res.data);
+        // dispatch(delDriverPaymentSuccessOrder(id));
+        // dispatch(delDriverPaymentSuccessDriver(id));
       })
       .catch((e) => {
         console.log(e.message);

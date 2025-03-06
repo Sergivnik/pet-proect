@@ -15,7 +15,12 @@ import {
   createAppSuccess,
 } from "../actions/documentAction";
 import { DOMENNAME } from "./initialState";
-import { makePaymentDriverSuccess } from "../actions/driverActions";
+import {
+  delDriverPaymentSuccessDriver,
+  makePaymentDriverSuccess,
+  delDriverPaymentSuccessOrder,
+  addDataDriverDebtSuccess,
+} from "../actions/driverActions";
 
 const socket = io(DOMENNAME);
 
@@ -111,6 +116,19 @@ export const socketMiddleware = (store) => (next) => (action) => {
           data.dataIo.currentDriverSumOfOders
         )
       );
+    });
+  }
+  if (!socket.hasListeners("deletedDriverPayment")) {
+    socket.on("deletedDriverPayment", (data) => {
+      console.log("Удален платеж водителю через WebSocket New:", data);
+      store.dispatch(delDriverPaymentSuccessOrder(data));
+      store.dispatch(delDriverPaymentSuccessDriver(data));
+    });
+  }
+  if (!socket.hasListeners("addedDriversDebt")) {
+    socket.on("addedDriversDebt", (data) => {
+      console.log("Добавлен долг водителя через WebSocket New:", data);
+      store.dispatch(addDataDriverDebtSuccess(data.data, data.dataIo));
     });
   }
 

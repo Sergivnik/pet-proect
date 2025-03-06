@@ -378,6 +378,8 @@ module.exports.makeDriverDebt = (req, res) => {
       res.status(500);
       res.json({ message: data.error });
     } else {
+      let dataIo = { data: data, dataIo: req.body.body };
+      req.app.get("io").emit("addedDriversDebt", dataIo);
       res.json(data);
     }
   });
