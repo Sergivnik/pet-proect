@@ -88,7 +88,8 @@ export const delDataDriverDebt = (id) => {
     axios
       .delete(URL + "/deletedriverDebt" + "/" + id)
       .then((res) => {
-        return dispatch(delDataDriverDebtSuccess(id));
+        console.log(res.data);
+        //return dispatch(delDataDriverDebtSuccess(id));
       })
       .catch((e) => {
         console.log(e.message);

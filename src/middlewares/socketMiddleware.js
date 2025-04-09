@@ -20,6 +20,7 @@ import {
   makePaymentDriverSuccess,
   delDriverPaymentSuccessOrder,
   addDataDriverDebtSuccess,
+  delDataDriverDebtSuccess,
 } from "../actions/driverActions";
 
 const socket = io(DOMENNAME);
@@ -129,6 +130,12 @@ export const socketMiddleware = (store) => (next) => (action) => {
     socket.on("addedDriversDebt", (data) => {
       console.log("Добавлен долг водителя через WebSocket New:", data);
       store.dispatch(addDataDriverDebtSuccess(data.data, data.dataIo));
+    });
+  }
+  if (!socket.hasListeners("deletedDriverDebt")) {
+    socket.on("deletedDriverDebt", (data) => {
+      console.log("Удален долг водителя через WebSocket New:", data);
+      store.dispatch(delDataDriverDebtSuccess(data));
     });
   }
 
