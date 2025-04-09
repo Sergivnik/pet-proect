@@ -285,6 +285,11 @@ module.exports.taskAddData = (req, res) => {
       res.status(500);
       res.json(data.error);
     } else {
+      req.app.get("io").emit("addedData", {
+        dataServer: data,
+        newData: req.body.body.newData,
+        editTable: req.body.body.editTable,
+      });
       res.json(data);
     }
   });
@@ -344,11 +349,15 @@ module.exports.taskEditData = (req, res) => {
   res.set("Access-Control-Allow-Headers", "Content-Type");
 
   tasksData.editData(req.body.body, (data) => {
-    console.log(data);
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });
     } else {
+      req.app.get("io").emit("editedData", {
+        dataServer: data,
+        newData: req.body.body.newData,
+        editTable: req.body.body.editTable,
+      });
       res.json(data);
     }
   });
@@ -426,6 +435,10 @@ module.exports.taskDeleteData = (req, res) => {
       res.status(500);
       res.json(data);
     } else {
+      req.app.get("io").emit("delData", {
+        id: req.params.id,
+        editTable: req.body.editTable,
+      });
       res.json(data);
     }
   });
@@ -467,6 +480,7 @@ module.exports.editDriverDebt = (req, res) => {
       res.status(500);
       res.json({ message: data.error });
     } else {
+      req.app.get("io").emit("editedDriverDebt", req.body.body);
       res.json(data);
     }
   });

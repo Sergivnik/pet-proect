@@ -33,7 +33,8 @@ export const editData = (newData, editTable) => {
         body: { newData: newData, editTable: editTable },
       })
       .then((res) => {
-        return dispatch(editDataSuccess(res.data, newData, editTable));
+        // Socket event will handle the update
+        // return dispatch(editDataSuccess(res.data, newData, editTable));
       })
       .catch((e) => {
         console.log(e.message);
@@ -61,7 +62,8 @@ export const addData = (newData, editTable) => {
         body: { newData: newData, editTable: editTable },
       })
       .then((res) => {
-        return dispatch(addDataSuccess(res.data, newData, editTable));
+        // Socket event will handle the update
+        // return dispatch(addDataSuccess(res.data, newData, editTable));
       })
       .catch((e) => {
         return dispatch(addDataFailure(e.response.data));
@@ -87,7 +89,8 @@ export const delData = (id, editTable) => {
         data: { editTable: editTable },
       })
       .then((res) => {
-        return dispatch(delDataSuccess(id, editTable));
+        // Socket event will handle the update
+        // return dispatch(delDataSuccess(id, editTable));
       })
       .catch((e) => {
         return dispatch(delDataFailure(e.response.data));

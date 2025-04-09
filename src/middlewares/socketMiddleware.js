@@ -1,4 +1,7 @@
 import { io } from "socket.io-client";
+import { DOMENNAME } from "./initialState";
+
+// Actions для заказов
 import {
   addOderSuccess,
   delOderSuccess,
@@ -9,19 +12,30 @@ import {
   addOrderAppSuccess,
   delPrintedMarkSuccess,
 } from "../actions/oderActions";
+
+// Actions для документов
 import {
   createNewInvoiceSuccess,
   sendEmailSuccess,
   createAppSuccess,
 } from "../actions/documentAction";
-import { DOMENNAME } from "./initialState";
+
+// Actions для водителей
 import {
   delDriverPaymentSuccessDriver,
   makePaymentDriverSuccess,
   delDriverPaymentSuccessOrder,
   addDataDriverDebtSuccess,
   delDataDriverDebtSuccess,
+  editDataDriverDebtSuccess,
 } from "../actions/driverActions";
+
+// Actions для данных
+import {
+  editDataSuccess,
+  addDataSuccess,
+  delDataSuccess,
+} from "../actions/editDataAction";
 
 const socket = io(DOMENNAME);
 
@@ -136,6 +150,34 @@ export const socketMiddleware = (store) => (next) => (action) => {
     socket.on("deletedDriverDebt", (data) => {
       console.log("Удален долг водителя через WebSocket New:", data);
       store.dispatch(delDataDriverDebtSuccess(data));
+    });
+  }
+  if (!socket.hasListeners("editedDriverDebt")) {
+    socket.on("editedDriverDebt", (data) => {
+      console.log("Изменен долг водителя через WebSocket:", data);
+      store.dispatch(editDataDriverDebtSuccess(data));
+    });
+  }
+  if (!socket.hasListeners("editedData")) {
+    socket.on("editedData", (data) => {
+      console.log("Изменены данные через WebSocket:", data);
+      store.dispatch(
+        editDataSuccess(data.dataServer, data.newData, data.editTable)
+      );
+    });
+  }
+  if (!socket.hasListeners("addedData")) {
+    socket.on("addedData", (data) => {
+      console.log("Добавлены данные через WebSocket:", data);
+      store.dispatch(
+        addDataSuccess(data.dataServer, data.newData, data.editTable)
+      );
+    });
+  }
+  if (!socket.hasListeners("delData")) {
+    socket.on("delData", (data) => {
+      console.log("Удалены данные через WebSocket:", data);
+      store.dispatch(delDataSuccess(data.id, data.editTable));
     });
   }
 

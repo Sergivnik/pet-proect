@@ -116,7 +116,9 @@ export const editDataDriverDebt = (data) => {
         body: data,
       })
       .then((res) => {
-        return dispatch(editDataDriverDebtSuccess(data));
+        console.log(res.data);
+        // Socket event will handle the update
+        // return dispatch(editDataDriverDebtSuccess(data));
       })
       .catch((e) => {
         console.log(e.message);
