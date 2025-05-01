@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo, useCallback } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { dateLocal, findValueBy_Id, sumInWords } from "../myLib/myLib.js";
 import { TrEditable } from "./trEditable.jsx";
@@ -8,101 +8,151 @@ import { SpanWithText } from "../myLib/mySpan/spanWithText.jsx";
 
 import "./billsForm.sass";
 
+// Вынесем стили в константы
+const styles = {
+  container: {
+    pageBreakAfter: "always",
+  },
+  mainContent: {
+    width: "88%",
+    display: "block",
+    minHeight: "500px",
+    padding: "4% 4% 0% 8%",
+    marginTop: "19px",
+    fontFamily: "arial",
+  },
+  warningText: {
+    width: "95%",
+    margin: "0 auto",
+    textAlign: "center",
+    fontSize: "11px",
+    lineHeight: "1",
+    fontWeight: 300,
+  },
+  paymentSample: {
+    width: "95%",
+    margin: "20px auto 0 auto",
+    textAlign: "center",
+    fontSize: "14px",
+  },
+  table: {
+    borderCollapse: "collapse",
+    width: "100%",
+    fontSize: "14px",
+  },
+  tableCell: {
+    border: "1px solid black",
+  },
+  invoiceNumber: {
+    borderBottom: "2px solid black",
+    fontSize: "16px",
+  },
+  invoiceTitle: {
+    fontWeight: 700,
+    margin: "17px 0 17px 0",
+    fontSize: "18px",
+  },
+};
+
 export const InvoiceForm = (props) => {
   const odersList = useSelector((state) => state.oderReducer.originOdersList);
   const clientList = useSelector((state) => state.oderReducer.clientList);
-
-  let oders = props.dataDoc.odersListId.map((id) =>
-    odersList.find((elem) => elem._id == id)
-  );
   const odersList1 = useSelector((state) => state.oderReducer.odersList);
-  if (oders[0] == undefined) {
-    oders = props.dataDoc.odersListId.map((id) =>
-      odersList1.find((elem) => elem._id == id)
+
+  // Оптимизируем получение заказов
+  const oders = useMemo(() => {
+    let result = props.dataDoc.odersListId.map((id) =>
+      odersList.find((elem) => elem._id === id)
     );
-  }
-  const dateOfInvoice = oders.reduce((maxDate, elem) => {
-    if (maxDate < new Date(elem.date)) {
-      maxDate = elem.date;
+
+    if (result[0] === undefined) {
+      result = props.dataDoc.odersListId.map((id) =>
+        odersList1.find((elem) => elem._id === id)
+      );
     }
-    return maxDate;
-  }, new Date(oders[0].date));
+    return result;
+  }, [props.dataDoc.odersListId, odersList, odersList1]);
+
+  // Оптимизируем вычисление даты
+  const dateOfInvoice = useMemo(() => {
+    return oders.reduce((maxDate, elem) => {
+      const currentDate = new Date(elem.date);
+      return maxDate < currentDate ? currentDate : maxDate;
+    }, new Date(oders[0].date));
+  }, [oders]);
 
   const [strInvoiceNumber, setStrInvoiceNumber] = useState(
     `Счет № ${props.dataDoc.number} от ${dateLocal(dateOfInvoice)}`
   );
   const [showInput, setShowInput] = useState(false);
-
-  const customer = findValueBy_Id(oders[0].idCustomer, clientList);
-  useEffect(() => {
-    let sumOders = oders.reduce((sum, elem, index) => {
-      if (props.strObj[index]) {
-        sum = sum + Number(props.strObj[index].sum);
-      } else {
-        sum = sum + Number(elem.customerPrice);
-      }
-      return sum;
-    }, 0);
-    if (sumOders - Math.floor(sumOders) == 0) {
-      sumOders = sumOders + ".00";
-    } else {
-      sumOders = Math.floor(sumOders * 100) / 100;
-    }
-    setSumOrder(sumOders);
-  }, [props]);
-
   const [sumOrders, setSumOrder] = useState(null);
 
-  const handleDblClick = () => {
+  const customer = useMemo(
+    () => findValueBy_Id(oders[0].idCustomer, clientList),
+    [oders, clientList]
+  );
+
+  // Оптимизируем обработчики событий
+  const handleDblClick = useCallback(() => {
     setShowInput(true);
-  };
-  const handleChange = (e) => {
+  }, []);
+
+  const handleChange = useCallback((e) => {
     setStrInvoiceNumber(e.currentTarget.value);
-  };
-  const handleEnter = (e) => {
-    if (e.keyCode == 13) {
-      setShowInput(false);
-      let start = strInvoiceNumber.indexOf("№") + 1;
-      if (strInvoiceNumber[start] == " ") start = start + 1;
-      let end = strInvoiceNumber.indexOf(" от ", 7);
-      let newNumber = strInvoiceNumber.slice(start, end);
-      props.getNewNumber(newNumber);
-    }
-  };
-  const getEditText = (text, name) => {
-    props.editDataReason(text, name);
-  };
+  }, []);
+
+  const handleEnter = useCallback(
+    (e) => {
+      if (e.keyCode === 13) {
+        setShowInput(false);
+        const start = strInvoiceNumber.indexOf("№") + 1;
+        const adjustedStart =
+          strInvoiceNumber[start] === " " ? start + 1 : start;
+        const end = strInvoiceNumber.indexOf(" от ", 7);
+        const newNumber = strInvoiceNumber.slice(adjustedStart, end);
+        props.getNewNumber(newNumber);
+      }
+    },
+    [strInvoiceNumber, props.getNewNumber]
+  );
+
+  const getEditText = useCallback(
+    (text, name) => {
+      props.editDataReason(text, name);
+    },
+    [props.editDataReason]
+  );
+
+  // Оптимизируем вычисление суммы
   useEffect(() => {
-    if (props.addStrObj != null) {
+    const sumOders = oders.reduce((sum, elem, index) => {
+      const price = props.strObj[index]
+        ? Number(props.strObj[index].sum)
+        : Number(elem.customerPrice);
+      return sum + price;
+    }, 0);
+
+    const formattedSum =
+      sumOders - Math.floor(sumOders) === 0
+        ? `${sumOders}.00`
+        : Math.floor(sumOders * 100) / 100;
+
+    setSumOrder(formattedSum);
+  }, [oders, props.strObj]);
+
+  useEffect(() => {
+    if (props.addStrObj) {
       setSumOrder(
         Number(sumOrders) +
           props.addStrObj.numberServices * props.addStrObj.unitPrice
       );
     }
-  }, [props.addStrObj]);
+  }, [props.addStrObj, sumOrders]);
 
   return (
-    <div className="invoicePrintForm" style={{ pageBreakAfter: "always" }}>
-      <div
-        style={{
-          width: "88%",
-          display: "block",
-          minHeight: "500px",
-          padding: "4% 4% 0% 8%",
-          marginTop: "19px",
-          fontFamily: "arial",
-        }}
-      >
-        <h5
-          style={{
-            width: "95%",
-            margin: "0 auto",
-            textAlign: "center",
-            fontSize: "11px",
-            lineHeight: "1",
-            fontWeight: 300,
-          }}
-        >
+    <div className="invoicePrintForm" style={styles.container}>
+      <div style={styles.mainContent}>
+        <h5 style={styles.warningText}>
           Внимание! Оплата данного счета означает согласие с условиями поставки
           товара. Уведомление об оплате
           <br />
@@ -112,44 +162,31 @@ export const InvoiceForm = (props) => {
           прихода денег на р/с Поставщика, самовывозом, при наличии доверенности
           и паспорта.
         </h5>
-        <h4
-          style={{
-            width: "95%",
-            margin: "20px auto 0 auto",
-            textAlign: "center",
-            fontSize: "14px",
-          }}
-        >
+        <h4 style={styles.paymentSample}>
           Образец заполнения платежного поручения
         </h4>
-        <table
-          style={{
-            borderCollapse: "collapse",
-            width: "100%",
-            fontSize: "14px",
-          }}
-        >
+        <table style={styles.table}>
           <tbody>
             <tr style={{ lineHeight: "1" }}>
-              <td style={{ border: "1px solid black", width: "34.3%" }}>
+              <td style={{ ...styles.tableCell, width: "34.3%" }}>
                 ИНН 615408271552
               </td>
-              <td style={{ border: "1px solid black", width: "31.3%" }}>КПП</td>
+              <td style={{ ...styles.tableCell, width: "31.3%" }}>КПП</td>
               <td
                 style={{
-                  border: "1px solid black",
+                  ...styles.tableCell,
                   borderBottom: "none",
                   width: "6.7%",
                 }}
               >
                 Сч.№
               </td>
-              <td style={{ border: "1px solid black", width: "25.7%" }}>
+              <td style={{ ...styles.tableCell, width: "25.7%" }}>
                 40802810400000367485
               </td>
             </tr>
             <tr style={{ lineHeight: "1" }}>
-              <td style={{ border: "1px solid black" }} colSpan={2}>
+              <td style={styles.tableCell} colSpan={2}>
                 ИП Иванов Сергей Николаевич
                 <br />
                 <span
@@ -162,11 +199,11 @@ export const InvoiceForm = (props) => {
                   Получатель
                 </span>
               </td>
-              <td style={{ border: "1px solid black", borderTop: "none" }}></td>
-              <td style={{ border: "1px solid black", borderTop: "none" }}></td>
+              <td style={{ ...styles.tableCell, borderTop: "none" }}></td>
+              <td style={{ ...styles.tableCell, borderTop: "none" }}></td>
             </tr>
             <tr style={{ lineHeight: "1" }}>
-              <td style={{ border: "1px solid black" }} rowSpan="2" colSpan={2}>
+              <td style={styles.tableCell} rowSpan="2" colSpan={2}>
                 АО "ТИНЬКОФФ БАНК" 123060 Москва 1-й Волоколамский пр-д,д.10
                 <br />
                 <span
@@ -179,24 +216,21 @@ export const InvoiceForm = (props) => {
                   Банк получателя
                 </span>
               </td>
-              <td style={{ border: "1px solid black" }}>БИК</td>
-              <td style={{ border: "1px solid black", borderBottom: "none" }}>
+              <td style={styles.tableCell}>БИК</td>
+              <td style={{ ...styles.tableCell, borderBottom: "none" }}>
                 044525974
               </td>
             </tr>
             <tr>
-              <td style={{ border: "1px solid black" }}>Сч.№</td>
-              <td style={{ border: "1px solid black", borderTop: "none" }}>
+              <td style={styles.tableCell}>Сч.№</td>
+              <td style={{ ...styles.tableCell, borderTop: "none" }}>
                 30101810145250000974
               </td>
             </tr>
           </tbody>
         </table>
-        <div /*style={{pageBreakAfter:"always"}}*/>
-          <div
-            onDoubleClick={handleDblClick}
-            style={{ borderBottom: "2px solid black", fontSize: "16px" }}
-          >
+        <div>
+          <div onDoubleClick={handleDblClick} style={styles.invoiceNumber}>
             {showInput ? (
               <input
                 type="text"
@@ -206,15 +240,7 @@ export const InvoiceForm = (props) => {
                 onKeyDown={handleEnter}
               />
             ) : (
-              <h4
-                style={{
-                  fontWeight: 700,
-                  margin: "17px 0 17px 0",
-                  fontSize: "18px",
-                }}
-              >
-                {strInvoiceNumber}
-              </h4>
+              <h4 style={styles.invoiceTitle}>{strInvoiceNumber}</h4>
             )}
           </div>
         </div>
