@@ -1,45 +1,24 @@
-@media (min-width: 1380px)
-  .smallMenu
-    display: none
-  .odersMenu
-    display: flex
-  .odersMenuVertical
-    display: none
-@media (max-width: 1380px)
-  .smallMenu
-    display: none
-  .odersMenu
-    display: flex
-  .odersMenuVertical
-    display: none
-@media (max-width:1020px)
-  .smallMenu
-    display: none
-  .odersMenu
-    display: flex
-  .odersMenuVertical
-    display: none
-@media (max-width:950px)
-  .smallMenu
-    display: block
-  .odersMenu
-    display: none
-  .odersMenuVertical
-    display: flex
+// Основные стили
 .odersMenu
   position: relative
   width: 50%
   justify-content: space-around
-.odersMenuBtn
-  margin: 0 10px
-  border: none
-  padding: 3px
-  height: 22px
-.odersMenuBtn:hover
-  color: blue
-.odersMenuBtn:active
-  color: brown
-  border: none
+  align-items: center
+  display: flex
+
+  &Btn
+    margin: 0 10px
+    border: none
+    padding: 3px
+    height: 22px
+
+    &:hover
+      color: blue
+
+    &:active
+      color: brown
+      border: none
+
 .dropDownMenu
   display: flex
   flex-direction: column
@@ -51,15 +30,18 @@
   margin: 10px
   border: 1px solid #000
   background-color: #ddd
+
 .odersDropMenuBtn
   padding: 3px
   border: none
   background: none
   width: 100%
   text-align: start
-.odersDropMenuBtn:hover
-  background-color: #ccc
-  color: blue
+
+  &:hover
+    background-color: #ccc
+    color: blue
+
 .odersMenuVertical
   position: absolute
   flex-direction: column
@@ -67,3 +49,45 @@
   z-index: 25
   left: 40%
   width: 225px
+
+// Медиа-запросы
+@media (min-width: 1380px)
+  .smallMenu
+    display: none
+  .odersMenu
+    display: flex
+  .odersMenuVertical
+    display: none
+
+@media (max-width: 1380px)
+  .smallMenu
+    display: none
+  .odersMenu
+    display: flex
+  .odersMenuVertical
+    display: none
+@media (max-width: 1300px)
+  .odersMenuBtn
+    height: 35px
+
+@media (max-width: 1100px)
+  .odersMenu
+    font-size: 12px
+    &Btn
+      margin: 0 5px
+
+@media (max-width: 1020px)
+  .smallMenu
+    display: none
+  .odersMenu
+    display: flex
+  .odersMenuVertical
+    display: none
+
+@media (max-width: 950px)
+  .smallMenu
+    display: block
+  .odersMenu
+    display: none
+  .odersMenuVertical
+    display: flex
