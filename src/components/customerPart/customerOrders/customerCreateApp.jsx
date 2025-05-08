@@ -98,7 +98,9 @@ export const CustomerCreateApp = (props) => {
         orderId: appOrder.orderId,
         customerId: appOrder.customerId,
         idManager: appOrder.idManager,
-        applicationNumber: appOrder.applicationNumber,
+        applicationNumber: appOrder.applicationNumber
+          ? appOrder.applicationNumber
+          : appOrder._id,
         loadingText: appOrder.loadingText,
         unloadingText: appOrder.unloadingText,
         idDriver: appOrder.idDriver,
@@ -123,7 +125,9 @@ export const CustomerCreateApp = (props) => {
         orderId: null,
         customerId: user.customerId,
         idManager: user.managerID,
-        applicationNumber: null,
+        applicationNumber: appOrder.applicationNumber
+          ? appOrder.applicationNumber
+          : appOrder._id,
         loadingText: [],
         unloadingText: [],
       });
