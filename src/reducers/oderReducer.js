@@ -338,6 +338,9 @@ export const oderReducer = (store = initialStore, action) => {
         case "accountNumber":
           newOder.accountNumber = action.newValue;
           break;
+        case "applicationNumber":
+          newOder.applicationNumber = action.newValue;
+          break;
         case "sumPartPay":
           newOder.partialPaymentAmount = action.newValue;
           newIncome =
@@ -1315,7 +1318,8 @@ export const oderReducer = (store = initialStore, action) => {
           (order) => order._id == id
         );
         if (indexOrigin != -1) {
-          newOriginOrderLis[indexOrigin].postTracker = action.data.postTrackNumber;
+          newOriginOrderLis[indexOrigin].postTracker =
+            action.data.postTrackNumber;
           if (
             newOriginOrderLis[indexOrigin].customerPayment != "Ок" &&
             newOriginOrderLis[indexOrigin].customerPayment != "Частично оплачен"

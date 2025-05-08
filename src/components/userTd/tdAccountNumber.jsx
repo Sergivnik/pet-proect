@@ -38,7 +38,6 @@ export const TdAccountNumber = (props) => {
   const [printObj, setPrintObj] = useState({ number: null, odersListId: [] });
 
   const handleDBLClick = (e) => {
-    console.log("hi");
     let element = e.currentTarget;
     if (e.target.tagName != "TD") return false;
     if (props.edit) {

@@ -392,7 +392,9 @@ export const AppForm = (props) => {
             style={{ textAlign: "center", padding: "0 15px", fontSize: "15px" }}
           >
             {`ДОГОВОР-ЗАЯВКА НА  ПЕРЕВОЗКУ ГРУЗА № ${
-              props.dataDoc.odersListId[props.id - 1]
+              props.isLogistApp
+                ? order.applicationNumber
+                : props.dataDoc.odersListId[props.id - 1]
             } от  `}
             <SpanWithDate
               date={editData.appDate}

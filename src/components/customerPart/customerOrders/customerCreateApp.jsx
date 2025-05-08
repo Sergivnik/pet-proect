@@ -8,6 +8,7 @@ import {
   editCustomerApp,
 } from "../../../actions/customerOrderAction.js";
 import "./customerOrders.sass";
+import { editOder } from "../../../actions/oderActions.js";
 
 export const CustomerCreateApp = (props) => {
   const dispatch = useDispatch();
@@ -43,6 +44,8 @@ export const CustomerCreateApp = (props) => {
     loadingText: [],
     unloadingText: [],
   });
+  const [isEdit, setIsEdit] = useState(false);
+  const [applicationNumber, setApplicationNumber] = useState(null);
 
   useEffect(() => {
     let obj = { ...dataApp };
@@ -143,7 +146,7 @@ export const CustomerCreateApp = (props) => {
         orderId: props.order._id,
         customerId: props.order.idCustomer,
         idManager: props.order.idManager,
-        applicationNumber: id,
+        applicationNumber: id + 1,
         idDriver: props.order.idDriver,
         idTrackDriver: props.order.idTrackDriver,
         idTrack: props.order.idTrack,
@@ -162,11 +165,38 @@ export const CustomerCreateApp = (props) => {
     });
     setCustomerList(arr);
   }, [customerclients]);
+  useEffect(() => {
+    console.log(dataApp.applicationNumber, dataApp.dateOfApp);
+    if (dataApp.orderId != null) {
+      let date = new Date(dataApp.dateOfApp);
+      let day = String(date.getDate()).padStart(2, "0");
+      let month = String(date.getMonth() + 1).padStart(2, "0");
+      let year = date.getFullYear();
+      let text = `${applicationNumber} от ${day}.${month}.${year}`;
+      console.log(text);
+
+      dispatch(editOder(dataApp.orderId, "applicationNumber", text));
+    }
+  }, [dataApp.applicationNumber, dataApp.dateOfApp]);
 
   const getData = (data, name) => {
     let obj = { ...dataApp };
-    obj.dateOfApp = data;
+    obj[name] = data;
     setDataApp(obj);
+  };
+  const editApplicationNumber = () => {
+    setIsEdit(true);
+    setApplicationNumber(dataApp.applicationNumber);
+  };
+  const getApplicationNumber = (e) => {
+    setApplicationNumber(e.currentTarget.value);
+  };
+  const handleEnter = (e) => {
+    if (e.key == "Enter") {
+      getData(applicationNumber, "applicationNumber");
+      setIsEdit(false);
+    }
+    if (e.key == "Escape") setIsEdit(false);
   };
   const setCustomer = (data) => {
     let obj = { ...dataApp };
@@ -339,9 +369,23 @@ export const CustomerCreateApp = (props) => {
   return (
     <div className="contentDiv">
       <h2 className="createAppH3">
-        {`Договор-заявка на превозку груза ${
-          appOrder._id ? `№ ${appOrder._id}` : ``
-        } от `}
+        <span>{`Договор-заявка на превозку груза №`}</span>
+        <div
+          className="applicationNumberDiv"
+          onDoubleClick={editApplicationNumber}
+        >
+          {!isEdit ? (
+            <span>{dataApp.applicationNumber}</span>
+          ) : (
+            <input
+              className="applicationInput"
+              value={applicationNumber}
+              onChange={getApplicationNumber}
+              onKeyDown={handleEnter}
+            />
+          )}
+        </div>
+        <span>{` от `}</span>
         <SpanWithDate
           date={dataApp.dateOfApp}
           name="dateOfApp"
