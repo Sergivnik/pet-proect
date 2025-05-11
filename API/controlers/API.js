@@ -24,7 +24,7 @@ const writeLogToFile = (logData) => {
 };
 
 module.exports.taskGet = (req, res) => {
-  tasks.list((data) => {
+  tasks.list(req.session.userId, (data) => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });
@@ -35,7 +35,7 @@ module.exports.taskGet = (req, res) => {
 };
 module.exports.taskGet5000 = (req, res) => {
   console.log("req");
-  tasks.order5000((data) => {
+  tasks.order5000(req.session.userId, (data) => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });

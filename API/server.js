@@ -17,7 +17,22 @@ const io = socketIo(server, {
 
 app.set("io", io);
 
-// Подключение клиентов к WebSocket
+// 🛡️ Защита от некорректных URL и path traversal
+app.use((req, res, next) => {
+  try {
+    const decodedPath = decodeURIComponent(req.path);
+    if (decodedPath.includes('..')) {
+      console.warn(`⛔️ Path traversal attempt: ${req.ip} -> ${req.url}`);
+      return res.status(403).send("Forbidden");
+    }
+    next();
+  } catch (err) {
+    console.warn(`⛔️ Bad URI encoding attempt: ${req.ip} -> ${req.url}`);
+    return res.status(400).send("Bad Request");
+  }
+});
+
+// Подключение WebSocket
 io.on("connection", (socket) => {
   console.log("Клиент подключён:", socket.id);
 
@@ -47,30 +62,23 @@ app.use((req, res, next) => {
   next();
 });
 
-// Функция блокировки CORS нужна для режима разработки
-
+// Middleware
 app.use(express.static(path.join(__dirname, "./public")));
 app.use(express.static(path.join(__dirname, "documents")));
 app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 
-
+// Сессии
 const session = require("express-session");
 const MySQLStore = require("express-mysql-session")(session);
 const connection = mysql2.createPool(config.sql);
 const sessionStore = new MySQLStore({}, connection);
-
 let sessionOption = config.session;
 sessionOption.store = sessionStore;
 app.use(session(sessionOption));
+
+// Роутинг
 app.use(router);
 
-// Запускаем сервер
-// var loadData = require("./DB/loadData");
-// loadData.getData();
-// loadData.getCities();
-// loadData.getDrivers();
-// loadData.getCustomers();
-// loadData.getExpenses();
-// loadData.getTrackDrivers();
+// Запуск
 server.listen(80, () => console.log("Сервер запущен на порту 80"));
