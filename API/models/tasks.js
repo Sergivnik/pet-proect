@@ -10,155 +10,131 @@ const dateToSqlString = (dateSomeFormate) => {
 var Tasks = {
   list: async function (userId, callback) {
     console.log("list", userId);
-    let allData = {};
     const db = mysql.createPool(options.sql).promise();
+  
     try {
-      let [userData] = await db.query(
-        `SELECT * FROM users where _id=${userId}`
+      const [[userData]] = await db.query(
+        `SELECT ownerId FROM users WHERE _id = ?`,
+        [userId]
       );
-      let ownerId = userData[0].ownerId;
-
-      let [data] = await db.query(
-        "SELECT DISTINCT date FROM oderslist WHERE ownerId = ?",
-        [ownerId]
-      );
-      allData.date = data;
-      [data] = await db.query("SELECT * FROM cities order by value");
-      allData.citieslist = data;
-      [data] = await db.query(
-        "SELECT * FROM drivers WHERE ownerId = ? order by value",
-        [ownerId]
-      );
-      allData.driverlist = data;
-      [data] = await db.query(
-        "SELECT * FROM oders WHERE ownerId = ? order by value",
-        [ownerId]
-      );
-      allData.clientList = data;
-      [data] = await db.query(
-        `(SELECT * FROM oderslist WHERE ownerId = ? ORDER BY _id DESC LIMIT 500) ORDER BY date, accountNumber, _id`,
-        [ownerId]
-      );
-      allData.odersList = data;
-      [data] = await db.query(
-        `select max(customerPrice) as 'maxCustomerPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR) AND ownerId = ?`,
-        [ownerId]
-      );
-      allData.maxCustomerPrice = data[0].maxCustomerPrice;
-      [data] = await db.query(
-        `select min(customerPrice) as 'minCustomerPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR) AND ownerId = ?`,
-        [ownerId]
-      );
-      allData.minCustomerPrice = data[0].minCustomerPrice;
-      [data] = await db.query(
-        `select max(driverPrice) as 'maxDriverPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR) AND ownerId = ?`,
-        [ownerId]
-      );
-      allData.maxDriverPrice = data[0].maxDriverPrice;
-      [data] = await db.query(
-        `select min(driverPrice) as 'minDriverPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR) AND ownerId = ?`,
-        [ownerId]
-      );
-      allData.minDriverPrice = data[0].minDriverPrice;
-      [data] = await db.query(
-        `SELECT distinct accountNumber from oderslist WHERE ownerId = ? order by accountNumber`,
-        [ownerId]
-      );
-      allData.accountList = data;
-      [data] = await db.query(
-        `SELECT sum(customerPrice) as income FROM pet_proect.oderslist where customerPayment='Ок' AND ownerId = ?`,
-        [ownerId]
-      );
-      let incomeOk = Number(data[0].income);
-      [data] = await db.query(
-        `SELECT sum(partialPaymentAmount) as income FROM pet_proect.oderslist where customerPayment='Частично оплачен' AND ownerId = ?`,
-        [ownerId]
-      );
-      let incomePartReal = Number(data[0].income);
-      allData.income = incomeOk + incomePartReal;
-      [data] = await db.query(
-        `SELECT sum(driverPrice) as expenses FROM pet_proect.oderslist where driverPayment='Ок' AND ownerId = ?`,
-        [ownerId]
-      );
-      let driverPayment = data[0].expenses;
-      [data] = await db.query(
-        `SELECT sum(sumOfDebts) as debt FROM driverpayment WHERE ownerId = ?`,
-        [ownerId]
-      );
-      let driverDebtReturn = data[0].debt;
-
-      [data] = await db.query(
-        `SELECT sum(sum) as contractorsPayments FROM contractorspayments WHERE ownerId = ?`,
-        [ownerId]
-      );
-      let contractorsPayments = data[0].contractorsPayments;
-      allData.expenses =
-        Number(driverPayment) -
-        Number(driverDebtReturn) +
-        Number(contractorsPayments);
-      [data] = await db.query(
-        `SELECT distinct idCustomer FROM oderslist where customerPayment !="Ок" AND ownerId = ?`,
-        [ownerId]
-      );
-      allData.customerWithoutPayment = data;
-      [data] = await db.query(
-        `SELECT * FROM clientmanager WHERE ownerId = ? order by value`,
-        [ownerId]
-      );
-      allData.clientmanager = data;
-      [data] = await db.query(
-        `SELECT * FROM trackdrivers WHERE ownerId = ? order by value`,
-        [ownerId]
-      );
-      allData.trackdrivers = data;
-      [data] = await db.query(
-        `SELECT * FROM tracklist WHERE ownerId = ? order by value`,
-        [ownerId]
-      );
-      allData.tracklist = data;
-      [data] = await db.query(
-        `SELECT * FROM addtable WHERE ownerId = ? order by orderId`,
-        [ownerId]
-      );
-      allData.addtable = data;
-      [data] = await db.query(
-        `SELECT * FROM storelist WHERE ownerId = ? order by value`,
-        [ownerId]
-      );
-      allData.storelist = data;
-      [data] = await db.query(
-        `SELECT * FROM driverpayment WHERE ownerId = ? order by date`,
-        [ownerId]
-      );
-      allData.driverpayments = data;
-      [data] = await db.query(
-        `SELECT * FROM contractorspayments WHERE ownerId = ? order by date`,
-        [ownerId]
-      );
-      allData.contractorspayments = data;
-      [data] = await db.query(
-        `SELECT * FROM customerpayment WHERE ownerId = ? order by date`,
-        [ownerId]
-      );
-      allData.customerpayment = data;
-      [data] = await db.query(`SELECT * FROM contractors WHERE ownerId = ?`, [
-        ownerId,
+      const ownerId = userData.ownerId;
+      const allData = {};
+  
+      // Запросы без зависимостей — параллельно
+      const [
+        [dates],
+        [citieslist],
+        [driverlist],
+        [clientList],
+        [accountList],
+        [clientmanager],
+        [trackdrivers],
+        [tracklist],
+        [addtable],
+        [storelist],
+        [driverpayments],
+        [contractorspayments],
+        [customerpayment],
+        [contractors],
+        [incomereport],
+        [yearconst],
+        [customerWithoutPayment]
+      ] = await Promise.all([
+        db.query(`SELECT DISTINCT date FROM oderslist WHERE ownerId = ?`, [ownerId]),
+        db.query(`SELECT * FROM cities ORDER BY value`),
+        db.query(`SELECT * FROM drivers WHERE ownerId = ? ORDER BY value`, [ownerId]),
+        db.query(`SELECT * FROM oders WHERE ownerId = ? ORDER BY value`, [ownerId]),
+        db.query(`SELECT DISTINCT accountNumber FROM oderslist WHERE ownerId = ? ORDER BY accountNumber`, [ownerId]),
+        db.query(`SELECT * FROM clientmanager WHERE ownerId = ? ORDER BY value`, [ownerId]),
+        db.query(`SELECT * FROM trackdrivers WHERE ownerId = ? ORDER BY value`, [ownerId]),
+        db.query(`SELECT * FROM tracklist WHERE ownerId = ? ORDER BY value`, [ownerId]),
+        db.query(`SELECT * FROM addtable WHERE ownerId = ? ORDER BY orderId`, [ownerId]),
+        db.query(`SELECT * FROM storelist WHERE ownerId = ? ORDER BY value`, [ownerId]),
+        db.query(`SELECT * FROM driverpayment WHERE ownerId = ? ORDER BY date`, [ownerId]),
+        db.query(`SELECT * FROM contractorspayments WHERE ownerId = ? ORDER BY date`, [ownerId]),
+        db.query(`SELECT * FROM customerpayment WHERE ownerId = ? ORDER BY date`, [ownerId]),
+        db.query(`SELECT * FROM contractors WHERE ownerId = ?`, [ownerId]),
+        db.query(`SELECT * FROM incomereport WHERE ownerId = ?`, [ownerId]),
+        db.query(`SELECT * FROM yearconst WHERE ownerId = ?`, [ownerId]),
+        db.query(`SELECT DISTINCT idCustomer FROM oderslist WHERE customerPayment != 'Ок' AND ownerId = ?`, [ownerId])
       ]);
-      allData.contractors = data;
-      [data] = await db.query(`SELECT * FROM incomereport WHERE ownerId = ?`, [
-        ownerId,
+  
+      // Веса
+      const [
+        [maxCustomerPrice],
+        [minCustomerPrice],
+        [maxDriverPrice],
+        [minDriverPrice]
+      ] = await Promise.all([
+        db.query(`SELECT MAX(customerPrice) AS maxCustomerPrice FROM oderslist WHERE date > DATE_ADD(SYSDATE(), INTERVAL -5 YEAR) AND ownerId = ?`, [ownerId]),
+        db.query(`SELECT MIN(customerPrice) AS minCustomerPrice FROM oderslist WHERE date > DATE_ADD(SYSDATE(), INTERVAL -5 YEAR) AND ownerId = ?`, [ownerId]),
+        db.query(`SELECT MAX(driverPrice) AS maxDriverPrice FROM oderslist WHERE date > DATE_ADD(SYSDATE(), INTERVAL -5 YEAR) AND ownerId = ?`, [ownerId]),
+        db.query(`SELECT MIN(driverPrice) AS minDriverPrice FROM oderslist WHERE date > DATE_ADD(SYSDATE(), INTERVAL -5 YEAR) AND ownerId = ?`, [ownerId])
       ]);
-      allData.incomereport = data;
-      [data] = await db.query(`SELECT * FROM yearconst WHERE ownerId = ?`, [
-        ownerId,
+  
+      // Финансы
+      const [
+        [incomeOkRes],
+        [incomePartRes],
+        [driverPaymentRes],
+        [driverDebtReturnRes],
+        [contractorsPaymentsRes]
+      ] = await Promise.all([
+        db.query(`SELECT SUM(customerPrice) AS income FROM oderslist WHERE customerPayment = 'Ок' AND ownerId = ?`, [ownerId]),
+        db.query(`SELECT SUM(partialPaymentAmount) AS income FROM oderslist WHERE customerPayment = 'Частично оплачен' AND ownerId = ?`, [ownerId]),
+        db.query(`SELECT SUM(driverPrice) AS expenses FROM oderslist WHERE driverPayment = 'Ок' AND ownerId = ?`, [ownerId]),
+        db.query(`SELECT SUM(sumOfDebts) AS debt FROM driverpayment WHERE ownerId = ?`, [ownerId]),
+        db.query(`SELECT SUM(sum) AS contractorsPayments FROM contractorspayments WHERE ownerId = ?`, [ownerId])
       ]);
-      allData.yearconst = data;
+  
+      const incomeOk = Number(incomeOkRes[0].income || 0);
+      const incomePart = Number(incomePartRes[0].income || 0);
+      const driverPayment = Number(driverPaymentRes[0].expenses || 0);
+      const driverDebtReturn = Number(driverDebtReturnRes[0].debt || 0);
+      const contractorsPayments = Number(contractorsPaymentsRes[0].contractorsPayments || 0);
+  
+      allData.date = dates;
+      allData.citieslist = citieslist;
+      allData.driverlist = driverlist;
+      allData.clientList = clientList;
+      allData.accountList = accountList;
+      allData.clientmanager = clientmanager;
+      allData.trackdrivers = trackdrivers;
+      allData.tracklist = tracklist;
+      allData.addtable = addtable;
+      allData.storelist = storelist;
+      allData.driverpayments = driverpayments;
+      allData.contractorspayments = contractorspayments;
+      allData.customerpayment = customerpayment;
+      allData.contractors = contractors;
+      allData.incomereport = incomereport;
+      allData.yearconst = yearconst;
+      allData.customerWithoutPayment = customerWithoutPayment;
+  
+      allData.maxCustomerPrice = maxCustomerPrice[0].maxCustomerPrice || 0;
+      allData.minCustomerPrice = minCustomerPrice[0].minCustomerPrice || 0;
+      allData.maxDriverPrice = maxDriverPrice[0].maxDriverPrice || 0;
+      allData.minDriverPrice = minDriverPrice[0].minDriverPrice || 0;
+  
+      allData.income = incomeOk + incomePart;
+      allData.expenses = driverPayment - driverDebtReturn + contractorsPayments;
+  
+      // odersList (сортировка сразу, без вложенного SELECT)
+      const [odersList] = await db.query(
+        `SELECT * FROM oderslist WHERE ownerId = ? ORDER BY date, accountNumber, _id DESC LIMIT 500`,
+        [ownerId]
+      );
+      allData.odersList = odersList;
+  
       callback(allData);
     } catch (err) {
-      callback({ error: err });
+      console.error("list error:", err);
+      callback({ error: err.message });
+    } finally {
+      db.end();
     }
-    db.end();
   },
+  
   order5000: async function (userId, callback) {
     console.log("order5000");
     const db = mysql.createPool(options.sql).promise();
