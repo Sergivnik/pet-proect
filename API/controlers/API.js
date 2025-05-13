@@ -582,71 +582,47 @@ module.exports.taskAddPdfDoc = (req, res) => {
       res.send(Promise.resolve());
     });
 };
-module.exports.taskCreateDoc = (req, res) => {
+module.exports.taskCreateDoc = async (req, res) => {
   res.set("Access-Control-Allow-Methods", "GET, OPTIONS, DELETE");
   res.set("Access-Control-Allow-Headers", "Content-Type");
   console.log("запрос пришел");
 
+  const { year, customer, invoiceNumber, html, arrOrderId } = req.body.body;
+  const dirPath = `./API/Bills/${year}/${customer}`;
+  const filePath = `${dirPath}/doc${invoiceNumber}.pdf`;
+
   try {
-    const exists = fs.existsSync(
-      `./API/Bills/${req.body.body.year}/${req.body.body.customer}`
-    );
-    if (!exists) {
-      fs.mkdirSync(
-        `./API/Bills/${req.body.body.year}/${req.body.body.customer}`,
-        { recursive: true }
-      );
+    // 1. Создание папки
+    if (!fs.existsSync(dirPath)) {
+      fs.mkdirSync(dirPath, { recursive: true });
     }
-  } catch (e) {
-    console.log(e);
-  }
-  console.log("создани папки или проверка");
-  fs.writeFile(
-    `./API/Bills/${req.body.body.year}/${req.body.body.customer}/doc${req.body.body.invoiceNumber}.pdf`,
-    "utf8",
-    function (error) {
-      if (error) throw error; // если возникла ошибка
-      console.log("Асинхронная запись файла завершена. Содержимое файла:");
-    }
-  );
-  console.log("Создание файла");
-  (async () => {
-    const browser = await puppeteer.launch({
-      args: ["--no-sandbox"],
-    });
-    console.log("Запуск поппитера");
+    console.log("создана папка или уже существовала");
+
+    // 2. Запуск Puppeteer
+    const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
     const page = await browser.newPage();
-    console.log("создание пустой страницы");
-    await page.setContent(req.body.body.html);
-    console.log("создание контента страницы");
+    await page.setContent(html, { timeout: 60000 }); // увеличенный таймаут
     await page.pdf({
-      path: `./API/Bills/${req.body.body.year}/${req.body.body.customer}/doc${req.body.body.invoiceNumber}.pdf`,
+      path: filePath,
       format: "a4",
+      timeout: 60000,
     });
-    console.log("создание пдф страницы");
-    console.log(req.body.body.invoiceNumber);
-    tacksDocs.add(
-      req.body.body.arrOrderId,
-      req.body.body.invoiceNumber,
-      (data) => {
-        if (data.error) {
-          res.status(500);
-          res.json({ message: data.error });
-        } else {
-          let dataIo = {
-            invoiceNumber: req.body.body.invoiceNumber,
-            arrOrderId: req.body.body.arrOrderId,
-          };
-          req.app.get("io").emit("createdDoc", dataIo);
-          res.json(data);
-        }
-      }
-    );
-    console.log("Добавление номер в БД");
-    console.log(new Date());
     await browser.close();
-    console.log("закрытие страницы");
-  })();
+    console.log("PDF создан");
+
+    // 3. Сохраняем в БД
+    tacksDocs.add(arrOrderId, invoiceNumber, (data) => {
+      if (data.error) {
+        return res.status(500).json({ message: data.error });
+      }
+
+      req.app.get("io").emit("createdDoc", { invoiceNumber, arrOrderId });
+      return res.json(data);
+    });
+  } catch (error) {
+    console.error("Ошибка при создании PDF:", error);
+    return res.status(500).json({ message: "Ошибка создания PDF" });
+  }
 };
 
 module.exports.taskSaveReport = (req, res) => {
