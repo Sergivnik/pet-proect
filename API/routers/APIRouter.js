@@ -8,6 +8,7 @@ const docAPI = require("../controlers/docAPI.js");
 const cardAPI = require("../controlers/cardAPI.js");
 const postAPI = require("../controlers/postAPI.js");
 const driverAPI = require("../controlers/driverAPI.js");
+const ownerLogistAPI = require("../controlers/ownerLogistAPI.js");
 
 const multer = require("multer");
 // const storage = multer.diskStorage({
@@ -40,6 +41,7 @@ router.get("/getApps", customerAPI.taskGetApps);
 router.get("/getLogTxt", tasksAPI.sendLog);
 router.get("/getDriverPayments", driverAPI.getDriverPayments);
 router.get("/sendReportEmail/:email", API.taskSendReportEmail);
+router.get("/ownerlogist", ownerLogistAPI.getOwnerLogist);
 router.get("/*", (req, res) => {
   res.sendFile(path.resolve(__dirname, "../public/index.html"));
 });

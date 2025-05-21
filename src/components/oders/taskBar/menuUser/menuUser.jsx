@@ -1,24 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import "./menuUser.sass";
-import { checkLog } from "../../../../actions/tasksActions";
-import { UserWindow } from "../../../userWindow/userWindow.jsx";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import './menuUser.sass';
+import { checkLog } from '../../../../actions/tasksActions';
+import { UserWindow } from '../../../userWindow/userWindow.jsx';
+import { ClientForm } from '../../../clientPart/clientForm.tsx';
 
-export const MenuUser = (props) => {
-  const logList = useSelector((state) => state.tasksReducer.logList);
+export const MenuUser = props => {
+  const logList = useSelector(state => state.tasksReducer.logList);
   const dispatch = useDispatch();
-  const {
-    tasksNumber,
-    user,
-    handleClickTasks,
-    handleClickUser,
-    handleClickExit,
-  } = props;
+  const { tasksNumber, user, handleClickTasks, handleClickUser, handleClickExit } = props;
   let showTimeout;
   let hideTimeout;
   const [isHovered, setIsHovered] = useState(false);
   const [isTooltipVisible, setIsTooltipVisible] = useState(false);
   const [showLogs, setShowLogs] = useState(false);
+  const [showClient, setShowClient] = useState(false);
 
   const handleMouseEnter = () => {
     setIsHovered(true);
@@ -38,15 +34,15 @@ export const MenuUser = (props) => {
       clearTimeout(showTimeout);
     }
   };
-  const handleClickTasksSpan = (e) => {
-    if (e.target.className === "tooltipSpanTask") handleClickTasks();
+  const handleClickTasksSpan = e => {
+    if (e.target.className === 'tooltipSpanTask') handleClickTasks();
   };
-  const handleClickUserSpan = (e) => {
-    if (e.target.className === "orderMenuUserSpan") handleClickUser();
+  const handleClickUserSpan = e => {
+    if (e.target.className === 'orderMenuUserSpan') handleClickUser();
   };
-  const handleClickLogSpan = (e) => {
-    console.log("logList:", logList);
-    if (e.target.className === "tooltipSpanTask") {
+  const handleClickLogSpan = e => {
+    console.log('logList:', logList);
+    if (e.target.className === 'tooltipSpanTask') {
       dispatch(checkLog());
       setShowLogs(true);
       setIsTooltipVisible(false);
@@ -54,6 +50,14 @@ export const MenuUser = (props) => {
   };
   const handleClickWindowClose = () => {
     setShowLogs(false);
+    setShowClient(false);
+  };
+  const handleClickClientSpan = () => {
+    console.log('admin', user.role);
+    if (user.role == 'admin') {
+      setShowClient(true);
+      setIsTooltipVisible(false);
+    }
   };
 
   useEffect(() => {
@@ -89,9 +93,14 @@ export const MenuUser = (props) => {
             <span onClick={handleClickTasksSpan} className="tooltipSpanTask">
               Вход в список заданий ctrl+З
             </span>
-            {user.role == "admin" && (
+            {user.role == 'admin' && (
               <span className="tooltipSpanTask" onClick={handleClickLogSpan}>
                 Отчет логов ctrl+О
+              </span>
+            )}
+            {user.role == 'admin' && (
+              <span className="tooltipSpanTask" onClick={handleClickClientSpan}>
+                Добавление клиента ctrl+К
               </span>
             )}
           </div>
@@ -117,7 +126,7 @@ export const MenuUser = (props) => {
                 </tr>
               </thead>
               <tbody>
-                {logList.map((log) => {
+                {logList.map(log => {
                   return (
                     <tr key={`log${log.id}`}>
                       <td>{log.date}</td>
@@ -128,6 +137,18 @@ export const MenuUser = (props) => {
               </tbody>
             </table>
           </dir>
+        </UserWindow>
+      )}
+      {showClient && (
+        <UserWindow
+          header="Добавление клиента"
+          width={800}
+          handleClickWindowClose={handleClickWindowClose}
+          windowId="clientWindow"
+          left="-350%"
+          top="300%"
+        >
+          <ClientForm />
         </UserWindow>
       )}
     </div>
