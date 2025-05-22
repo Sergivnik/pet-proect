@@ -1,1 +1,42 @@
+$border-color: #ddd
+$padding-base: 8px
+$header-bg: #cccccc
+$even-row-bg: #f9f9f9
+$hover-bg: #ddd
 
+.clientTableContainer
+  margin-top: 20px
+  overflow-x: auto
+  max-height: calc(70vh - 25px - 20px)
+  overflow-y: auto
+
+.clientTable
+  width: 100%
+  border-collapse: collapse
+  margin-bottom: 20px
+
+  thead
+    position: sticky
+    top: 0
+    z-index: 5
+
+.clientTableHeader
+  border: 1px solid $border-color
+  padding: $padding-base
+  text-align: center
+  background-color: $header-bg
+  font-weight: 900
+  position: sticky
+  left: 0
+  z-index: 10
+
+.clientTableDataCell
+  border: 1px solid $border-color
+  padding: $padding-base
+  text-align: left
+
+.clientTableRowEven
+  background-color: $even-row-bg
+
+.clientTableRowHover:hover
+  background-color: $hover-bg

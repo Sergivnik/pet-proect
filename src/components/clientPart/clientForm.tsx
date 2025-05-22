@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOwnerLogist } from '../../actions/ownerLogistAction';
+import './clientForm.sass';
 
 interface ClientData {
   id: number;
@@ -41,39 +42,34 @@ export const ClientForm = () => {
   }
 
   return (
-    <div className="client-table-container">
-      <table className="client-table">
+    <div className="clientTableContainer">
+      <table className="clientTable">
         <thead>
           <tr>
-            <th>Название</th>
-            <th>ИНН</th>
-            <th>КПП</th>
-            <th>ОГРН</th>
-            <th>Адрес</th>
-            <th>Телефон</th>
-            <th>Email</th>
-            <th>Руководитель</th>
-            <th>Банк</th>
-            <th>Расчетный счет</th>
-            <th>Корр. счет</th>
-            <th>БИК</th>
+            <th className="clientTableHeader">Название</th>
+            <th className="clientTableHeader">Полное название</th>
+            <th className="clientTableHeader">ИНН</th>
+            <th className="clientTableHeader">Адрес</th>
+            <th className="clientTableHeader">Email</th>
+            <th className="clientTableHeader">Телефон</th>
+            <th className="clientTableHeader">Руководитель</th>
+            <th className="clientTableHeader">Доп. информация</th>
           </tr>
         </thead>
         <tbody>
-          {ownerLogist.map((client: ClientData) => (
-            <tr key={client.id}>
-              <td>{client.nameOwner}</td>
-              <td>{client.TIN || '-'}</td>
-              <td>{client.KPP || '-'}</td>
-              <td>{client.OGRN || '-'}</td>
-              <td>{client.address || '-'}</td>
-              <td>{client.phone || '-'}</td>
-              <td>{client.email || '-'}</td>
-              <td>{client.bossName || '-'}</td>
-              <td>{client.bankName || '-'}</td>
-              <td>{client.Acc || '-'}</td>
-              <td>{client.CorAcc || '-'}</td>
-              <td>{client.RCBIC || '-'}</td>
+          {ownerLogist.map((client: ClientData, index: number) => (
+            <tr
+              key={client.id}
+              className={`${index % 2 === 1 ? 'clientTableRowEven' : ''} clientTableRowHover`}
+            >
+              <td className="clientTableDataCell">{client.nameOwner}</td>
+              <td className="clientTableDataCell">{client.fullNameOwner || '-'}</td>
+              <td className="clientTableDataCell">{client.TIN || '-'}</td>
+              <td className="clientTableDataCell">{client.address || '-'}</td>
+              <td className="clientTableDataCell">{client.email || '-'}</td>
+              <td className="clientTableDataCell">{client.phone || '-'}</td>
+              <td className="clientTableDataCell">{client.bossName || '-'}</td>
+              <td className="clientTableDataCell">{client.addInfo || '-'}</td>
             </tr>
           ))}
         </tbody>
