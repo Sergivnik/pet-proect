@@ -4,6 +4,7 @@ import { reportReducer } from "./reportReducer.js";
 import { customerReducer } from "./customerOrderReduser.js";
 import { tasksReducer } from "./tasksReducer.js";
 import { driverReducer } from "./driverReducer.js";
+import { clientReducer } from "./clientReduser.js";
 
 export default combineReducers({
   oderReducer,
@@ -11,4 +12,5 @@ export default combineReducers({
   customerReducer,
   driverReducer,
   tasksReducer,
+  clientReducer,
 });

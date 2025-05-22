@@ -26,11 +26,58 @@ interface ClientData {
 
 export const ClientForm = () => {
   const dispatch = useDispatch();
-  //const clientData = useSelector((state: any) => state.ownerLogist.data) as ClientData;
+  const { ownerLogist, status } = useSelector((state: any) => state.clientReducer);
 
   useEffect(() => {
     dispatch(getOwnerLogist());
   }, [dispatch]);
 
-  return <div></div>;
+  if (status === 'REQUEST') {
+    return <div>Загрузка...</div>;
+  }
+
+  if (!ownerLogist || ownerLogist.length === 0) {
+    return <div>Нет данных</div>;
+  }
+
+  return (
+    <div className="client-table-container">
+      <table className="client-table">
+        <thead>
+          <tr>
+            <th>Название</th>
+            <th>ИНН</th>
+            <th>КПП</th>
+            <th>ОГРН</th>
+            <th>Адрес</th>
+            <th>Телефон</th>
+            <th>Email</th>
+            <th>Руководитель</th>
+            <th>Банк</th>
+            <th>Расчетный счет</th>
+            <th>Корр. счет</th>
+            <th>БИК</th>
+          </tr>
+        </thead>
+        <tbody>
+          {ownerLogist.map((client: ClientData) => (
+            <tr key={client.id}>
+              <td>{client.nameOwner}</td>
+              <td>{client.TIN || '-'}</td>
+              <td>{client.KPP || '-'}</td>
+              <td>{client.OGRN || '-'}</td>
+              <td>{client.address || '-'}</td>
+              <td>{client.phone || '-'}</td>
+              <td>{client.email || '-'}</td>
+              <td>{client.bossName || '-'}</td>
+              <td>{client.bankName || '-'}</td>
+              <td>{client.Acc || '-'}</td>
+              <td>{client.CorAcc || '-'}</td>
+              <td>{client.RCBIC || '-'}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
 };
