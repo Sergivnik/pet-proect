@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { URL } from "../middlewares/initialState";
+import { URL } from '../middlewares/initialState';
 
 // Action types
 export const GET_OWNER_LOGIST_REQUEST = 'GET_OWNER_LOGIST_REQUEST';
