@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOwnerLogist } from '../../actions/ownerLogistAction';
 import './clientForm.sass';
@@ -25,9 +25,79 @@ interface ClientData {
   postAddress: string | null;
 }
 
+const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: () => void }) => {
+  return (
+    <div className="clientDetailsContainer">
+      <button className="backButton" onClick={onBack}>
+        Назад к списку
+      </button>
+      <div className="clientDetailsTables">
+        <table className="mainDataTable">
+          <thead>
+            <tr>
+              <th className="detailHeader">Название</th>
+              <th className="detailHeader">Полное название</th>
+              <th className="detailHeader">ИНН</th>
+              <th className="detailHeader">Адрес</th>
+              <th className="detailHeader">Email</th>
+              <th className="detailHeader">Телефон</th>
+              <th className="detailHeader">Руководитель</th>
+              <th className="detailHeader">Доп. информация</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="detailCell">{client.nameOwner}</td>
+              <td className="detailCell">{client.fullNameOwner || '-'}</td>
+              <td className="detailCell">{client.TIN || '-'}</td>
+              <td className="detailCell">{client.address || '-'}</td>
+              <td className="detailCell">{client.email || '-'}</td>
+              <td className="detailCell">{client.phone || '-'}</td>
+              <td className="detailCell">{client.bossName || '-'}</td>
+              <td className="detailCell">{client.addInfo || '-'}</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <table className="otherDataTable">
+          <thead>
+            <tr>
+              <th className="detailHeader">КПП</th>
+              <th className="detailHeader">ОГРН</th>
+              <th className="detailHeader">Банк</th>
+              <th className="detailHeader">Адрес банка</th>
+              <th className="detailHeader">Расчетный счет</th>
+              <th className="detailHeader">Корр. счет</th>
+              <th className="detailHeader">БИК</th>
+              <th className="detailHeader">Почтовый адрес</th>
+              <th className="detailHeader">Доп. email</th>
+              <th className="detailHeader">Доп. телефон</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td className="detailCell">{client.KPP || '-'}</td>
+              <td className="detailCell">{client.OGRN || '-'}</td>
+              <td className="detailCell">{client.bankName || '-'}</td>
+              <td className="detailCell">{client.bankAddress || '-'}</td>
+              <td className="detailCell">{client.Acc || '-'}</td>
+              <td className="detailCell">{client.CorAcc || '-'}</td>
+              <td className="detailCell">{client.RCBIC || '-'}</td>
+              <td className="detailCell">{client.postAddress || '-'}</td>
+              <td className="detailCell">{client.email_copy1 || '-'}</td>
+              <td className="detailCell">{client.phone_copy1 || '-'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
 export const ClientForm = () => {
   const dispatch = useDispatch();
   const { ownerLogist, status } = useSelector((state: any) => state.clientReducer);
+  const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
 
   useEffect(() => {
     dispatch(getOwnerLogist());
@@ -39,6 +109,10 @@ export const ClientForm = () => {
 
   if (!ownerLogist || ownerLogist.length === 0) {
     return <div>Нет данных</div>;
+  }
+
+  if (selectedClient) {
+    return <ClientDetails client={selectedClient} onBack={() => setSelectedClient(null)} />;
   }
 
   return (
@@ -61,6 +135,7 @@ export const ClientForm = () => {
             <tr
               key={client.id}
               className={`${index % 2 === 1 ? 'clientTableRowEven' : ''} clientTableRowHover`}
+              onDoubleClick={() => setSelectedClient(client)}
             >
               <td className="clientTableDataCell">{client.nameOwner}</td>
               <td className="clientTableDataCell">{client.fullNameOwner || '-'}</td>
