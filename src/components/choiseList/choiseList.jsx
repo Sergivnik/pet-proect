@@ -1,34 +1,34 @@
-import React, { useEffect, useState } from "react";
-import "./choiseList.sass";
+import React, { useEffect, useState } from 'react';
+import './choiseList.sass';
 
-export const ChoiseList = (props) => {
-  const [text, setText] = useState("");
+export const ChoiseList = props => {
+  const [text, setText] = useState('');
   const [list, setList] = useState(props.arrlist);
   const [showSelect, setShowSelect] = useState(false);
   let elSelect = null;
 
-  const getText = (e) => {
+  const getText = e => {
     setShowSelect(true);
     let test = e.currentTarget.value;
     setText(e.currentTarget.value);
-    let regtext = new RegExp(test, "i");
-    let arr = props.arrlist.filter((elem) => regtext.test(elem.value));
+    let regtext = new RegExp(test, 'i');
+    let arr = props.arrlist.filter(elem => regtext.test(elem.value));
     setList(arr);
   };
-  const handleKeyDown = (e) => {
-    if (e.key == "Enter") {
+  const handleKeyDown = e => {
+    if (e.key == 'Enter') {
       e.preventDefault();
       e.stopPropagation();
     }
-    if (e.key == "ArrowDown") {
+    if (e.key == 'ArrowDown') {
       elSelect.focus();
       elSelect.firstChild.selected = true;
     }
   };
-  const handleClick = (e) => {
+  const handleClick = e => {
     e.stopPropagation();
     let id = elSelect.value;
-    list.forEach((elem) => {
+    list.forEach(elem => {
       if (elem._id == id) {
         setText(elem.value);
         props.setValue(
@@ -45,12 +45,12 @@ export const ChoiseList = (props) => {
     });
     setShowSelect(false);
   };
-  const handleChoiseEnter = (e) => {
-    if (e.key == "Enter") {
+  const handleChoiseEnter = e => {
+    if (e.key == 'Enter') {
       e.preventDefault();
       e.stopPropagation();
       let id = elSelect.value;
-      list.forEach((elem) => {
+      list.forEach(elem => {
         if (elem._id == id) {
           setText(elem.value);
           props.setValue(
@@ -68,22 +68,22 @@ export const ChoiseList = (props) => {
       setShowSelect(false);
     }
   };
-  const handleClickInput = (e) => {
+  const handleClickInput = e => {
     //console.log(e);
   };
-  const handleLostFocus = (e) => {
+  const handleLostFocus = e => {
     console.log(e.target);
   };
 
   useEffect(() => {
-    if (props.parent === "oders") {
+    if (props.parent === 'oders') {
       setShowSelect(true);
       setList(props.arrlist);
     }
-    if (props.reset) setText("");
+    if (props.reset) setText('');
   }, [props]);
   useEffect(() => {
-    let optionEl = document.querySelector(".optionClass");
+    let optionEl = document.querySelector('.optionClass');
     if (optionEl) optionEl.selected = true;
   }, [list]);
 
@@ -101,7 +101,7 @@ export const ChoiseList = (props) => {
       />
       {showSelect && (
         <select
-          ref={(select) => {
+          ref={select => {
             elSelect = select;
           }}
           size="5"
@@ -110,18 +110,20 @@ export const ChoiseList = (props) => {
           className="selectList"
           name="select"
         >
-          {list.map((elem, index) => {
-            return (
-              <option
-                key={elem._id}
-                value={elem._id}
-                className="optionClass"
-                //selected={index == 0 ? true : false}
-              >
-                {elem.value}
-              </option>
-            );
-          })}
+          {list != undefined
+            ? list.map((elem, index) => {
+                return (
+                  <option
+                    key={elem._id}
+                    value={elem._id}
+                    className="optionClass"
+                    //selected={index == 0 ? true : false}
+                  >
+                    {elem.value}
+                  </option>
+                );
+              })
+            : ''}
         </select>
       )}
     </React.Fragment>
