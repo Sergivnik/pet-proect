@@ -2,6 +2,7 @@ import React from 'react';
 import { InvoiceForm } from './invoiceForm.jsx';
 import { ActForm } from './actForm.jsx';
 import { AppForm } from './appForm.jsx';
+import './billsForm.sass';
 
 export const FormsRenderer = ({
   dataDoc,

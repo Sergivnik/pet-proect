@@ -1,7 +1,5 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { InvoiceForm } from './invoiceForm.jsx';
-import { ActForm } from './actForm.jsx';
 import { findValueBy_Id, dateLocal } from '../myLib/myLib.js';
 import { InputText } from '../myLib/inputText.jsx';
 import {
@@ -9,7 +7,6 @@ import {
   createDocWithoutStamp,
   createNewInvoice,
 } from '../../actions/documentAction.js';
-import { AppForm } from './appForm.jsx';
 import { FormsRenderer } from './formsRenderer.jsx';
 
 import './billsForm.sass';
