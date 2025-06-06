@@ -589,7 +589,11 @@ async function processQueue() {
     .then(result => resolve(result))
     .catch(err => reject(err))
     .finally(() => {
-      console.log(`Активных задач: ${activeCount}, в очереди: ${queue.length}`);
+      console.log(
+        `Активных задач: ${activeCount}, Память:`,
+        process.memoryUsage().rss / 1024 / 1024,
+        'MB'
+      );
       activeCount--;
       processQueue(); // запускаем следующую задачу
     });
