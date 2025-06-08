@@ -568,7 +568,7 @@ module.exports.taskAddPdfDoc = (req, res) => {
   });
 };
 
-const MAX_CONCURRENT = 2; // ← Меняй это число для лимита
+const MAX_CONCURRENT = 10; // ← Меняй это число для лимита
 let activeCount = 0;
 const queue = [];
 
