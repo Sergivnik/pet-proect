@@ -21,11 +21,7 @@ app.set('io', io);
 
 // ✅ Сначала объявляем переменные
 const allowedOrigins = ['http://localhost:8080', 'http://atpivanova.ru'];
-const allowedReferers = [
-  'http://localhost:8080',
-  'http://atpivanova.ru',
-  'http://31.31.203.198:80'
-];
+const allowedReferers = ['http://localhost:8080', 'http://atpivanova.ru'];
 
 // 🛡️ Защита от некорректных URL и path traversal
 app.use((req, res, next) => {
@@ -50,7 +46,10 @@ app.use((req, res, next) => {
   if (origin && allowedOrigins.includes(origin)) {
     res.header('Access-Control-Allow-Origin', origin);
     res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header(
+      'Access-Control-Allow-Headers',
+      'Origin, X-Requested-With, Content-Type, Accept, Authorization'
+    );
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
   }
 
