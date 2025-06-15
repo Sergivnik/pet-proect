@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
 import { ClientData } from './types.ts';
 import { editData } from '../../actions/editDataAction.js';
 import './clientForm.sass';
+
+const urlTIN = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party';
+const urlRCBIC = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/bank';
+const token = 'fd7ad5614056fe4932599a0a3d94dd317d009510';
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    Authorization: `Token ${token}`,
+  },
+};
 
 export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: () => void }) => {
   const dispatch = useDispatch();
@@ -10,6 +22,74 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
   const [editingField, setEditingField] = useState<keyof ClientData | null>(null);
   const [previousValue, setPreviousValue] = useState<string | null>(null);
   const [isSaved, setIsSaved] = useState(true);
+  const [requestTIN, setRequestTIN] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    const data = {
+      query: editedClient.TIN,
+    };
+    if (editedClient.TIN && (editedClient.TIN.length === 10 || editedClient.TIN.length === 12)) {
+      axios
+        .post(urlTIN, data, config)
+        .then(response => {
+          console.log(response.data.suggestions);
+          setRequestTIN(response.data.suggestions);
+          setShowSuggestions(true);
+        })
+        .catch(error => {
+          console.log('error', error);
+        });
+    }
+  }, [editedClient.TIN]);
+
+  useEffect(() => {
+    const data = {
+      query: editedClient.RCBIC,
+    };
+    if (
+      editedClient.RCBIC &&
+      editedClient.RCBIC.length === 9 &&
+      (editedClient.CorAcc == null ||
+        editedClient.bankName == null ||
+        editedClient.bankAddress == null ||
+        editedClient.CorAcc === '' ||
+        editedClient.bankName === '' ||
+        editedClient.bankAddress === '')
+    ) {
+      axios
+        .post(urlRCBIC, data, config)
+        .then(response => {
+          if (response.data.suggestions && response.data.suggestions.length > 0) {
+            const bankData = response.data.suggestions[0];
+            setEditedClient(prev => ({
+              ...prev,
+              CorAcc: bankData.data.correspondent_account || 'нет данных',
+              bankName: bankData.value || 'нет данных',
+              bankAddress: bankData.data.address.value || 'нет данных',
+            }));
+            setIsSaved(false);
+          }
+        })
+        .catch(error => {
+          console.log('error', error);
+        });
+    }
+  }, [editedClient.RCBIC]);
+
+  const handleClickSuggestion = (index: number) => {
+    const suggestion = requestTIN[index];
+    setEditedClient(prev => ({
+      ...prev,
+      KPP: prev.KPP || suggestion.data.kpp || 'нет данных',
+      fullNameOwner: prev.fullNameOwner || suggestion.data.name.short_with_opf || 'нет данных',
+      OGRN: prev.OGRN || suggestion.data.ogrn || 'нет данных',
+      bossName: prev.bossName || suggestion.data.management?.name || 'нет данных',
+      address: prev.address || suggestion.data.address.unrestricted_value || 'нет данных',
+    }));
+    setShowSuggestions(false);
+    setIsSaved(false);
+  };
 
   const handleInputChange = (field: keyof ClientData, value: string) => {
     setEditedClient(prev => ({
@@ -66,15 +146,17 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
   const renderCell = (field: keyof ClientData, value: string | null) => {
     if (editingField === field) {
       return (
-        <input
-          type={field.includes('email') ? 'email' : field.includes('phone') ? 'tel' : 'text'}
-          value={value || ''}
-          onChange={e => handleInputChange(field, e.target.value)}
-          onBlur={handleBlur}
-          onKeyDown={handleKeyDown}
-          className="detailInput"
-          autoFocus
-        />
+        <>
+          <input
+            type={field.includes('email') ? 'email' : field.includes('phone') ? 'tel' : 'text'}
+            value={value || ''}
+            onChange={e => handleInputChange(field, e.target.value)}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="detailInput"
+            autoFocus
+          />
+        </>
       );
     }
     return <div onDoubleClick={() => handleDoubleClick(field)}>{value || '-'}</div>;
@@ -119,7 +201,21 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
             </tr>
           </tbody>
         </table>
-
+        <div className="suggestionsDivContainer">
+          {showSuggestions && (
+            <div className="suggestionsOwner">
+              {requestTIN.map((elem, index) => (
+                <p
+                  key={`suggestion${index}`}
+                  className="suggestionsDivP"
+                  onClick={() => handleClickSuggestion(index)}
+                >
+                  {elem.value + ' КПП ' + elem.data.kpp + ' ' + elem.data.address.value}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
         <table className="otherDataTable">
           <thead>
             <tr>

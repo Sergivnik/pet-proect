@@ -19,6 +19,19 @@ export const ClientForm = () => {
     console.log('ClientForm');
   }, [dispatch]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setSelectedClientId(null);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const handleDelete = () => {
     if (selectedClientId) {
       const confirm = window.confirm('Вы уверены, что хотите удалить этого клиента?');
@@ -47,7 +60,7 @@ export const ClientForm = () => {
 
   return (
     <div className="clientTableContainer">
-      <div className="clientTableHeader">
+      <div className="clientBtnHeader">
         <button className="addButton" onClick={() => setShowAddForm(true)}>
           Добавить клиента
         </button>

@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
 import { ClientData } from './types';
 import { addData } from '../../actions/editDataAction';
 import './clientForm.sass';
+
+const urlTIN = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party';
+const urlRCBIC = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/bank';
+const token = 'fd7ad5614056fe4932599a0a3d94dd317d009510';
+const config = {
+  headers: {
+    'Content-Type': 'application/json',
+    Accept: 'application/json',
+    Authorization: `Token ${token}`,
+  },
+};
 
 interface AddClientFormProps {
   onBack: () => void;
@@ -33,6 +45,72 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
   const [editingField, setEditingField] = useState<keyof ClientData | null>(null);
   const [previousValue, setPreviousValue] = useState<string | null>(null);
   const [filledFields, setFilledFields] = useState<Array<keyof ClientData>>([]);
+  const [requestTIN, setRequestTIN] = useState<any[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+
+  useEffect(() => {
+    const data = {
+      query: newClient.TIN,
+    };
+    if (newClient.TIN && (newClient.TIN.length === 10 || newClient.TIN.length === 12)) {
+      axios
+        .post(urlTIN, data, config)
+        .then(response => {
+          console.log(response.data.suggestions);
+          setRequestTIN(response.data.suggestions);
+          setShowSuggestions(true);
+        })
+        .catch(error => {
+          console.log('error', error);
+        });
+    }
+  }, [newClient.TIN]);
+
+  useEffect(() => {
+    const data = {
+      query: newClient.RCBIC,
+    };
+    if (
+      newClient.RCBIC &&
+      newClient.RCBIC.length === 9 &&
+      (newClient.CorAcc == null ||
+        newClient.bankName == null ||
+        newClient.bankAddress == null ||
+        newClient.CorAcc === '' ||
+        newClient.bankName === '' ||
+        newClient.bankAddress === '')
+    ) {
+      axios
+        .post(urlRCBIC, data, config)
+        .then(response => {
+          if (response.data.suggestions && response.data.suggestions.length > 0) {
+            const bankData = response.data.suggestions[0];
+            setNewClient(prev => ({
+              ...prev,
+              CorAcc: bankData.data.correspondent_account || 'нет данных',
+              bankName: bankData.value || 'нет данных',
+              bankAddress: bankData.data.address.value || 'нет данных',
+            }));
+          }
+        })
+        .catch(error => {
+          console.log('error', error);
+        });
+    }
+  }, [newClient.RCBIC]);
+
+  const handleClickSuggestion = (index: number) => {
+    const suggestion = requestTIN[index];
+    setNewClient(prev => ({
+      ...prev,
+      KPP: prev.KPP || suggestion.data.kpp || 'нет данных',
+      fullNameOwner: prev.fullNameOwner || suggestion.data.name.short_with_opf || 'нет данных',
+      OGRN: prev.OGRN || suggestion.data.ogrn || 'нет данных',
+      bossName: prev.bossName || suggestion.data.management?.name || 'нет данных',
+      address: prev.address || suggestion.data.address.unrestricted_value || 'нет данных',
+    }));
+    setShowSuggestions(false);
+  };
 
   const handleInputChange = (field: keyof ClientData, value: string) => {
     setNewClient(prev => ({
@@ -80,16 +158,18 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
   const renderInput = (field: keyof ClientData, value: string | null) => {
     if (editingField === field || !filledFields.includes(field)) {
       return (
-        <input
-          type={field.includes('email') ? 'email' : field.includes('phone') ? 'tel' : 'text'}
-          value={value || ''}
-          onChange={e => handleInputChange(field, e.target.value)}
-          onBlur={() => handleBlur(field)}
-          onKeyDown={e => handleKeyDown(e, field)}
-          className="detailInput"
-          autoFocus={editingField === field}
-          placeholder="Введите значение"
-        />
+        <>
+          <input
+            type={field.includes('email') ? 'email' : field.includes('phone') ? 'tel' : 'text'}
+            value={value || ''}
+            onChange={e => handleInputChange(field, e.target.value)}
+            onBlur={() => handleBlur(field)}
+            onKeyDown={e => handleKeyDown(e, field)}
+            className="detailInput"
+            autoFocus={editingField === field}
+            placeholder="Введите значение"
+          />
+        </>
       );
     }
     return <div onDoubleClick={() => handleDoubleClick(field)}>{value || '-'}</div>;
@@ -134,6 +214,21 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
             </tr>
           </tbody>
         </table>
+        <div className="suggestionsDivContainer">
+          {showSuggestions && (
+            <div className="suggestionsOwner">
+              {requestTIN.map((elem, index) => (
+                <p
+                  key={`suggestion${index}`}
+                  className="suggestionsDivP"
+                  onClick={() => handleClickSuggestion(index)}
+                >
+                  {elem.value + ' КПП ' + elem.data.kpp + ' ' + elem.data.address.value}
+                </p>
+              ))}
+            </div>
+          )}
+        </div>
 
         <table className="otherDataTable">
           <thead>
