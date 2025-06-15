@@ -1124,22 +1124,30 @@ module.exports.taskCheckUser = (req, res) => {
     }
   });
 };
-module.exports.taskGetUser = (req, res) => {
+module.exports.taskGetUser = async (req, res) => {
   res.set('Access-Control-Allow-Credentials', 'true');
-  console.log(1, req.sessionID, req.session.userId);
   writeLogToFile(req.session.name);
-  if (req.session.userId) {
-    let data = {
+
+  if (!req.session.userId) {
+    return res.json({ error: 'no authorized users' });
+  }
+  let user = await tasks.getDataBy_IdPromise(req.session.userId, 'users');
+
+  let ownerId = user.ownerId;
+  let owner = await tasks.getDataByIdPromise(ownerId, 'ownerlogist');
+
+  const data = {
+    userData: {
       _id: req.session.userId,
       name: req.session.name,
       role: req.session.role,
       managerID: req.session.managerID,
       customerId: req.session.customerId,
-    };
-    res.json(data);
-  } else {
-    res.json({ error: 'no authorized users' });
-  }
+    },
+    ownerData: owner,
+  };
+
+  return res.json(data);
 };
 module.exports.taskSignOut = (req, res) => {
   res.set('Access-Control-Allow-Credentials', 'true');

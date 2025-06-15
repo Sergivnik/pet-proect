@@ -1,22 +1,31 @@
 const express = require('express');
 const mysql2 = require('mysql2/promise');
 const path = require('path');
-const http = require('http'); // Для работы с socket.io
+const http = require('http');
 const socketIo = require('socket.io');
 const router = require('./routers');
 const config = require('./models/config.js');
 const os = require('os');
 
 const app = express();
-const server = http.createServer(app); // Создаём HTTP сервер
+const server = http.createServer(app);
+
 const io = socketIo(server, {
   cors: {
-    origin: 'http://localhost:8080', // Разрешённый клиентский домен
+    origin: ['http://localhost:8080', 'http://atpivanova.ru'],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   },
 });
 
 app.set('io', io);
+
+// ✅ Сначала объявляем переменные
+const allowedOrigins = ['http://localhost:8080', 'http://atpivanova.ru'];
+const allowedReferers = [
+  'http://localhost:8080',
+  'http://atpivanova.ru',
+  'http://31.31.203.198:80'
+];
 
 // 🛡️ Защита от некорректных URL и path traversal
 app.use((req, res, next) => {
@@ -33,6 +42,30 @@ app.use((req, res, next) => {
   }
 });
 
+// ✅ CORS и проверка Referer — объединено и оптимизировано
+app.use((req, res, next) => {
+  const origin = req.headers.origin;
+  const referer = req.headers.referer;
+
+  if (origin && allowedOrigins.includes(origin)) {
+    res.header('Access-Control-Allow-Origin', origin);
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+  }
+
+  if (referer && !allowedReferers.some(r => referer.startsWith(r))) {
+    console.warn(`❌ Запрос с недопустимого Referer: ${referer}`);
+    return res.status(403).send('Access denied by Referer');
+  }
+
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(204);
+  }
+
+  next();
+});
+
 // Подключение WebSocket
 io.on('connection', socket => {
   console.log('Клиент подключён:', socket.id);
@@ -40,24 +73,6 @@ io.on('connection', socket => {
   socket.on('disconnect', () => {
     console.log('Клиент отключился:', socket.id);
   });
-});
-
-// CORS для API
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:8080'); // Домен, с которого разрешены запросы
-  res.header('Access-Control-Allow-Credentials', 'true'); // Разрешаем передачу cookies и авторизационных заголовков
-  res.header(
-    'Access-Control-Allow-Headers',
-    'Origin, X-Requested-With, Content-Type, Accept, Authorization'
-  );
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS'); // Разрешаемые методы
-
-  // Обрабатываем preflight-запрос (OPTIONS)
-  if (req.method === 'OPTIONS') {
-    return res.sendStatus(204); // Успешный ответ без тела
-  }
-
-  next();
 });
 
 // Middleware
@@ -78,18 +93,17 @@ app.use(session(sessionOption));
 // Роутинг
 app.use(router);
 
-
-// Запуск
+// Запуск сервера
 server.listen(80, () => console.log('Сервер запущен на порту 80'));
+
 setInterval(() => {
-  const totalMem = os.totalmem() / 1024 / 1024; // в MB
-  const freeMem = os.freemem() / 1024 / 1024;   // в MB
+  const totalMem = os.totalmem() / 1024 / 1024;
+  const freeMem = os.freemem() / 1024 / 1024;
   const usedMem = totalMem - freeMem;
 
-  console.log("🧠 Использование системной памяти:");
+  console.log('🧠 Использование системной памяти:');
   console.log(`- Всего     : ${totalMem.toFixed(2)} MB`);
   console.log(`- Занято    : ${usedMem.toFixed(2)} MB`);
   console.log(`- Свободно  : ${freeMem.toFixed(2)} MB`);
-  console.log("—".repeat(30));
-}, 5000); // каждые 5 секунд
-
+  console.log('—'.repeat(30));
+}, 50000);
