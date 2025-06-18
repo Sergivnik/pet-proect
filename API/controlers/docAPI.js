@@ -49,6 +49,14 @@ module.exports.taskCreateDriverContract = (req, res) => {
 module.exports.taskGetPdfContract = (req, res) => {
   res.set("Access-Control-Allow-Methods", "GET, OPTIONS");
   res.set("Access-Control-Allow-Headers", "Content-Type");
+    
+  // Check if user is authenticated
+  if (!req.session.userId) {
+    console.log(req.session.userId);
+    
+    return res.status(401).json({ message: 'Unauthorized - Please login first' });
+  }
+  
   const { customer } = req.query;
   console.log(customer);
   const path = require("path");
