@@ -47,22 +47,52 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
   const [filledFields, setFilledFields] = useState<Array<keyof ClientData>>([]);
   const [requestTIN, setRequestTIN] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [prevTIN, setPrevTIN] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const data = {
       query: newClient.TIN,
     };
     if (newClient.TIN && (newClient.TIN.length === 10 || newClient.TIN.length === 12)) {
-      axios
-        .post(urlTIN, data, config)
-        .then(response => {
-          console.log(response.data.suggestions);
-          setRequestTIN(response.data.suggestions);
-          setShowSuggestions(true);
-        })
-        .catch(error => {
-          console.log('error', error);
-        });
+      const hasEmptyFields =
+        !newClient.KPP ||
+        !newClient.fullNameOwner ||
+        !newClient.OGRN ||
+        !newClient.bossName ||
+        !newClient.address;
+
+      if (hasEmptyFields) {
+        axios
+          .post(urlTIN, data, config)
+          .then(response => {
+            console.log(response.data.suggestions);
+            setRequestTIN(response.data.suggestions);
+            setShowSuggestions(true);
+          })
+          .catch(error => {
+            console.log('error', error);
+          });
+      } else {
+        setShowSuggestions(false);
+      }
+    }
+  }, [newClient.TIN]);
+
+  useEffect(() => {
+    if (
+      newClient.TIN &&
+      newClient.TIN !== prevTIN &&
+      (/^\d{10}$/.test(newClient.TIN) || /^\d{12}$/.test(newClient.TIN))
+    ) {
+      setNewClient(prev => ({
+        ...prev,
+        KPP: '',
+        fullNameOwner: '',
+        OGRN: '',
+        bossName: '',
+        address: '',
+      }));
+      setPrevTIN(newClient.TIN);
     }
   }, [newClient.TIN]);
 
@@ -103,11 +133,38 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
     const suggestion = requestTIN[index];
     setNewClient(prev => ({
       ...prev,
-      KPP: prev.KPP || suggestion.data.kpp || 'нет данных',
-      fullNameOwner: prev.fullNameOwner || suggestion.data.name.short_with_opf || 'нет данных',
-      OGRN: prev.OGRN || suggestion.data.ogrn || 'нет данных',
-      bossName: prev.bossName || suggestion.data.management?.name || 'нет данных',
-      address: prev.address || suggestion.data.address.unrestricted_value || 'нет данных',
+      KPP:
+        prev.KPP === '' || prev.KPP === null || prev.KPP === undefined || prev.KPP === 'нет данных'
+          ? suggestion.data.kpp || 'нет данных'
+          : prev.KPP,
+      fullNameOwner:
+        prev.fullNameOwner === '' ||
+        prev.fullNameOwner === null ||
+        prev.fullNameOwner === undefined ||
+        prev.fullNameOwner === 'нет данных'
+          ? suggestion.data.name.short_with_opf || 'нет данных'
+          : prev.fullNameOwner,
+      OGRN:
+        prev.OGRN === '' ||
+        prev.OGRN === null ||
+        prev.OGRN === undefined ||
+        prev.OGRN === 'нет данных'
+          ? suggestion.data.ogrn || 'нет данных'
+          : prev.OGRN,
+      bossName:
+        prev.bossName === '' ||
+        prev.bossName === null ||
+        prev.bossName === undefined ||
+        prev.bossName === 'нет данных'
+          ? suggestion.data.management?.name || 'нет данных'
+          : prev.bossName,
+      address:
+        prev.address === '' ||
+        prev.address === null ||
+        prev.address === undefined ||
+        prev.address === 'нет данных'
+          ? suggestion.data.address.unrestricted_value || 'нет данных'
+          : prev.address,
     }));
     setShowSuggestions(false);
   };
@@ -124,7 +181,24 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
     setPreviousValue(newClient[field]?.toString() || null);
   };
 
+  const clearFieldsOnTIN = (value: string) => {
+    if (value && value !== prevTIN && (/^\d{10}$/.test(value) || /^\d{12}$/.test(value))) {
+      setNewClient(prev => ({
+        ...prev,
+        KPP: '',
+        fullNameOwner: '',
+        OGRN: '',
+        bossName: '',
+        address: '',
+      }));
+      setPrevTIN(value);
+    }
+  };
+
   const handleBlur = (field: keyof ClientData) => {
+    if (field === 'TIN') {
+      clearFieldsOnTIN(newClient.TIN || '');
+    }
     if (newClient[field] && !filledFields.includes(field)) {
       setFilledFields(prev => [...prev, field]);
     }
@@ -134,6 +208,9 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field: keyof ClientData) => {
     if (e.key === 'Enter') {
+      if (field === 'TIN') {
+        clearFieldsOnTIN(newClient.TIN || '');
+      }
       if (newClient[field] && !filledFields.includes(field)) {
         setFilledFields(prev => [...prev, field]);
       }

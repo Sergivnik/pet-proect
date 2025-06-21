@@ -24,22 +24,35 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
   const [isSaved, setIsSaved] = useState(true);
   const [requestTIN, setRequestTIN] = useState<any[]>([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [prevTIN, setPrevTIN] = useState<string | undefined>(client.TIN);
 
   useEffect(() => {
     const data = {
       query: editedClient.TIN,
     };
     if (editedClient.TIN && (editedClient.TIN.length === 10 || editedClient.TIN.length === 12)) {
-      axios
-        .post(urlTIN, data, config)
-        .then(response => {
-          console.log(response.data.suggestions);
-          setRequestTIN(response.data.suggestions);
-          setShowSuggestions(true);
-        })
-        .catch(error => {
-          console.log('error', error);
-        });
+      // Проверяем, есть ли пустые поля для заполнения
+      const hasEmptyFields =
+        !editedClient.KPP ||
+        !editedClient.fullNameOwner ||
+        !editedClient.OGRN ||
+        !editedClient.bossName ||
+        !editedClient.address;
+
+      if (hasEmptyFields) {
+        axios
+          .post(urlTIN, data, config)
+          .then(response => {
+            console.log(response.data.suggestions);
+            setRequestTIN(response.data.suggestions);
+            setShowSuggestions(true);
+          })
+          .catch(error => {
+            console.log('error', error);
+          });
+      } else {
+        setShowSuggestions(false);
+      }
     }
   }, [editedClient.TIN]);
 
@@ -77,15 +90,81 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
     }
   }, [editedClient.RCBIC]);
 
+  const clearFieldsOnTIN = (value: string) => {
+    if (value && value !== prevTIN && (/^\d{10}$/.test(value) || /^\d{12}$/.test(value))) {
+      setEditedClient(prev => ({
+        ...prev,
+        KPP: '',
+        fullNameOwner: '',
+        OGRN: '',
+        bossName: '',
+        address: '',
+      }));
+      setPrevTIN(value);
+    }
+  };
+
+  const handleBlur = (field?: keyof ClientData) => {
+    if (field === 'TIN') {
+      clearFieldsOnTIN(editedClient.TIN || '');
+    }
+    setEditingField(null);
+    setPreviousValue(null);
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, field?: keyof ClientData) => {
+    if (e.key === 'Enter') {
+      if (field === 'TIN') {
+        clearFieldsOnTIN(editedClient.TIN || '');
+      }
+      setEditingField(null);
+      setPreviousValue(null);
+    } else if (e.key === 'Escape' && editingField) {
+      setEditedClient(prev => ({
+        ...prev,
+        [editingField]: previousValue,
+      }));
+      setEditingField(null);
+      setPreviousValue(null);
+    }
+  };
+
   const handleClickSuggestion = (index: number) => {
     const suggestion = requestTIN[index];
     setEditedClient(prev => ({
       ...prev,
-      KPP: prev.KPP || suggestion.data.kpp || 'нет данных',
-      fullNameOwner: prev.fullNameOwner || suggestion.data.name.short_with_opf || 'нет данных',
-      OGRN: prev.OGRN || suggestion.data.ogrn || 'нет данных',
-      bossName: prev.bossName || suggestion.data.management?.name || 'нет данных',
-      address: prev.address || suggestion.data.address.unrestricted_value || 'нет данных',
+      KPP:
+        prev.KPP === '' || prev.KPP === null || prev.KPP === undefined || prev.KPP === 'нет данных'
+          ? suggestion.data.kpp || 'нет данных'
+          : prev.KPP,
+      fullNameOwner:
+        prev.fullNameOwner === '' ||
+        prev.fullNameOwner === null ||
+        prev.fullNameOwner === undefined ||
+        prev.fullNameOwner === 'нет данных'
+          ? suggestion.data.name.short_with_opf || 'нет данных'
+          : prev.fullNameOwner,
+      OGRN:
+        prev.OGRN === '' ||
+        prev.OGRN === null ||
+        prev.OGRN === undefined ||
+        prev.OGRN === 'нет данных'
+          ? suggestion.data.ogrn || 'нет данных'
+          : prev.OGRN,
+      bossName:
+        prev.bossName === '' ||
+        prev.bossName === null ||
+        prev.bossName === undefined ||
+        prev.bossName === 'нет данных'
+          ? suggestion.data.management?.name || 'нет данных'
+          : prev.bossName,
+      address:
+        prev.address === '' ||
+        prev.address === null ||
+        prev.address === undefined ||
+        prev.address === 'нет данных'
+          ? suggestion.data.address.unrestricted_value || 'нет данных'
+          : prev.address,
     }));
     setShowSuggestions(false);
     setIsSaved(false);
@@ -102,25 +181,6 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
   const handleDoubleClick = (field: keyof ClientData) => {
     setEditingField(field);
     setPreviousValue(editedClient[field]?.toString() || null);
-  };
-
-  const handleBlur = () => {
-    setEditingField(null);
-    setPreviousValue(null);
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      setEditingField(null);
-      setPreviousValue(null);
-    } else if (e.key === 'Escape' && editingField) {
-      setEditedClient(prev => ({
-        ...prev,
-        [editingField]: previousValue,
-      }));
-      setEditingField(null);
-      setPreviousValue(null);
-    }
   };
 
   const handleSave = () => {
@@ -151,8 +211,8 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
             type={field.includes('email') ? 'email' : field.includes('phone') ? 'tel' : 'text'}
             value={value || ''}
             onChange={e => handleInputChange(field, e.target.value)}
-            onBlur={handleBlur}
-            onKeyDown={handleKeyDown}
+            onBlur={() => handleBlur(field)}
+            onKeyDown={e => handleKeyDown(e, field)}
             className="detailInput"
             autoFocus
           />
