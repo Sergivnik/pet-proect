@@ -1,167 +1,144 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useSelector } from 'react-redux';
+import { URL } from '../../middlewares/initialState';
 
-import "./editData.sass";
+import './editData.sass';
 
-export const CustomerAddDiv = (props) => {
-  const orderList = useSelector((state) => state.oderReducer.clientList);
+export const CustomerAddDiv = props => {
+  const orderList = useSelector(state => state.oderReducer.clientList);
   const fielsList = [
-    "value",
-    "TIN",
-    "companyName",
-    "address",
-    "postAddress",
-    "email",
-    "phone",
-    "contract",
-    "active",
-    "KPP",
-    "OGRN",
-    "bossName",
-    "RCBIC",
-    "Acc",
-    "CorAcc",
-    "bankName",
-    "bankAddress",
-    "addInfo",
+    'value',
+    'TIN',
+    'companyName',
+    'address',
+    'postAddress',
+    'email',
+    'phone',
+    'contract',
+    'active',
+    'KPP',
+    'OGRN',
+    'bossName',
+    'RCBIC',
+    'Acc',
+    'CorAcc',
+    'bankName',
+    'bankAddress',
+    'addInfo',
   ];
-  const [editField, setEditField] = useState("value");
-  const [value, setValue] = useState("");
+  const [editField, setEditField] = useState('value');
+  const [value, setValue] = useState('');
   const [customerData, setCustomerData] = useState({});
   const [requestTIN, setRequestTIN] = useState([]);
   const [requestRCBIC, setRequestRCBIC] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
-  const handleEnter = (e) => {
-    let index = fielsList.findIndex((field) => field == editField);
+  const handleEnter = e => {
+    let index = fielsList.findIndex(field => field == editField);
     let newData = { ...customerData };
-    const token = "fd7ad5614056fe4932599a0a3d94dd317d009510";
-    const config = {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Token ${token}`,
-      },
-    };
 
-    const getDaDataTIN = (TIN) => {
-      console.log("TIN", TIN);
-      const url =
-        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party";
+    const getDaDataTIN = TIN => {
+      console.log('TIN', TIN);
       const data = {
         query: TIN,
       };
       axios
-        .post(url, data, config)
-        .then((response) => {
+        .post(URL + '/dadataTIN', data)
+        .then(response => {
           console.log(response.data.suggestions);
           setRequestTIN(response.data.suggestions);
           setShowSuggestions(true);
         })
-        .catch((error) => {
-          console.log("error", error);
+        .catch(error => {
+          console.log('error', error);
         });
     };
-    const getDadataRCBIC = (RCBIC) => {
-      console.log("RCBIC", RCBIC);
-      const url =
-        "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/bank";
+    const getDadataRCBIC = RCBIC => {
+      console.log('RCBIC', RCBIC);
       const data = {
         query: RCBIC,
       };
       axios
-        .post(url, data, config)
-        .then((response) => {
+        .post(URL + '/dadataBank', data)
+        .then(response => {
           console.log(response.data.suggestions);
           setRequestRCBIC(response.data.suggestions);
         })
-        .catch((error) => {
-          console.log("error", error);
+        .catch(error => {
+          console.log('error', error);
         });
     };
-    if (e.key == "Enter") {
+    if (e.key == 'Enter') {
       newData[editField] = value;
       setCustomerData(newData);
       setEditField(null);
-      setValue("");
-      if (editField == "TIN") {
+      setValue('');
+      if (editField == 'TIN') {
         getDaDataTIN(value);
       }
-      if (editField == "RCBIC") {
+      if (editField == 'RCBIC') {
         getDadataRCBIC(value);
       }
     }
-    if (e.key == "Tab") {
+    if (e.key == 'Tab') {
       newData[editField] = value;
       setCustomerData(newData);
       setEditField(fielsList[index + 1]);
-      setValue(
-        customerData[fielsList[index + 1]]
-          ? customerData[fielsList[index + 1]]
-          : ""
-      );
-      if (editField == "TIN") {
+      setValue(customerData[fielsList[index + 1]] ? customerData[fielsList[index + 1]] : '');
+      if (editField == 'TIN') {
         getDaDataTIN(value);
         setEditField(null);
       }
-      if (editField == "RCBIC") {
+      if (editField == 'RCBIC') {
         getDadataRCBIC(value);
         setEditField(null);
       }
     }
-    if (e.shiftKey && e.key == "Tab") {
+    if (e.shiftKey && e.key == 'Tab') {
       newData[editField] = value;
       setCustomerData(newData);
       setEditField(fielsList[index - 1]);
-      setValue(
-        customerData[fielsList[index - 1]]
-          ? customerData[fielsList[index - 1]]
-          : ""
-      );
-      if (editField == "TIN") {
+      setValue(customerData[fielsList[index - 1]] ? customerData[fielsList[index - 1]] : '');
+      if (editField == 'TIN') {
         getDaDataTIN(value);
       }
-      if (editField == "RCBIC") {
+      if (editField == 'RCBIC') {
         getDadataRCBIC(value);
       }
     }
   };
-  const handleChange = (e) => {
+  const handleChange = e => {
     setValue(e.currentTarget.value);
   };
-  const handleDBLclick = (field) => {
+  const handleDBLclick = field => {
     console.log(field);
     setEditField(field);
     setValue(customerData[field]);
   };
-  const handleClickSuggestion = (index) => {
+  const handleClickSuggestion = index => {
     console.log(index);
     let newData = { ...customerData };
-    if (customerData.KPP == null || customerData.KPP == "") {
-      newData.KPP = requestTIN[index].data.kpp
-        ? requestTIN[index].data.kpp
-        : "нет данных";
+    if (customerData.KPP == null || customerData.KPP == '') {
+      newData.KPP = requestTIN[index].data.kpp ? requestTIN[index].data.kpp : 'нет данных';
     }
-    if (customerData.companyName == null || customerData.companyName == "") {
+    if (customerData.companyName == null || customerData.companyName == '') {
       newData.companyName = requestTIN[index].data.name.short_with_opf
         ? requestTIN[index].data.name.short_with_opf
-        : "нет данных";
+        : 'нет данных';
     }
-    if (customerData.OGRN == null || customerData.OGRN == "") {
-      newData.OGRN = requestTIN[index].data.ogrn
-        ? requestTIN[index].data.ogrn
-        : "нет данных";
+    if (customerData.OGRN == null || customerData.OGRN == '') {
+      newData.OGRN = requestTIN[index].data.ogrn ? requestTIN[index].data.ogrn : 'нет данных';
     }
-    if (customerData.bossName == null || customerData.bossName == "") {
+    if (customerData.bossName == null || customerData.bossName == '') {
       newData.bossName = requestTIN[index].data.management
         ? requestTIN[index].data.management.name
-        : "нет данных";
+        : 'нет данных';
     }
-    if (customerData.address == null || customerData.address == "") {
+    if (customerData.address == null || customerData.address == '') {
       newData.address = requestTIN[index].data.address.unrestricted_value
         ? requestTIN[index].data.address.unrestricted_value
-        : "нет данных";
+        : 'нет данных';
     }
     setCustomerData(newData);
     setShowSuggestions(false);
@@ -169,17 +146,17 @@ export const CustomerAddDiv = (props) => {
   const handleClickSave = () => {
     if (!customerData.active) customerData.active = 1;
     if (customerData.value) {
-      if (checkUniqueTIN(customerData["TIN"])) {
+      if (checkUniqueTIN(customerData['TIN'])) {
         props.handleAddCustomer(customerData);
       } else {
-        let conf = confirm("Введен не уникальный ИНН. Добавить?");
+        let conf = confirm('Введен не уникальный ИНН. Добавить?');
         if (conf) props.handleAddCustomer(customerData);
       }
     }
   };
 
-  const checkUniqueTIN = (TIN) => {
-    let result = orderList.find((order) => order.TIN == TIN);
+  const checkUniqueTIN = TIN => {
+    let result = orderList.find(order => order.TIN == TIN);
     if (result == undefined) {
       return true;
     } else {
@@ -190,20 +167,18 @@ export const CustomerAddDiv = (props) => {
   useEffect(() => {
     if (requestRCBIC.length) {
       let newData = { ...customerData };
-      if (customerData.CorAcc == null || customerData.CorAcc == "") {
+      if (customerData.CorAcc == null || customerData.CorAcc == '') {
         newData.CorAcc = requestRCBIC[0].data.correspondent_account
           ? requestRCBIC[0].data.correspondent_account
-          : "нет данных";
+          : 'нет данных';
       }
-      if (customerData.bankName == null || customerData.bankName == "") {
-        newData.bankName = requestRCBIC[0].value
-          ? requestRCBIC[0].value
-          : "нет данных";
+      if (customerData.bankName == null || customerData.bankName == '') {
+        newData.bankName = requestRCBIC[0].value ? requestRCBIC[0].value : 'нет данных';
       }
-      if (customerData.bankAddress == null || customerData.bankAddress == "") {
+      if (customerData.bankAddress == null || customerData.bankAddress == '') {
         newData.bankAddress = requestRCBIC[0].data.address.value
           ? requestRCBIC[0].data.address.value
-          : "нет данных";
+          : 'нет данных';
       }
       setCustomerData(newData);
     }
@@ -231,10 +206,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("value");
+                handleDBLclick('value');
               }}
             >
-              {editField == "value" ? (
+              {editField == 'value' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -249,10 +224,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("TIN");
+                handleDBLclick('TIN');
               }}
             >
-              {editField == "TIN" ? (
+              {editField == 'TIN' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -267,15 +242,8 @@ export const CustomerAddDiv = (props) => {
                 <div className="suggestionsDiv">
                   {requestTIN.map((elem, index) => {
                     return (
-                      <p
-                        key={`suggestion${index}`}
-                        onClick={() => handleClickSuggestion(index)}
-                      >
-                        {elem.value +
-                          " КПП " +
-                          elem.data.kpp +
-                          " " +
-                          elem.data.address.value}
+                      <p key={`suggestion${index}`} onClick={() => handleClickSuggestion(index)}>
+                        {elem.value + ' КПП ' + elem.data.kpp + ' ' + elem.data.address.value}
                       </p>
                     );
                   })}
@@ -285,10 +253,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("companyName");
+                handleDBLclick('companyName');
               }}
             >
-              {editField == "companyName" ? (
+              {editField == 'companyName' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -303,10 +271,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("address");
+                handleDBLclick('address');
               }}
             >
-              {editField == "address" ? (
+              {editField == 'address' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -321,10 +289,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("postAddress");
+                handleDBLclick('postAddress');
               }}
             >
-              {editField == "postAddress" ? (
+              {editField == 'postAddress' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -339,10 +307,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("email");
+                handleDBLclick('email');
               }}
             >
-              {editField == "email" ? (
+              {editField == 'email' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -357,10 +325,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("phone");
+                handleDBLclick('phone');
               }}
             >
-              {editField == "phone" ? (
+              {editField == 'phone' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -375,10 +343,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("contract");
+                handleDBLclick('contract');
               }}
             >
-              {editField == "contract" ? (
+              {editField == 'contract' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -393,10 +361,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("active");
+                handleDBLclick('active');
               }}
             >
-              {editField == "active" ? (
+              {editField == 'active' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -430,10 +398,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("KPP");
+                handleDBLclick('KPP');
               }}
             >
-              {editField == "KPP" ? (
+              {editField == 'KPP' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -448,10 +416,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("OGRN");
+                handleDBLclick('OGRN');
               }}
             >
-              {editField == "OGRN" ? (
+              {editField == 'OGRN' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -466,10 +434,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("bossName");
+                handleDBLclick('bossName');
               }}
             >
-              {editField == "bossName" ? (
+              {editField == 'bossName' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -484,10 +452,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("RCBIC");
+                handleDBLclick('RCBIC');
               }}
             >
-              {editField == "RCBIC" ? (
+              {editField == 'RCBIC' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -502,10 +470,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("Acc");
+                handleDBLclick('Acc');
               }}
             >
-              {editField == "Acc" ? (
+              {editField == 'Acc' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -520,10 +488,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("CorAcc");
+                handleDBLclick('CorAcc');
               }}
             >
-              {editField == "CorAcc" ? (
+              {editField == 'CorAcc' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -538,10 +506,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("bankName");
+                handleDBLclick('bankName');
               }}
             >
-              {editField == "bankName" ? (
+              {editField == 'bankName' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -556,10 +524,10 @@ export const CustomerAddDiv = (props) => {
             <td
               className="customerAddTd"
               onDoubleClick={() => {
-                handleDBLclick("bankAddress");
+                handleDBLclick('bankAddress');
               }}
             >
-              {editField == "bankAddress" ? (
+              {editField == 'bankAddress' ? (
                 <input
                   type="text"
                   className="customerTrInput"
@@ -575,14 +543,14 @@ export const CustomerAddDiv = (props) => {
         </tbody>
       </table>
       <footer className="customerAddFooter">
-        <span className="customerAddSpanHeader">{"Особые условия:"}</span>
+        <span className="customerAddSpanHeader">{'Особые условия:'}</span>
         <span
           className="customerAddSpanInfo"
           onDoubleClick={() => {
-            handleDBLclick("addInfo");
+            handleDBLclick('addInfo');
           }}
         >
-          {editField == "addInfo" ? (
+          {editField == 'addInfo' ? (
             <input
               type="text"
               className="customerTrInput"

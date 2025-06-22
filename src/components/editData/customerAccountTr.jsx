@@ -1,24 +1,13 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import { useDispatch } from "react-redux";
-import { editData } from "../../actions/editDataAction.js";
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useDispatch } from 'react-redux';
+import { editData } from '../../actions/editDataAction.js';
+import { URL } from '../../middlewares/initialState';
 
-import "./editData.sass";
+import './editData.sass';
 
-export const CustomerAccountTr = (props) => {
-  const urlTIN =
-    "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party";
-  const urlRCBIC =
-    "https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/bank";
-  const token = "fd7ad5614056fe4932599a0a3d94dd317d009510";
+export const CustomerAccountTr = props => {
   const customer = props.customer;
-  const config = {
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-      Authorization: `Token ${token}`,
-    },
-  };
 
   const dispatch = useDispatch();
 
@@ -30,10 +19,7 @@ export const CustomerAccountTr = (props) => {
   const [value, setValue] = useState(null);
 
   useEffect(() => {
-    if (
-      props.customer.TIN != customerData.TIN ||
-      props.customer.RCBIC != customerData.RCBIC
-    ) {
+    if (props.customer.TIN != customerData.TIN || props.customer.RCBIC != customerData.RCBIC) {
       setCustomerData(props.customer);
     }
   }, [props.customer]);
@@ -47,21 +33,21 @@ export const CustomerAccountTr = (props) => {
         customerData.KPP == null ||
         customerData.OGRN == null ||
         customerData.bossName == null ||
-        customerData.address == "" ||
-        customerData.companyName == "" ||
-        customerData.KPP == "" ||
-        customerData.OGRN == "" ||
-        customerData.bossName == "")
+        customerData.address == '' ||
+        customerData.companyName == '' ||
+        customerData.KPP == '' ||
+        customerData.OGRN == '' ||
+        customerData.bossName == '')
     ) {
       axios
-        .post(urlTIN, data, config)
-        .then((response) => {
+        .post(URL + '/dadataTIN', data)
+        .then(response => {
           console.log(response.data.suggestions);
           setRequestTIN(response.data.suggestions);
           setShowSuggestions(true);
         })
-        .catch((error) => {
-          console.log("error", error);
+        .catch(error => {
+          console.log('error', error);
         });
     }
   }, [customerData.TIN]);
@@ -75,110 +61,104 @@ export const CustomerAccountTr = (props) => {
       (customerData.CorAcc == null ||
         customerData.bankName == null ||
         customerData.bankAddress == null ||
-        customerData.CorAcc == "" ||
-        customerData.bankName == "" ||
-        customerData.bankAddress == "")
+        customerData.CorAcc == '' ||
+        customerData.bankName == '' ||
+        customerData.bankAddress == '')
     )
       axios
-        .post(urlRCBIC, data, config)
-        .then((response) => {
+        .post(URL + '/dadataBank', data)
+        .then(response => {
           console.log(response.data.suggestions);
           setRequestRCBIC(response.data.suggestions);
         })
-        .catch((error) => {
-          console.log("error", error);
+        .catch(error => {
+          console.log('error', error);
         });
   }, [customerData.RCBIC]);
 
   useEffect(() => {
     if (requestRCBIC.length) {
       let newData = { ...customerData };
-      if (customerData.CorAcc == null || customerData.CorAcc == "") {
+      if (customerData.CorAcc == null || customerData.CorAcc == '') {
         newData.CorAcc = requestRCBIC[0].data.correspondent_account
           ? requestRCBIC[0].data.correspondent_account
-          : "нет данных";
+          : 'нет данных';
       }
-      if (customerData.bankName == null || customerData.bankName == "") {
-        newData.bankName = requestRCBIC[0].value
-          ? requestRCBIC[0].value
-          : "нет данных";
+      if (customerData.bankName == null || customerData.bankName == '') {
+        newData.bankName = requestRCBIC[0].value ? requestRCBIC[0].value : 'нет данных';
       }
-      if (customerData.bankAddress == null || customerData.bankAddress == "") {
+      if (customerData.bankAddress == null || customerData.bankAddress == '') {
         newData.bankAddress = requestRCBIC[0].data.address.value
           ? requestRCBIC[0].data.address.value
-          : "нет данных";
+          : 'нет данных';
       }
       setCustomerData(newData);
-      dispatch(editData(newData, "oders"));
+      dispatch(editData(newData, 'oders'));
     }
   }, [requestRCBIC]);
 
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         setEditField(null);
         setValue(null);
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, []);
 
-  const handleClickSuggestion = (index) => {
+  const handleClickSuggestion = index => {
     console.log(index);
     let newData = { ...customerData };
-    if (customerData.KPP == null || customerData.KPP == "") {
-      newData.KPP = requestTIN[index].data.kpp
-        ? requestTIN[index].data.kpp
-        : "нет данных";
+    if (customerData.KPP == null || customerData.KPP == '') {
+      newData.KPP = requestTIN[index].data.kpp ? requestTIN[index].data.kpp : 'нет данных';
     }
-    if (customerData.companyName == null || customerData.companyName == "") {
+    if (customerData.companyName == null || customerData.companyName == '') {
       newData.companyName = requestTIN[index].data.name.short_with_opf
         ? requestTIN[index].data.name.short_with_opf
-        : "нет данных";
+        : 'нет данных';
     }
-    if (customerData.OGRN == null || customerData.OGRN == "") {
-      newData.OGRN = requestTIN[index].data.ogrn
-        ? requestTIN[index].data.ogrn
-        : "нет данных";
+    if (customerData.OGRN == null || customerData.OGRN == '') {
+      newData.OGRN = requestTIN[index].data.ogrn ? requestTIN[index].data.ogrn : 'нет данных';
     }
-    if (customerData.bossName == null || customerData.bossName == "") {
+    if (customerData.bossName == null || customerData.bossName == '') {
       newData.bossName = requestTIN[index].data.management
         ? requestTIN[index].data.management.name
-        : "нет данных";
+        : 'нет данных';
     }
-    if (customerData.address == null || customerData.address == "") {
+    if (customerData.address == null || customerData.address == '') {
       newData.address = requestTIN[index].data.address.unrestricted_value
         ? requestTIN[index].data.address.unrestricted_value
-        : "нет данных";
+        : 'нет данных';
     }
     setCustomerData(newData);
     setShowSuggestions(false);
-    dispatch(editData(newData, "oders"));
+    dispatch(editData(newData, 'oders'));
   };
-  const handleDBLclick = (field) => {
+  const handleDBLclick = field => {
     console.log(field);
     setEditField(field);
     setValue(customerData[field]);
   };
-  const handleEnter = (e) => {
-    if (e.key == "Enter") {
+  const handleEnter = e => {
+    if (e.key == 'Enter') {
       let newData = { ...customerData };
       newData[editField] = value;
-      if (editField == "RCBIC") {
+      if (editField == 'RCBIC') {
         newData.Acc = null;
         newData.CorAcc = null;
         newData.bankName = null;
         newData.bankAddress = null;
       }
       setCustomerData(newData);
-      dispatch(editData(newData, "oders"));
+      dispatch(editData(newData, 'oders'));
       setEditField(null);
     }
   };
-  const handleChange = (e) => {
+  const handleChange = e => {
     setValue(e.currentTarget.value);
   };
 
@@ -188,10 +168,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("KPP");
+            handleDBLclick('KPP');
           }}
         >
-          {editField == "KPP" ? (
+          {editField == 'KPP' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -206,10 +186,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("OGRN");
+            handleDBLclick('OGRN');
           }}
         >
-          {editField == "OGRN" ? (
+          {editField == 'OGRN' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -224,10 +204,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("bossName");
+            handleDBLclick('bossName');
           }}
         >
-          {editField == "bossName" ? (
+          {editField == 'bossName' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -242,10 +222,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("RCBIC");
+            handleDBLclick('RCBIC');
           }}
         >
-          {editField == "RCBIC" ? (
+          {editField == 'RCBIC' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -260,10 +240,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("Acc");
+            handleDBLclick('Acc');
           }}
         >
-          {editField == "Acc" ? (
+          {editField == 'Acc' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -278,10 +258,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("CorAcc");
+            handleDBLclick('CorAcc');
           }}
         >
-          {editField == "CorAcc" ? (
+          {editField == 'CorAcc' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -296,10 +276,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("bankName");
+            handleDBLclick('bankName');
           }}
         >
-          {editField == "bankName" ? (
+          {editField == 'bankName' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -314,10 +294,10 @@ export const CustomerAccountTr = (props) => {
         <td
           className="customerTd"
           onDoubleClick={() => {
-            handleDBLclick("bankAddress");
+            handleDBLclick('bankAddress');
           }}
         >
-          {editField == "bankAddress" ? (
+          {editField == 'bankAddress' ? (
             <input
               type="text"
               className="customerTrInput"
@@ -332,15 +312,12 @@ export const CustomerAccountTr = (props) => {
       </tr>
       {showSuggestions &&
         requestTIN.map((elem, index) => {
-          let kpp = elem.data.kpp ? elem.data.kpp : "";
-          let address = elem.data.address ? elem.data.address.value : "";
+          let kpp = elem.data.kpp ? elem.data.kpp : '';
+          let address = elem.data.address ? elem.data.address.value : '';
           return (
-            <tr
-              key={`suggestion${index}`}
-              onClick={() => handleClickSuggestion(index)}
-            >
+            <tr key={`suggestion${index}`} onClick={() => handleClickSuggestion(index)}>
               <td className="suggestionTd" colSpan={8}>
-                {elem.value + " КПП " + kpp + " " + address}
+                {elem.value + ' КПП ' + kpp + ' ' + address}
               </td>
             </tr>
           );
