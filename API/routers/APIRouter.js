@@ -1,104 +1,90 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const path = require("path");
-const API = require("../controlers/API.js");
-const customerAPI = require("../controlers/customerAPI.js");
-const tasksAPI = require("../controlers/tasksAPI.js");
-const docAPI = require("../controlers/docAPI.js");
-const cardAPI = require("../controlers/cardAPI.js");
-const postAPI = require("../controlers/postAPI.js");
-const driverAPI = require("../controlers/driverAPI.js");
-const ownerLogistAPI = require("../controlers/ownerLogistAPI.js");
+const path = require('path');
+const API = require('../controlers/API.js');
+const customerAPI = require('../controlers/customerAPI.js');
+const tasksAPI = require('../controlers/tasksAPI.js');
+const docAPI = require('../controlers/docAPI.js');
+const cardAPI = require('../controlers/cardAPI.js');
+const postAPI = require('../controlers/postAPI.js');
+const driverAPI = require('../controlers/driverAPI.js');
+const ownerLogistAPI = require('../controlers/ownerLogistAPI.js');
+const dadataAPI = require('../controlers/daDataAPI.js');
 
-const multer = require("multer");
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "./API/Bills/");
-//   },
-//   filename: function (req, file, cb) {
-//     cb(null, "tempDoc.pdf");
-//   },
-// });
+const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
-router.get("/data", API.taskGet);
-router.get("/data5000", API.taskGet5000);
-router.get("/dataPayments", API.taskGetPayments);
-router.get("/dataDriverDebt", API.taskGetDebts);
-router.get("/dataContractors", API.taskGetContractors);
-router.get("/getPdf/:id/:typeDoc", API.taskGetPdf);
-router.get("/getPdfWithoutStamp/:id", API.taskGetPdfWithoutStamp);
-router.get("/getReportPdf", API.taskGetReportPdf);
-router.get("/getContractPdf", docAPI.taskGetPdfContract);
-router.get("/getUser", API.taskGetUser);
-router.get("/signOut", API.taskSignOut);
-router.get("/getCustomerData", customerAPI.taskGet);
-router.get("/getNewApp", customerAPI.taskGetNewApp);
-router.get("/getNewTasks", tasksAPI.tasksGetNew);
-router.get("/getDataTasks", tasksAPI.tasksGetData);
-router.get("/getApps", customerAPI.taskGetApps);
-router.get("/getLogTxt", tasksAPI.sendLog);
-router.get("/getDriverPayments", driverAPI.getDriverPayments);
-router.get("/sendReportEmail/:email", API.taskSendReportEmail);
-router.get("/ownerlogist", ownerLogistAPI.getOwnerLogist);
-router.get("/*", (req, res) => {
-  res.sendFile(path.resolve(__dirname, "../public/index.html"));
+router.get('/data', API.taskGet);
+router.get('/data5000', API.taskGet5000);
+router.get('/dataPayments', API.taskGetPayments);
+router.get('/dataDriverDebt', API.taskGetDebts);
+router.get('/dataContractors', API.taskGetContractors);
+router.get('/getPdf/:id/:typeDoc', API.taskGetPdf);
+router.get('/getPdfWithoutStamp/:id', API.taskGetPdfWithoutStamp);
+router.get('/getReportPdf', API.taskGetReportPdf);
+router.get('/getContractPdf', docAPI.taskGetPdfContract);
+router.get('/getUser', API.taskGetUser);
+router.get('/signOut', API.taskSignOut);
+router.get('/getCustomerData', customerAPI.taskGet);
+router.get('/getNewApp', customerAPI.taskGetNewApp);
+router.get('/getNewTasks', tasksAPI.tasksGetNew);
+router.get('/getDataTasks', tasksAPI.tasksGetData);
+router.get('/getApps', customerAPI.taskGetApps);
+router.get('/getLogTxt', tasksAPI.sendLog);
+router.get('/getDriverPayments', driverAPI.getDriverPayments);
+router.get('/sendReportEmail/:email', API.taskSendReportEmail);
+router.get('/ownerlogist', ownerLogistAPI.getOwnerLogist);
+router.get('/*', (req, res) => {
+  res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
-router.post("/filter", API.taskGetFilter);
-router.post("/addOder", API.taskAdd);
-router.post("/addOrderApp", API.taskAddOrderApp);
-router.post("/proxy/:id", API.taskProxy);
-router.post("/addData", API.taskAddData);
-router.post("/addPdf/:id", API.taskAddPdfDoc);
-router.post("/createDoc", API.taskCreateDoc);
-router.post("/createDocWithoutStamp", API.taskCreateDocWithoutStamp);
-router.post("/createApp", API.taskCreateApp);
-router.post("/addContract", docAPI.taskCreateContract);
-router.post("/addDriverContract", docAPI.taskCreateDriverContract);
-// router.post(
-//   "/addSomePdfDoc/:id/:typeDoc",
-//   upload.single("fileData"),
-//   API.taskAddSomePdfDoc
-// );
-router.post(
-  "/addSomePdfDocNew",
-  upload.single("file"),
-  docAPI.taskCreatePdfDocNew
-);
-router.post("/getReportData", API.taskGetReport);
-router.post("/saveReportPdf", API.taskSaveReport);
-router.post("/editYearConst", API.taskEditYearConst);
-router.post("/editAddData", API.taskEditAddData);
-router.post("/signUp", API.taskAddNewUser);
-router.post("/signIn", API.taskCheckUser);
-router.post("/changePassword", API.taskChangePassword);
-router.post("/sendEmail", API.taskSendEmail);
-router.post("/addCustomerApp", customerAPI.taskAddCustomerApp);
-router.post("/editCustomerApp", customerAPI.taskEditCustomerApp);
-router.post("/addNewTask", tasksAPI.tasksAddData);
-router.post("/makeCardPayment", cardAPI.makeCardPayment);
-router.post("/addPostTrack", postAPI.addPostTrack);
+router.post('/filter', API.taskGetFilter);
+router.post('/addOder', API.taskAdd);
+router.post('/addOrderApp', API.taskAddOrderApp);
+router.post('/proxy/:id', API.taskProxy);
+router.post('/addData', API.taskAddData);
+router.post('/addPdf/:id', API.taskAddPdfDoc);
+router.post('/createDoc', API.taskCreateDoc);
+router.post('/createDocWithoutStamp', API.taskCreateDocWithoutStamp);
+router.post('/createApp', API.taskCreateApp);
+router.post('/addContract', docAPI.taskCreateContract);
+router.post('/addDriverContract', docAPI.taskCreateDriverContract);
+router.post('/dadataTIN', dadataAPI.getDataTin);
+router.post('/dadataBank', dadataAPI.getDataBank);
+router.post('/addSomePdfDocNew', upload.single('file'), docAPI.taskCreatePdfDocNew);
+router.post('/getReportData', API.taskGetReport);
+router.post('/saveReportPdf', API.taskSaveReport);
+router.post('/editYearConst', API.taskEditYearConst);
+router.post('/editAddData', API.taskEditAddData);
+router.post('/signUp', API.taskAddNewUser);
+router.post('/signIn', API.taskCheckUser);
+router.post('/changePassword', API.taskChangePassword);
+router.post('/sendEmail', API.taskSendEmail);
+router.post('/addCustomerApp', customerAPI.taskAddCustomerApp);
+router.post('/editCustomerApp', customerAPI.taskEditCustomerApp);
+router.post('/addNewTask', tasksAPI.tasksAddData);
+router.post('/makeCardPayment', cardAPI.makeCardPayment);
+router.post('/addPostTrack', postAPI.addPostTrack);
 
-router.patch("/edit", API.taskEdit);
-router.patch("/editOderNew", API.taskEditNew);
-router.patch("/makePaymentCustomer", API.makePaymentCustomer);
-router.patch("/addDataDriverDebt", API.makeDriverDebt);
-router.patch("/editDriverDebt", API.editDriverDebt);
-router.patch("/makePaymentDriver", API.makePaymentDriver);
-router.patch("/addDataContractorPayment", API.addDataContractorPayment);
-router.patch("/editData", API.taskEditData);
-router.patch("/delPrintedMark/:id", API.taskDelPrintedMark);
-router.patch("/editTask", tasksAPI.taskEditData);
+router.patch('/edit', API.taskEdit);
+router.patch('/editOderNew', API.taskEditNew);
+router.patch('/makePaymentCustomer', API.makePaymentCustomer);
+router.patch('/addDataDriverDebt', API.makeDriverDebt);
+router.patch('/editDriverDebt', API.editDriverDebt);
+router.patch('/makePaymentDriver', API.makePaymentDriver);
+router.patch('/addDataContractorPayment', API.addDataContractorPayment);
+router.patch('/editData', API.taskEditData);
+router.patch('/delPrintedMark/:id', API.taskDelPrintedMark);
+router.patch('/editTask', tasksAPI.taskEditData);
 
-router.delete("/:id", API.taskDel);
-router.delete("/deleteDataPatmenrs/:id", API.taskDeletePayments);
-router.delete("/deletedriverDebt/:id", API.taskDeleteDebt);
-router.delete("/deleteData/:id", API.taskDeleteData);
-router.delete("/deleteContractorPayment/:id", API.deleteContractorPayment);
-router.delete("/deleteAddData/:id", API.deleteAddData);
-router.delete("/deleteCustomerApp/:id", customerAPI.taskDelCustomerApp);
-router.delete("/delTask/:id", tasksAPI.taskDelData);
-router.delete("/delDriverPayment/:id", driverAPI.delDriverPayment);
+router.delete('/:id', API.taskDel);
+router.delete('/deleteDataPatmenrs/:id', API.taskDeletePayments);
+router.delete('/deletedriverDebt/:id', API.taskDeleteDebt);
+router.delete('/deleteData/:id', API.taskDeleteData);
+router.delete('/deleteContractorPayment/:id', API.deleteContractorPayment);
+router.delete('/deleteAddData/:id', API.deleteAddData);
+router.delete('/deleteCustomerApp/:id', customerAPI.taskDelCustomerApp);
+router.delete('/delTask/:id', tasksAPI.taskDelData);
+router.delete('/delDriverPayment/:id', driverAPI.delDriverPayment);
 
 module.exports = router;

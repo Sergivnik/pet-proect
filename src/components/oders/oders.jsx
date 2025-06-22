@@ -142,8 +142,6 @@ export const Oders = () => {
   }, [tasksNumber]);
   useEffect(() => {
     const onKeypress = (e) => {
-      console.log(e);
-
       if (e.code == "Escape") {
         if (currentTR) currentTR.style.backgroundColor = "";
         setShowDelete(false);

@@ -3,18 +3,9 @@ import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { ClientData } from './types';
 import { addData } from '../../actions/editDataAction';
+import { formatDateToRu, toInputDateValue } from '../myLib/myLib.js';
+import { URL } from '../../middlewares/initialState';
 import './clientForm.sass';
-
-const urlTIN = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/party';
-const urlRCBIC = 'https://suggestions.dadata.ru/suggestions/api/4_1/rs/findById/bank';
-const token = 'fd7ad5614056fe4932599a0a3d94dd317d009510';
-const config = {
-  headers: {
-    'Content-Type': 'application/json',
-    Accept: 'application/json',
-    Authorization: `Token ${token}`,
-  },
-};
 
 interface AddClientFormProps {
   onBack: () => void;
@@ -63,7 +54,7 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
 
       if (hasEmptyFields) {
         axios
-          .post(urlTIN, data, config)
+          .post(URL + '/dadataTIN', data)
           .then(response => {
             console.log(response.data.suggestions);
             setRequestTIN(response.data.suggestions);
@@ -111,7 +102,7 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
         newClient.bankAddress === '')
     ) {
       axios
-        .post(urlRCBIC, data, config)
+        .post(URL + '/dadataBank', data)
         .then(response => {
           if (response.data.suggestions && response.data.suggestions.length > 0) {
             const bankData = response.data.suggestions[0];
@@ -237,8 +228,16 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
       return (
         <>
           <input
-            type={field.includes('email') ? 'email' : field.includes('phone') ? 'tel' : 'text'}
-            value={value || ''}
+            type={
+              field.includes('email')
+                ? 'email'
+                : field.includes('phone')
+                  ? 'tel'
+                  : field.includes('dateOfReg')
+                    ? 'date'
+                    : 'text'
+            }
+            value={field === 'dateOfReg' ? toInputDateValue(value) : value || ''}
             onChange={e => handleInputChange(field, e.target.value)}
             onBlur={() => handleBlur(field)}
             onKeyDown={e => handleKeyDown(e, field)}
@@ -248,6 +247,9 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
           />
         </>
       );
+    }
+    if (field === 'dateOfReg') {
+      return <div onDoubleClick={() => handleDoubleClick(field)}>{formatDateToRu(value)}</div>;
     }
     return <div onDoubleClick={() => handleDoubleClick(field)}>{value || '-'}</div>;
   };
@@ -312,6 +314,9 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
             <tr>
               <th className="detailHeader">КПП</th>
               <th className="detailHeader">ОГРН</th>
+              <th className="detailHeader">Дата регистрации</th>
+              <th className="detailHeader">Краткое ФИО</th>
+              <th className="detailHeader">ФИО в РП</th>
               <th className="detailHeader">Банк</th>
               <th className="detailHeader">Адрес банка</th>
               <th className="detailHeader">Расчетный счет</th>
@@ -326,6 +331,9 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
             <tr>
               <td className="detailCell">{renderInput('KPP', newClient.KPP)}</td>
               <td className="detailCell">{renderInput('OGRN', newClient.OGRN)}</td>
+              <td className="detailCell">{renderInput('dateOfReg', newClient.dateOfReg)}</td>
+              <td className="detailCell">{renderInput('shortFio', newClient.shortFio)}</td>
+              <td className="detailCell">{renderInput('fullNameRP', newClient.fullNameRP)}</td>
               <td className="detailCell">{renderInput('bankName', newClient.bankName)}</td>
               <td className="detailCell">{renderInput('bankAddress', newClient.bankAddress)}</td>
               <td className="detailCell">{renderInput('Acc', newClient.Acc)}</td>

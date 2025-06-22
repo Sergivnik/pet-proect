@@ -18,4 +18,7 @@ export interface ClientData {
   phone: string | null;
   phone_copy1: string | null;
   postAddress: string | null;
+  dateOfReg: string | null;
+  shortFio: string | null;
+  fullNameRP: string | null;
 } 

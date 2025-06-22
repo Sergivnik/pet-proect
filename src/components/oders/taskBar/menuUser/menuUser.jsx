@@ -142,7 +142,7 @@ export const MenuUser = props => {
       {showClient && (
         <UserWindow
           header="Добавление клиента"
-          width={1200}
+          width={1250}
           handleClickWindowClose={handleClickWindowClose}
           windowId="clientWindow"
           left="-450%"
