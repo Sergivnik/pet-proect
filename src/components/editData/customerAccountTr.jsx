@@ -28,6 +28,8 @@ export const CustomerAccountTr = props => {
     const data = { query: customerData.TIN };
     if (
       customerData.TIN != null &&
+      customerData.TIN.length == 10 &&
+      customerData.TIN.length == 12 &&
       (customerData.address == null ||
         customerData.companyName == null ||
         customerData.KPP == null ||

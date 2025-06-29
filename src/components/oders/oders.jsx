@@ -184,7 +184,7 @@ export const Oders = () => {
         break;
       }
     }
-    if (condotion && length > 0 && length != 5000) dispatch(getData5000());
+    //if (condotion && length > 0 && length != 5000) dispatch(getData5000());
     console.log(length);
     if (length > 100) {
       setOders(odersList.slice(length - 100 - addData, length - addData));

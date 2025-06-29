@@ -104,7 +104,7 @@ module.exports.taskGetPdf = async (req, res) => {
   // Check if user is authenticated
   if (!req.session.userId) {
     console.log(req.session.userId);
-    
+
     return res.status(401).json({ message: 'Unauthorized - Please login first' });
   }
 
@@ -209,14 +209,14 @@ module.exports.taskGetPdf = async (req, res) => {
 module.exports.taskGetReportPdf = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
-   
+
   // Check if user is authenticated
   if (!req.session.userId) {
     console.log(req.session.userId);
-    
+
     return res.status(401).json({ message: 'Unauthorized - Please login first' });
   }
-  
+
   const path = require('path');
   let pathBills = path.join(__dirname, '..', 'Bills');
   res.sendFile(`${pathBills}/tempDoc.pdf`);
@@ -224,11 +224,11 @@ module.exports.taskGetReportPdf = (req, res) => {
 module.exports.taskGetPdfWithoutStamp = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
-  
+
   // Check if user is authenticated
   if (!req.session.userId) {
     console.log(req.session.userId);
-    
+
     return res.status(401).json({ message: 'Unauthorized - Please login first' });
   }
 
@@ -294,7 +294,9 @@ module.exports.taskAddData = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-  tasksData.addData(req.body.body, data => {
+  const userId = req.session.userId;
+
+  tasksData.addData(req.body.body, userId, data => {
     if (data.error) {
       res.status(500);
       res.json(data.error);

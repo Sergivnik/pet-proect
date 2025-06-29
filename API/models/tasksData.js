@@ -25,10 +25,17 @@ let TasksDada = {
     }
     db.end();
   },
-  addData: async function (newData, callback) {
+  addData: async function (newData, userId, callback) {
     console.log(newData);
     const db = mysql.createPool(options.sql).promise();
     try {
+      let [user] = await db.query(`SELECT * FROM users WHERE _id=?`, userId);
+      console.log(user);
+
+      let ownerId = user[0].ownerId;
+      console.log('ownerId', ownerId);
+      newData.newData.ownerId = ownerId;
+
       let [data] = await db.query(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
       callback(data);
     } catch (err) {

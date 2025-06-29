@@ -144,7 +144,7 @@ var Tasks = {
 
       // odersList (сортировка сразу, без вложенного SELECT)
       const [odersList] = await db.query(
-        `SELECT * FROM oderslist WHERE ownerId = ? ORDER BY date, accountNumber, _id DESC LIMIT 500`,
+        `(SELECT * FROM oderslist WHERE ownerId = ? ORDER BY _id DESC LIMIT 5000) ORDER BY date, accountNumber, _id`,
         [ownerId]
       );
       allData.odersList = odersList;
