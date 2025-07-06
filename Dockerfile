@@ -1,22 +1,22 @@
-# Базовый образ
+# Указываем версию Node
 FROM node:14.17.0
 
-# Рабочая директория
-WORKDIR /usr/src/app
+# Устанавливаем рабочую директорию внутри контейнера
+WORKDIR /app
 
-# Копируем package.json
+# Копируем package.json и package-lock.json
 COPY package*.json ./
 
-# Установка зависимостей
+# Устанавливаем зависимости
 RUN npm install
 
-# Копируем остальные файлы
-COPY . .
+# Копируем весь проект
+COPY API ./API
 
-# Открываем порты
-EXPOSE 3000 5000
 
-# Используем многопроцессовый запуск через concurrently
-RUN npm install -g concurrently
+# Открываем порт 80
+EXPOSE 80
 
-CMD concurrently "npm run dev" "node API/server.js"
+# Запускаем сервер
+CMD ["node", "API/server.js"]
+

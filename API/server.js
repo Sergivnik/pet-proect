@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mysql2 = require('mysql2/promise');
 const path = require('path');
@@ -106,3 +107,5 @@ setInterval(() => {
   console.log(`- Свободно  : ${freeMem.toFixed(2)} MB`);
   console.log('—'.repeat(30));
 }, 50000);
+
+
