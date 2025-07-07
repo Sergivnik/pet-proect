@@ -13,7 +13,12 @@ const server = http.createServer(app);
 
 const io = socketIo(server, {
   cors: {
-    origin: ['http://localhost:8080', 'http://atpivanova.ru'],
+    origin: [
+      'http://localhost:8080',
+      'http://atpivanova.ru',
+      'http://5.44.41.196',
+      'http://97356.zetalink.ru',
+    ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
   },
 });
@@ -21,8 +26,18 @@ const io = socketIo(server, {
 app.set('io', io);
 
 // ✅ Сначала объявляем переменные
-const allowedOrigins = ['http://localhost:8080', 'http://atpivanova.ru'];
-const allowedReferers = ['http://localhost:8080', 'http://atpivanova.ru'];
+const allowedOrigins = [
+  'http://localhost:8080',
+  'http://atpivanova.ru',
+  'http://5.44.41.196',
+  'http://97356.zetalink.ru',
+];
+const allowedReferers = [
+  'http://localhost:8080',
+  'http://atpivanova.ru',
+  'http://5.44.41.196',
+  'http://97356.zetalink.ru',
+];
 
 // 🛡️ Защита от некорректных URL и path traversal
 app.use((req, res, next) => {
@@ -107,5 +122,3 @@ setInterval(() => {
   console.log(`- Свободно  : ${freeMem.toFixed(2)} MB`);
   console.log('—'.repeat(30));
 }, 50000);
-
-
