@@ -14,6 +14,8 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: [
+      'http://localhost',
+      'http://localhost:80',
       'http://localhost:8080',
       'http://atpivanova.ru',
       'http://5.44.41.196',
@@ -27,12 +29,16 @@ app.set('io', io);
 
 // ✅ Сначала объявляем переменные
 const allowedOrigins = [
+  'http://localhost',
+  'http://localhost:80',
   'http://localhost:8080',
   'http://atpivanova.ru',
   'http://5.44.41.196',
   'http://97356.zetalink.ru',
 ];
 const allowedReferers = [
+  'http://localhost',
+  'http://localhost:80',
   'http://localhost:8080',
   'http://atpivanova.ru',
   'http://5.44.41.196',
