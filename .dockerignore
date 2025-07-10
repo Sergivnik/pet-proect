@@ -1,5 +1,23 @@
+# Папки
 node_modules
-npm-debug.log
+documents
+API/Bills
+API/contracts
+logs
+dump.sql
+
+# Конфиги и файлы сборки
+.dockerignore
 Dockerfile
 docker-compose.yml
 .env
+
+# Временные и мусорные файлы
+npm-debug.log
+*.sqlite
+*.log
+*.md
+*.zip
+*.tar
+*.bak
+*.tmp
