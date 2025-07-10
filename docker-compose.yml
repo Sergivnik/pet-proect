@@ -17,6 +17,7 @@ services:
     restart: always
     volumes:
       - ./API/Bills:/app/API/Bills
+      - ./API/contracts:/app/API/contracts
 
   db:
     image: mysql:8
