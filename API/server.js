@@ -127,4 +127,10 @@ setInterval(() => {
   console.log(`- Занято    : ${usedMem.toFixed(2)} MB`);
   console.log(`- Свободно  : ${freeMem.toFixed(2)} MB`);
   console.log('—'.repeat(30));
+  const used = process.memoryUsage();
+  console.log('📊 Node.js memory usage:');
+  console.log(`- RSS        : ${(used.rss / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`- Heap Used  : ${(used.heapUsed / 1024 / 1024).toFixed(2)} MB`);
+  console.log(`- Heap Total : ${(used.heapTotal / 1024 / 1024).toFixed(2)} MB`);
+  console.log('—'.repeat(30));
 }, 50000);

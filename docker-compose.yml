@@ -25,7 +25,7 @@ services:
     restart: always
     volumes:
       - mysql_data:/var/lib/mysql
-      - ./dump05072025.sql:/docker-entrypoint-initdb.d/dump.sql
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
 
 volumes:
   mysql_data:
