@@ -11,6 +11,7 @@ dump.sql
 Dockerfile
 docker-compose.yml
 .env
+backup_mysql.sh
 
 # Временные и мусорные файлы
 npm-debug.log

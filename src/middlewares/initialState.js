@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const DOMENNAME = "http://localhost:8080"; //develop
-//export const DOMENNAME = "http://localhost:80"; //develop
+//export const DOMENNAME = "http://localhost:8080"; //develop
+export const DOMENNAME = "http://localhost:80"; //develop
 //export const DOMENNAME = "http://192.168.0.101:80";//work
 //export const DOMENNAME = "http://192.168.0.114:80";//home
 //export const DOMENNAME = "http://31.31.203.198:80"; //vps

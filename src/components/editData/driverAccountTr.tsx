@@ -157,7 +157,7 @@ export const DriverAccountTr = ({ driver }: Props) => {
 
   return (
     <React.Fragment>
-      <tr>
+      <tr className="driverAccountTr">
         <TdWithText text={driverData.KPP} name="KPP" getData={getNewData} elem={driverData} />
         <TdWithText text={driverData.OGRN} name="OGRN" getData={getNewData} elem={driverData} />
         <TdWithText text={driverData.Acc} name="Acc" getData={getNewData} elem={driverData} />
