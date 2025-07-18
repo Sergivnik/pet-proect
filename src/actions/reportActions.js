@@ -112,6 +112,7 @@ export const getReportPdfFailure = () => ({
 export const editYearConst = (name, data) => {
   return dispatch => {
     axios
+      .create({ withCredentials: true })
       .post(DOMENNAME + '/API/editYearConst', { name: name, data: data })
       .then(res => {
         console.log(res.data);

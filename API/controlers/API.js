@@ -56,7 +56,7 @@ module.exports.taskGetPayments = (req, res) => {
 };
 module.exports.taskGetDebts = (req, res) => {
   console.log(req.session.userId);
-  tasksDebt.list(req.session.userId,data => {
+  tasksDebt.list(req.session.userId, data => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });
@@ -728,7 +728,7 @@ module.exports.taskSaveReport = (req, res) => {
 module.exports.taskEditYearConst = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS, DELETE');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
-  taskReports.editYearConst(req.body, data => {
+  taskReports.editYearConst(req.body, req.session.userId, data => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });

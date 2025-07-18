@@ -76,12 +76,14 @@ let TasksReports = {
       callBack({ error: err });
     }
   },
-  editYearConst: async (data, callBack) => {
+  editYearConst: async (data, userId, callBack) => {
     console.log(data);
     const db = mysql.createPool(options.sql).promise();
     try {
+      let [user] = await db.query(`SELECT * FROM users where _id=${userId}`);
+      let ownerId = user[0].ownerId;
       await db.query(
-        `UPDATE yearconst SET ${data.name}=${data.data} WHERE id=1`
+        `UPDATE yearconst SET ${data.name}=${data.data} WHERE ownerId=${ownerId}`
       );
       callBack("success!");
     } catch (err) {
