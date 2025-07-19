@@ -2,11 +2,13 @@ const mysql = require("mysql2");
 const options = require("./config.js");
 
 var TasksPayments = {
-  list: async function (callback) {
+  list: async function (userId, callback) {
     const db = mysql.createPool(options.sql).promise();
     try {
+      let [user] = await db.query(`SELECT * FROM users where _id=${userId}`);
+      let ownerId = user[0].ownerId;
       let [data] = await db.query(
-        "SELECT * FROM customerpayment order by date"
+        `SELECT * FROM customerpayment where ownerId=${ownerId} order by date`
       );
       callback(data);
     } catch (err) {

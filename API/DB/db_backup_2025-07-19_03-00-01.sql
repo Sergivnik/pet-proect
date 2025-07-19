@@ -1,15 +1,13 @@
-CREATE DATABASE  IF NOT EXISTS `pet_proect` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `pet_proect`;
--- MySQL dump 10.13  Distrib 8.0.27, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.4.5, for Linux (x86_64)
 --
 -- Host: localhost    Database: pet_proect
 -- ------------------------------------------------------
--- Server version	8.0.27
+-- Server version	8.4.5
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -610,7 +608,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('4aML6wxdK_3Vjj_UXvI2pogGl7H21HVr',1752939211,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T15:14:48.232Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('LtPIFVU5n2BmAQRmyvDgTYHJcDXX-vQe',1752997837,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-20T07:50:36.081Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":12,\"login\":\"Test\",\"name\":\"Test\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('kS7IPh0hnBwfE83V6jdeancXtS7uGJTf',1752925620,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:28:09.301Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('suR2iNlaxjc2i9kR5ZiMdmHgsgp6CiXE',1752917438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:30:10.177Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}');
+INSERT INTO `sessions` VALUES ('4aML6wxdK_3Vjj_UXvI2pogGl7H21HVr',1752939211,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T15:14:48.232Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('kS7IPh0hnBwfE83V6jdeancXtS7uGJTf',1752925620,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:28:09.301Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('suR2iNlaxjc2i9kR5ZiMdmHgsgp6CiXE',1752917438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:30:10.177Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -756,7 +754,7 @@ CREATE TABLE `users` (
   PRIMARY KEY (`_id`),
   UNIQUE KEY `_id_UNIQUE` (`_id`),
   UNIQUE KEY `login_UNIQUE` (`login`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -765,7 +763,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (3,'SergI','$2a$12$W6dXwQrYzl1zQVKZgHqanOxRM127zNCPfiD9eV4sjwhepNdpkE4Nm','Иванов Сергей','admin',NULL,NULL,1),(4,'Sklyarenko','$2a$10$Hm7ZwEtSSDPqBnLiDy0hN.UeSXMlhsLXD1JnJnKa48DUz.CRydT7C','Найденова Виктория','accounter',NULL,NULL,1),(5,'saver','$2a$12$qk2lXc6XwHdJoNwVpFY0WeTqU6ak31VoXI8nCRjKloPhFrlN1U92O','Скальт Вячеслав','logist',NULL,NULL,1),(7,'customerBoss','$2a$12$FWXQDh3tIp.5rwUjXTPG1.qqF4oGxC6v4BwU4rUCBeee1WNf/zKcO','Customer Boss','customerBoss',598,212,1),(8,'CustomerBossSI','$2a$12$H.ElFlCqVpSzWA23fcEFnOwqDwKjP/Byb/lhHY1A1wpElXHT9xSc.','Customer Boss SI','customerBoss',506,241,1),(10,'customerManager','$2a$12$3znQ0oSiAQRCmC53zAdZ5u9gtXT8nQikE8tOwAlpp0SiEcF/ZZRfO','Татьяна','customerManager',506,18,1),(11,'StroyMet','$2a$12$vMFvZ4.t5IxwlM6lhKWn6.sf2n4t8MtFYpYvagdEnP/.vwZAQtepC','Елена','customerBoss',538,427,1),(12,'Test','$2a$12$SyWeYcyXoVQJ24bxLlLeju6NDUw7Sq9zEMdU7XAJyZDgXUFo2mG3C','Test','admin',NULL,NULL,2);
+INSERT INTO `users` VALUES (3,'SergI','$2a$12$W6dXwQrYzl1zQVKZgHqanOxRM127zNCPfiD9eV4sjwhepNdpkE4Nm','Иванов Сергей','admin',NULL,NULL,1),(4,'Sklyarenko','$2a$10$Hm7ZwEtSSDPqBnLiDy0hN.UeSXMlhsLXD1JnJnKa48DUz.CRydT7C','Найденова Виктория','accounter',NULL,NULL,1),(5,'saver','$2a$12$qk2lXc6XwHdJoNwVpFY0WeTqU6ak31VoXI8nCRjKloPhFrlN1U92O','Скальт Вячеслав','logist',NULL,NULL,1),(7,'customerBoss','$2a$12$FWXQDh3tIp.5rwUjXTPG1.qqF4oGxC6v4BwU4rUCBeee1WNf/zKcO','Customer Boss','customerBoss',598,212,1),(8,'CustomerBossSI','$2a$12$H.ElFlCqVpSzWA23fcEFnOwqDwKjP/Byb/lhHY1A1wpElXHT9xSc.','Customer Boss SI','customerBoss',506,241,1),(10,'customerManager','$2a$12$3znQ0oSiAQRCmC53zAdZ5u9gtXT8nQikE8tOwAlpp0SiEcF/ZZRfO','Татьяна','customerManager',506,18,1),(11,'StroyMet','$2a$12$vMFvZ4.t5IxwlM6lhKWn6.sf2n4t8MtFYpYvagdEnP/.vwZAQtepC','Елена','customerBoss',538,427,1);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -793,7 +791,7 @@ CREATE TABLE `yearconst` (
 
 LOCK TABLES `yearconst` WRITE;
 /*!40000 ALTER TABLE `yearconst` DISABLE KEYS */;
-INSERT INTO `yearconst` VALUES (1,0.00,49043.11,53568.00,900000.00,1),(2,0.00,0.00,0.00,0.00,2);
+INSERT INTO `yearconst` VALUES (1,0.00,49043.11,53568.00,900000.00,1);
 /*!40000 ALTER TABLE `yearconst` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -806,4 +804,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-19 10:53:42
+-- Dump completed on 2025-07-19  0:00:03

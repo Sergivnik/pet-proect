@@ -45,7 +45,7 @@ module.exports.taskGet5000 = (req, res) => {
   });
 };
 module.exports.taskGetPayments = (req, res) => {
-  tasksPayments.list(data => {
+  tasksPayments.list(req.session.userId, data => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });
