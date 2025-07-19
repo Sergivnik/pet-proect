@@ -576,7 +576,7 @@ CREATE TABLE `ownerlogist` (
   `fullNameRP` varchar(90) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -610,7 +610,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('4aML6wxdK_3Vjj_UXvI2pogGl7H21HVr',1752939211,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T15:14:48.232Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('LtPIFVU5n2BmAQRmyvDgTYHJcDXX-vQe',1752997837,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-20T07:50:36.081Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":12,\"login\":\"Test\",\"name\":\"Test\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('kS7IPh0hnBwfE83V6jdeancXtS7uGJTf',1752925620,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:28:09.301Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('suR2iNlaxjc2i9kR5ZiMdmHgsgp6CiXE',1752917438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:30:10.177Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}');
+INSERT INTO `sessions` VALUES ('4aML6wxdK_3Vjj_UXvI2pogGl7H21HVr',1752939211,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T15:14:48.232Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('LAvzMeVUjpVTtiqWbNfi7-ElifwwgQ2t',1753029286,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-20T16:34:43.121Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('LtPIFVU5n2BmAQRmyvDgTYHJcDXX-vQe',1752997837,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-20T07:50:36.081Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":12,\"login\":\"Test\",\"name\":\"Test\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('kS7IPh0hnBwfE83V6jdeancXtS7uGJTf',1752925620,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:28:09.301Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('suR2iNlaxjc2i9kR5ZiMdmHgsgp6CiXE',1752917438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2025-07-16T06:30:10.177Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -777,14 +777,15 @@ DROP TABLE IF EXISTS `yearconst`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `yearconst` (
-  `id` int NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `lastyeartaxdebt` decimal(10,2) DEFAULT NULL,
   `taxadvance` decimal(10,2) DEFAULT NULL,
   `fixedincometax` decimal(10,2) DEFAULT NULL,
   `deposit` decimal(10,2) DEFAULT NULL,
   `ownerId` int NOT NULL DEFAULT '1',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id_UNIQUE` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -806,4 +807,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-07-19 10:53:42
+-- Dump completed on 2025-07-19 19:37:59

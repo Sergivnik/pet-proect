@@ -28,20 +28,43 @@ let TasksDada = {
   addData: async function (newData, userId, callback) {
     console.log(newData);
     const db = mysql.createPool(options.sql).promise();
+    let connection;
     try {
-      let [user] = await db.query(`SELECT * FROM users WHERE _id=?`, userId);
-      console.log(user);
+      connection = await db.getConnection();
+      await connection.beginTransaction();
+
+      let [user] = await connection.query(`SELECT * FROM users WHERE _id=?`, userId);
 
       let ownerId = user[0].ownerId;
-      console.log('ownerId', ownerId);
-      newData.newData.ownerId = ownerId;
+      if (newData.editTable != 'ownerlogist') newData.newData.ownerId = ownerId;
 
-      let [data] = await db.query(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
+      console.log(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
+
+      let [data] = await connection.query(
+        `INSERT INTO ${newData.editTable} SET ?`,
+        newData.newData
+      );
+      let newYearConst = {
+        lastyeartaxdebt: 0,
+        taxadvance: 0,
+        fixedincometax: 0,
+        deposit: 0,
+        ownerId: data.insertId,
+      };
+      console.log(`INSERT INTO yearconst SET ?`, newYearConst);
+
+      if (newData.editTable === 'ownerlogist') {
+        await connection.query(`INSERT INTO yearconst SET ?`, newYearConst);
+      }
+      await connection.commit();
       callback(data);
     } catch (err) {
+      if (connection) await connection.rollback();
       callback({ error: err });
+    } finally {
+      if (connection) connection.release();
+      db.end();
     }
-    db.end();
   },
   delData: async function (id, editTable, callback) {
     console.log(`Attempting to delete id: ${id} from table: ${editTable}`);
