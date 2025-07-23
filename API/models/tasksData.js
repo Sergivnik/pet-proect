@@ -3,7 +3,7 @@ const options = require('./config.js');
 
 let TasksDada = {
   editData: async function (newData, callback) {
-    console.log(newData);
+    console.log('editData', newData);
     const db = mysql.createPool(options.sql).promise();
     if ('_id' in newData.newData) console.log('_id');
     if ('id' in newData.newData) console.log('id');
@@ -26,7 +26,7 @@ let TasksDada = {
     db.end();
   },
   addData: async function (newData, userId, callback) {
-    console.log(newData);
+    console.log('addData', newData);
     const db = mysql.createPool(options.sql).promise();
     let connection;
     try {
@@ -36,24 +36,25 @@ let TasksDada = {
       let [user] = await connection.query(`SELECT * FROM users WHERE _id=?`, userId);
 
       let ownerId = user[0].ownerId;
-      if (newData.editTable != 'ownerlogist') newData.newData.ownerId = ownerId;
-
+      if (newData.editTable != 'ownerlogist' && newData.editTable != 'cities') {
+        newData.newData.ownerId = ownerId;
+      }
       console.log(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
 
       let [data] = await connection.query(
         `INSERT INTO ${newData.editTable} SET ?`,
         newData.newData
       );
-      let newYearConst = {
-        lastyeartaxdebt: 0,
-        taxadvance: 0,
-        fixedincometax: 0,
-        deposit: 0,
-        ownerId: data.insertId,
-      };
-      console.log(`INSERT INTO yearconst SET ?`, newYearConst);
 
       if (newData.editTable === 'ownerlogist') {
+        let newYearConst = {
+          lastyeartaxdebt: 0,
+          taxadvance: 0,
+          fixedincometax: 0,
+          deposit: 0,
+          ownerId: data.insertId,
+        };
+        console.log(`INSERT INTO yearconst SET ?`, newYearConst);
         await connection.query(`INSERT INTO yearconst SET ?`, newYearConst);
       }
       await connection.commit();
