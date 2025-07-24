@@ -20,6 +20,8 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
     address: '',
     email: '',
     phone: '',
+    login: '',
+    password: '',
     bossName: '',
     addInfo: '',
     KPP: '',
@@ -345,6 +347,17 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
             </tr>
           </tbody>
         </table>
+        {/* Блок для логина и пароля */}
+        <div style={{ display: 'flex', gap: '20px', margin: '16px 0' }}>
+          <div>
+            <label className="detailLabel">Логин</label>
+            {renderInput('login', newClient.login)}
+          </div>
+          <div>
+            <label className="detailLabel">Пароль</label>
+            {renderInput('password', newClient.password)}
+          </div>
+        </div>
       </div>
     </div>
   );

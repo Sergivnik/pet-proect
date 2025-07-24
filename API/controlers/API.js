@@ -1118,7 +1118,7 @@ module.exports.taskSendReportEmail = (req, res) => {
   });
 };
 module.exports.taskAddNewUser = (req, res) => {
-  tasksUser.addNewUser(req.body.body, data => {
+  tasksUser.addNewUser(req.body.body, req.session.userId, data => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });

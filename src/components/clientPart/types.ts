@@ -21,4 +21,6 @@ export interface ClientData {
   dateOfReg: string | null;
   shortFio: string | null;
   fullNameRP: string | null;
+  login: string | null;
+  password: string | null;
 } 

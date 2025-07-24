@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
 const options = require('./config.js');
+const TasksUser = require('./taskUser.js');
 
 let TasksDada = {
   editData: async function (newData, callback) {
@@ -39,13 +40,29 @@ let TasksDada = {
       if (newData.editTable != 'ownerlogist' && newData.editTable != 'cities') {
         newData.newData.ownerId = ownerId;
       }
+      let newUser = {};
+      if (newData.editTable === 'ownerlogist') {
+        newUser = {
+          login: newData.newData.login,
+          password: newData.newData.password,
+          name: newData.newData.bossName,
+          role: 'admin',
+        };
+        delete newData.newData.login;
+        delete newData.newData.password;
+      }
       console.log(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
 
       let [data] = await connection.query(
         `INSERT INTO ${newData.editTable} SET ?`,
         newData.newData
       );
-
+      if (newData.editTable === 'ownerlogist') {
+        newUser.ownerId = data.insertId;
+        TasksUser.addNewUser(newUser, () => {
+          console.log('New user added');
+        });
+      }
       if (newData.editTable === 'ownerlogist') {
         let newYearConst = {
           lastyeartaxdebt: 0,

@@ -3,10 +3,11 @@ const options = require('./config.js');
 const bcryptjs = require('bcryptjs');
 
 let TasksUser = {
-  addNewUser: async (data, callback) => {
+  addNewUser: async (data, userId, callback) => {
     const db = mysql.createPool(options.sql).promise();
     const salt = bcryptjs.genSaltSync(options.saltRounds);
     let password = bcryptjs.hashSync(data.password, salt);
+
     let user = {
       login: data.login,
       password: password,
@@ -14,9 +15,20 @@ let TasksUser = {
       role: data.role,
       customerId: data.customerId,
       managerID: data.managerID,
+      ownerId: data.ownerId,
     };
+    console.log('user.ownerId', user.ownerId);
+
     try {
-      await db.query('INSERT INTO users SET ?', user);
+      if (user.ownerId == undefined) {
+        let [currentUser] = await db.query(`SELECT * FROM users WHERE _id=?`, userId);
+        let ownerId = currentUser[0].ownerId;
+        user.ownerId = ownerId;
+        console.log('INSERT INTO users SET ?', user);
+        await db.query('INSERT INTO users SET ?', user);
+      } else {
+        await db.query('INSERT INTO users SET ?', user);
+      }
       callback('success!');
     } catch (err) {
       console.log(err);
