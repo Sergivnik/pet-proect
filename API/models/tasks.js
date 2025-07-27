@@ -1,5 +1,5 @@
 const mysql = require('mysql2');
-const options = require('./config.js');
+const db = require('./db.js').promisePool;
 const dateToSqlString = dateSomeFormate => {
   let date = new Date(dateSomeFormate);
   let Year = date.getFullYear();
@@ -10,13 +10,10 @@ const dateToSqlString = dateSomeFormate => {
 var Tasks = {
   list: async function (userId, callback) {
     console.log('list', userId);
-    const db = mysql.createPool(options.sql).promise();
-
     try {
       const [[userData]] = await db.query(`SELECT ownerId FROM users WHERE _id = ?`, [userId]);
       const ownerId = userData.ownerId;
       const allData = {};
-
       // Запросы без зависимостей — параллельно
       const [
         [dates],
@@ -154,17 +151,14 @@ var Tasks = {
       console.error('list error:', err);
       callback({ error: err.message });
     } finally {
-      db.end();
     }
   },
 
   order5000: async function (userId, callback) {
     console.log('order5000');
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [userData] = await db.query(`SELECT * FROM users where _id=${userId}`);
       let ownerId = userData[0].ownerId;
-
       let [data] = await db.query(
         `(SELECT * FROM oderslist WHERE ownerId = ? ORDER BY _id DESC LIMIT 5000) ORDER BY date, accountNumber, _id`,
         [ownerId]
@@ -173,7 +167,6 @@ var Tasks = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
 
   filter: async function (datafilter, callback) {
@@ -320,7 +313,7 @@ var Tasks = {
       }
     });
 
-    const db = mysql.createPool(options.sql).promise();
+    
     try {
       if (filterDate) {
         [data] = await db.query(`SELECT DISTINCT date FROM oderslist where ${filterDate}`);
@@ -429,7 +422,6 @@ var Tasks = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   add: async function (data, callback) {
     console.log(data);
@@ -460,7 +452,7 @@ var Tasks = {
     };
     if (oder.customerPrice === '') oder.customerPrice = null;
     if (oder.driverPrice === '') oder.driverPrice = null;
-    const db = mysql.createPool(options.sql).promise();
+    
     try {
       let [data] = await db.query('INSERT INTO oderslist SET ?', oder);
       addData.orderId = data.insertId;
@@ -471,7 +463,6 @@ var Tasks = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   editNew: async function (data, callback) {
     dateToSqlString(data.dateOfSubmission);
@@ -510,8 +501,6 @@ var Tasks = {
         orderId: data._id,
       };
     }
-
-    const db = mysql.createPool(options.sql).promise();
     try {
       await db.query(`UPDATE oderslist SET ? WHERE _id=?`, [newData, data._id]);
       if (data.colorTR == 'hotpink') {
@@ -527,7 +516,6 @@ var Tasks = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
   edit: async function (newdata, userId, isAllowed, callback) {
     console.log(newdata, userId, isAllowed);
@@ -615,7 +603,6 @@ var Tasks = {
       default:
         break;
     }
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [userRole] = await db.query(`SELECT * FROM users WHERE _id=${userId}`);
       console.log(userRole[0]);
@@ -629,13 +616,11 @@ var Tasks = {
       //console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
 
   makePaymentCustomer: async function (data, callback) {
     console.log(data);
     const now = new Date();
-
     // Приводим к формату YYYY-MM-DD HH:MM:SS
     const formattedNow = now
       .toLocaleString('sv-SE', {
@@ -643,9 +628,7 @@ var Tasks = {
       })
       .replace('T', ' ');
     console.log(now);
-
     let sumChosenOders = data.arr.reduce((sum, item) => sum + item.customerPrice, 0);
-
     let idList = '';
     data.arr.forEach(elem => {
       if (idList == '') {
@@ -654,8 +637,6 @@ var Tasks = {
         idList = idList + ',' + elem.id;
       }
     });
-    const db = mysql.createPool(options.sql).promise();
-
     try {
       let [dataelem] = await db.query(
         `select * FROM pet_proect.oderslist where _id in (${idList})`
@@ -734,11 +715,9 @@ var Tasks = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
 
   getDataById: async function (id, table, callback) {
-    const db = mysql.createPool(options.sql).promise();
     let dataById = {};
     try {
       let [data] = await db.query(`select * FROM ${table} WHERE _id=${id}`);
@@ -754,43 +733,35 @@ var Tasks = {
           `select * FROM clientmanager WHERE _id=${data[0].idManager}`
         );
       }
-
       callback(dataById);
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
 
-  getDataBy_IdPromise: async function (id, table) {
-    const db = mysql.createPool(options.sql).promise();
+  getDataBy_IdPromise: async function (id, table) {  
     let dataById = {};
     try {
       let [data] = await db.query(`select * FROM ${table} WHERE _id=${id}`);
       dataById = data[0];
-      db.end();
       return dataById;
     } catch (err) {
-      db.end();
       throw err;
     }
   },
   getDataByIdPromise: async function (id, table) {
-    const db = mysql.createPool(options.sql).promise();
+    
     let dataById = {};
     try {
       let [data] = await db.query(`select * FROM ${table} WHERE id=${id}`);
       dataById = data[0];
-      db.end();
       return dataById;
     } catch (err) {
-      db.end();
       throw err;
     }
   },
 
   del: async function (id, callback) {
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [data] = await db.query(`SELECT * FROM oderslist WHERE _id=${id}`);
       await db.query(`DELETE FROM oderslist WHERE _id=${id}`);
@@ -799,10 +770,8 @@ var Tasks = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   getDataFromTableById: async (id, table, callback) => {
-    const db = mysql.createPool(options.sql).promise();
     let dataFromTable = {};
     try {
       let [data] = await db.query(`select * FROM ${table} WHERE _id=${id}`);
@@ -811,10 +780,8 @@ var Tasks = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
-  editField: async (id, table, field, newValue, callback) => {
-    const db = mysql.createPool(options.sql).promise();
+  editField: async (id, table, field, newValue, callback) => {   
     try {
       await db.query(`UPDATE ${table} SET ${field} = ${newValue} WHERE _id = ${id}`);
       callback('success!');
@@ -822,7 +789,6 @@ var Tasks = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
   addOrderApp: async function (data, appId, callback) {
     console.log('addOrderApp', data, appId);
@@ -852,7 +818,6 @@ var Tasks = {
     };
     if (oder.customerPrice === '') oder.customerPrice = null;
     if (oder.driverPrice === '') oder.driverPrice = null;
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [data] = await db.query('INSERT INTO oderslist SET ?', oder);
       await db.query(`UPDATE customerorders set orderId =${data.insertId} WHERE _id=${appId}`);
@@ -864,7 +829,6 @@ var Tasks = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
 };
 module.exports = Tasks;

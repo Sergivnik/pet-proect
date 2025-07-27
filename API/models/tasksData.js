@@ -59,7 +59,7 @@ let TasksDada = {
       );
       if (newData.editTable === 'ownerlogist') {
         newUser.ownerId = data.insertId;
-        TasksUser.addNewUser(newUser, () => {
+        await TasksUser.addNewUser(newUser, () => {
           console.log('New user added');
         });
       }

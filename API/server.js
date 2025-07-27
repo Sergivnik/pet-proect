@@ -7,6 +7,7 @@ const socketIo = require('socket.io');
 const router = require('./routers');
 const config = require('./models/config.js');
 const os = require('os');
+const { nativePool } = require('./models/db.js');
 
 const app = express();
 const server = http.createServer(app);
@@ -133,4 +134,10 @@ setInterval(() => {
   console.log(`- Heap Used  : ${(used.heapUsed / 1024 / 1024).toFixed(2)} MB`);
   console.log(`- Heap Total : ${(used.heapTotal / 1024 / 1024).toFixed(2)} MB`);
   console.log('—'.repeat(30));
+  console.log('[MySQL POOL]');
+  console.log('Total connections:', nativePool._allConnections.length);
+  console.log('Free connections:', nativePool._freeConnections.length);
+  console.log('In queue:', nativePool._connectionQueue.length);
+  console.log('-------------------------------');
 }, 500000);
+
