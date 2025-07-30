@@ -1,50 +1,45 @@
-const mysql = require("mysql2");
-const options = require("./config.js");
-const puppeteer = require("puppeteer");
-const fs = require("fs");
-const util = require("util"); // Добавьте эту строку для подключения модуля util
-const path = require("path");
+const db = require('./db.js').promisePool;
+const puppeteer = require('puppeteer');
+const fs = require('fs');
+const util = require('util'); // Добавьте эту строку для подключения модуля util
+const path = require('path');
 const writeFileAsync = util.promisify(fs.writeFile);
 const unlinkAsync = util.promisify(fs.unlink);
 
 var TaskDocs = {
   add: async function (listId, docNumber, callback) {
     if (!isNaN(docNumber)) {
-      if (docNumber < 10 && docNumber > 0) docNumber = "000" + docNumber;
-      if (docNumber < 100 && docNumber > 9) docNumber = "00" + docNumber;
-      if (docNumber < 1000 && docNumber > 99) docNumber = "0" + docNumber;
-      if (docNumber < 10000 && docNumber > 999) docNumber = "" + docNumber;
+      if (docNumber < 10 && docNumber > 0) docNumber = '000' + docNumber;
+      if (docNumber < 100 && docNumber > 9) docNumber = '00' + docNumber;
+      if (docNumber < 1000 && docNumber > 99) docNumber = '0' + docNumber;
+      if (docNumber < 10000 && docNumber > 999) docNumber = '' + docNumber;
     }
-    const db = mysql.createPool(options.sql).promise();
     try {
       for (const id of listId) {
-        await db.query(
-          `UPDATE oderslist SET accountNumber="${docNumber}" WHERE _id=${id}`
-        );
+        await db.query(`UPDATE oderslist SET accountNumber="${docNumber}" WHERE _id=${id}`);
       }
-      callback("success");
+      callback('success');
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   createContract: async (customer, html, css, callBack) => {
     try {
-      const cssFilePath = path.join(__dirname, "temp.css");
-      await writeFileAsync(cssFilePath, css, "utf8");
+      const cssFilePath = path.join(__dirname, 'temp.css');
+      await writeFileAsync(cssFilePath, css, 'utf8');
 
-      const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
       const page = await browser.newPage();
       await page.setContent(html);
       await page.addStyleTag({ path: cssFilePath });
 
       const pdfBuffer = await page.pdf({
-        format: "A4",
+        format: 'A4',
         margin: {
-          top: "5mm",
-          bottom: "5mm",
-          left: "10mm",
-          right: "0mm",
+          top: '5mm',
+          bottom: '5mm',
+          left: '10mm',
+          right: '0mm',
         },
         printBackground: true,
       });
@@ -60,28 +55,28 @@ var TaskDocs = {
       await writeFileAsync(pdfFilePath, pdfBuffer);
       await unlinkAsync(cssFilePath);
 
-      callBack("success!");
+      callBack('success!');
     } catch (err) {
       callBack({ error: err });
     }
   },
   createDriverContract: async (driver, html, css, callBack) => {
     try {
-      const cssFilePath = path.join(__dirname, "temp.css");
-      await writeFileAsync(cssFilePath, css, "utf8");
+      const cssFilePath = path.join(__dirname, 'temp.css');
+      await writeFileAsync(cssFilePath, css, 'utf8');
 
-      const browser = await puppeteer.launch({ args: ["--no-sandbox"] });
+      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
       const page = await browser.newPage();
       await page.setContent(html);
       await page.addStyleTag({ path: cssFilePath });
 
       const pdfBuffer = await page.pdf({
-        format: "A4",
+        format: 'A4',
         margin: {
-          top: "5mm",
-          bottom: "5mm",
-          left: "10mm",
-          right: "0mm",
+          top: '5mm',
+          bottom: '5mm',
+          left: '10mm',
+          right: '0mm',
         },
         printBackground: true,
       });
@@ -97,17 +92,16 @@ var TaskDocs = {
       await writeFileAsync(pdfFilePath, pdfBuffer);
       await unlinkAsync(cssFilePath);
 
-      callBack("success!");
+      callBack('success!');
     } catch (err) {
       callBack({ error: err });
     }
   },
   getDataFromTableByIdAsyhc: async (id, table) => {
-    const db = mysql.createPool(options.sql).promise();
     let dataFromTable = {};
     let data;
     try {
-      if (table == "contractorspayments") {
+      if (table == 'contractorspayments') {
         [data] = await db.query(`SELECT * FROM ${table} WHERE id=${id}`);
       } else {
         [data] = await db.query(`SELECT * FROM ${table} WHERE _id=${id}`);
@@ -117,10 +111,8 @@ var TaskDocs = {
     } catch (err) {
       return { error: err };
     } finally {
-      db.end();
     }
   },
 };
-
 
 module.exports = TaskDocs;

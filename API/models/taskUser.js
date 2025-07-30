@@ -1,10 +1,8 @@
-const mysql = require('mysql2');
-const options = require('./config.js');
+const db = require('./db.js').promisePool;
 const bcryptjs = require('bcryptjs');
 
 let TasksUser = {
   addNewUser: async (data, userId, callback) => {
-    const db = mysql.createPool(options.sql).promise();
     const salt = bcryptjs.genSaltSync(options.saltRounds);
     let password = bcryptjs.hashSync(data.password, salt);
 
@@ -34,10 +32,8 @@ let TasksUser = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
   checkUser: async (data, callback) => {
-    const db = mysql.createPool(options.sql).promise();
     try {
       let user = await db.query(`SELECT * FROM users WHERE login="${data.login}"`);
       user = user[0];
@@ -69,12 +65,10 @@ let TasksUser = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   changePassword: async (userId, changeData, callback) => {
     const salt = bcryptjs.genSaltSync(options.saltRounds);
     console.log('tasksUser:', userId, changeData);
-    const db = mysql.createPool(options.sql).promise();
     try {
       let user = await db.query(`SELECT * FROM users WHERE _id="${userId}"`);
       user = user[0];

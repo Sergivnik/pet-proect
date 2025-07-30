@@ -1,10 +1,8 @@
-const mysql = require("mysql2");
-const options = require("./config.js");
+const db = require('./db.js').promisePool;
 
 let tasksTasks = {
   getTasksNumber: async (userId, callBack) => {
     console.log(userId);
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [data] = await db.query(
         `SELECT * FROM taskstable where statusOfTask="Новое" and userId=${userId}`
@@ -12,22 +10,18 @@ let tasksTasks = {
       callBack(data.length);
     } catch (err) {
       console.log(err);
-      callBack({ error: err, message: "failure" });
+      callBack({ error: err, message: 'failure' });
     }
-    db.end();
   },
   getTasksData: async (userId, callBack) => {
     console.log(`Getting tasks data of user ${userId}`);
     let setData = {};
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [data] = await db.query(
         `SELECT * FROM taskstable where userId=${userId} or senderId=${userId}`
       );
       setData.taskstable = data;
-      [data] = await db.query(
-        `SELECT customerId FROM users where _id=${userId}`
-      );
+      [data] = await db.query(`SELECT customerId FROM users where _id=${userId}`);
       let customerId = data[0].customerId;
       console.log(customerId);
       if (customerId != null) {
@@ -41,12 +35,10 @@ let tasksTasks = {
       callBack(setData);
     } catch (err) {
       console.log(err);
-      callBack({ error: err, message: "failure" });
+      callBack({ error: err, message: 'failure' });
     }
-    db.end();
   },
   addNewTask: async (task, callBack) => {
-    const db = mysql.createPool(options.sql).promise();
     console.log(`adding task data:`, task);
     try {
       let [data] = await db.query(`INSERT INTO taskstable set ?`, task);
@@ -54,33 +46,28 @@ let tasksTasks = {
     } catch (err) {
       callBack({ error: err });
     }
-    db.end();
   },
   editTask: async (data, callBack) => {
     console.log(`edit task data:`, data);
-    const db = mysql.createPool(options.sql).promise();
     try {
-      await db.query(
-        `UPDATE taskstable SET ${data.editField} = ? WHERE _id=?`,
-        [data.newValue, data.id]
-      );
-      callBack("Success!");
+      await db.query(`UPDATE taskstable SET ${data.editField} = ? WHERE _id=?`, [
+        data.newValue,
+        data.id,
+      ]);
+      callBack('Success!');
     } catch (err) {
       callBack({ error: err });
     }
-    db.end();
   },
   delTask: async (id, callBack) => {
     console.log(`delete `, id);
-    const db = mysql.createPool(options.sql).promise();
     try {
       await db.query(`DELETE FROM taskstable WHERE _id=${id}`);
-      callBack("Success!");
+      callBack('Success!');
     } catch (err) {
       console.log(err);
       callBack({ error: err });
     }
-    db.end();
   },
 };
 module.exports = tasksTasks;

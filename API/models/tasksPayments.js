@@ -1,9 +1,7 @@
-const mysql = require("mysql2");
-const options = require("./config.js");
+const db = require('./db.js').promisePool;
 
 var TasksPayments = {
   list: async function (userId, callback) {
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [user] = await db.query(`SELECT * FROM users where _id=${userId}`);
       let ownerId = user[0].ownerId;
@@ -14,10 +12,8 @@ var TasksPayments = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   taskDeletePayments: async function (id, callback) {
-    const db = mysql.createPool(options.sql).promise();
     try {
       let sum = 0;
       let [PaymentsData] = await db.query(
@@ -95,7 +91,6 @@ var TasksPayments = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
 };
 

@@ -1,42 +1,32 @@
-const mysql = require("mysql2");
-const options = require("./config.js");
+const db = require('./db.js').promisePool;
 //const { getDriverPayments } = require("../controlers/driverAPI.js");
 
 let TasksDriver = {
-  getDriverPayments: async (callBack) => {
-    console.log("dataDriverPayment");
-    const db = mysql.createPool(options.sql).promise();
+  getDriverPayments: async callBack => {
+    console.log('dataDriverPayment');
     try {
       let [data] = await db.query(`SELECT * FROM driverpayment`);
       callBack(data);
     } catch (err) {
       callBack({ error: err });
     } finally {
-      db.end();
     }
   },
   delDriverPayment: async (id, callBack) => {
     console.log(id);
-    const db = mysql.createPool(options.sql).promise();
     const connection = await db.getConnection();
 
     try {
       await connection.beginTransaction();
-      let [payment] = await connection.query(
-        `SELECT * FROM driverpayment where id=${id}`
-      );
+      let [payment] = await connection.query(`SELECT * FROM driverpayment where id=${id}`);
       let listOfOrder = payment[0].listOfOders;
       let listOdDebtsInfo = payment[0].listOfDebts;
       await connection.query(`DELETE FROM driverpayment where id=${id}`);
       for (const id of listOfOrder) {
-        await connection.query(
-          `UPDATE oderslist SET driverPayment="нет" where _id=${id}`
-        );
+        await connection.query(`UPDATE oderslist SET driverPayment="нет" where _id=${id}`);
       }
       for (const debtInfo of listOdDebtsInfo) {
-        let [debt] = await connection.query(
-          `SELECT * FROM driverdebts where id=${debtInfo.id}`
-        );
+        let [debt] = await connection.query(`SELECT * FROM driverdebts where id=${debtInfo.id}`);
         if (debt[0].sumOfDebt == debtInfo.sum) {
           await connection.query(
             `UPDATE driverdebts SET debtClosed="нет", paidPartOfDebt=NULL where id=${debtInfo.id}`
@@ -55,7 +45,7 @@ let TasksDriver = {
         }
       }
       await connection.commit();
-      callBack("success!");
+      callBack('success!');
     } catch (err) {
       await connection.rollback();
       callBack({ error: err });

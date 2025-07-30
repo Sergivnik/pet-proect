@@ -1,10 +1,9 @@
 const mysql = require("mysql2");
-const options = require("./config.js");
+const db = require('./db.js').promisePool;
 
 var TasksContractors = {
   list: async function (callback) {
     let dataObj = {};
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [data] = await db.query("SELECT * FROM contractors order by value");
       dataObj.contractors = data;
@@ -16,11 +15,9 @@ var TasksContractors = {
     } catch (err) {
       callback({ error: err });
     }
-    db.end();
   },
   add: async function (data, callback) {
     console.log(data);
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [contractorPayment] = await db.query(
         "INSERT INTO contractorspayments SET ?",
@@ -31,11 +28,9 @@ var TasksContractors = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
   delete: async function (id, callback) {
     console.log(id);
-    const db = mysql.createPool(options.sql).promise();
     try {
       let [data] = await db.query(
         `DELETE FROM contractorspayments WHERE id=${id}`
@@ -45,7 +40,6 @@ var TasksContractors = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
 };
 

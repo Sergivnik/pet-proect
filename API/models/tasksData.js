@@ -1,11 +1,9 @@
-const mysql = require('mysql2');
-const options = require('./config.js');
 const TasksUser = require('./taskUser.js');
+const db = require('./db.js').promisePool;
 
 let TasksDada = {
   editData: async function (newData, callback) {
     console.log('editData', newData);
-    const db = mysql.createPool(options.sql).promise();
     if ('_id' in newData.newData) console.log('_id');
     if ('id' in newData.newData) console.log('id');
     try {
@@ -24,11 +22,9 @@ let TasksDada = {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
   addData: async function (newData, userId, callback) {
     console.log('addData', newData);
-    const db = mysql.createPool(options.sql).promise();
     let connection;
     try {
       connection = await db.getConnection();
@@ -78,16 +74,15 @@ let TasksDada = {
       callback(data);
     } catch (err) {
       if (connection) await connection.rollback();
+      console.log({ error: err });
       callback({ error: err });
     } finally {
       if (connection) connection.release();
-      db.end();
     }
   },
   delData: async function (id, editTable, callback) {
     console.log(`Attempting to delete id: ${id} from table: ${editTable}`);
     let check = 0;
-    const db = mysql.createPool(options.sql).promise();
     switch (editTable) {
       case 'drivers':
         try {
@@ -321,7 +316,6 @@ let TasksDada = {
           callback({ error: err });
         }
     }
-    db.end();
   },
 };
 module.exports = TasksDada;

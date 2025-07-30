@@ -1,15 +1,12 @@
-const mysql = require("mysql2");
-const options = require("./config.js");
+const mysql = require('mysql2');
+const db = require('./db.js').promisePool;
 
 var TaskPaymentsDriver = {
   add: async function (data, callback) {
     console.log(data);
     let listOfOders = JSON.stringify(data.chosenOders);
     let listOfDebts = JSON.stringify(data.chosenDebts);
-    let sumChosenDebts = data.chosenDebts.reduce(
-      (sum, item) => sum + item.sum,
-      0
-    );
+    let sumChosenDebts = data.chosenDebts.reduce((sum, item) => sum + item.sum, 0);
     let paymentString = {
       date: new Date(),
       idDriver: data.id,
@@ -18,21 +15,18 @@ var TaskPaymentsDriver = {
       sumOfDebts: sumChosenDebts,
       listOfDebts: listOfDebts,
     };
-    const db = mysql.createPool(options.sql).promise();
     console.log(paymentString);
     try {
       let check = true;
       for (let oderId of data.chosenOders) {
-        let [data] = await db.query(
-          `SELECT * FROM oderslist WHERE _id=${oderId}`
-        );
-        if (data[0].driverPayment == "Ок") check = false;
+        let [data] = await db.query(`SELECT * FROM oderslist WHERE _id=${oderId}`);
+        if (data[0].driverPayment == 'Ок') check = false;
       }
       if (check) {
-        await db.query("INSERT INTO driverpayment SET ?", paymentString);
+        await db.query('INSERT INTO driverpayment SET ?', paymentString);
         for (let oderId of data.chosenOders) {
           await db.query(`UPDATE oderslist SET ? WHERE _id=${oderId}`, [
-            { driverPayment: "Ок", dateOfPayment: paymentString.date },
+            { driverPayment: 'Ок', dateOfPayment: paymentString.date },
           ]);
         }
         for (let debt of data.chosenDebts) {
@@ -56,15 +50,12 @@ var TaskPaymentsDriver = {
         }
         callback(data);
       } else {
-        throw new Error(
-          "Некоторые заказы уже оплачены обновите страницу"
-        );
+        throw new Error('Некоторые заказы уже оплачены обновите страницу');
       }
     } catch (err) {
       console.log(err);
       callback({ error: err });
     }
-    db.end();
   },
 };
 module.exports = TaskPaymentsDriver;
