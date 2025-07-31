@@ -1,5 +1,3 @@
-const mysql = require('mysql2');
-const options = require('./config.js');
 const db = require('./db.js').promisePool;
 
 let customerTasks = {
@@ -7,47 +5,57 @@ let customerTasks = {
     console.log(userId);
     let allData = {};
     try {
-      let user = await db.query(`SELECT * FROM users WHERE _id="${userId}"`);
+      let [user] = await db.query(`SELECT * FROM users WHERE _id = ?`, [userId]);
       user = user[0];
-      console.log(user[0].customerId);
-      let whereCondition = `WHERE idCustomer=${user[0].customerId}`;
-      if (user[0].role == 'admin') whereCondition = '';
+      console.log(user.customerId);
+      let whereCondition = `WHERE idCustomer = ?`;
+      let whereParams = [user.customerId];
+      if (user.role == 'admin') {
+        whereCondition = '';
+        whereParams = [];
+      }
       let listOfColumns =
         'oderslist._id, date, oderslist.idLoadingPoint, oderslist.idUnloadingPoint, oderslist.customerPrice, document, customerPayment, accountNumber, oderslist.idTrackDriver, oderslist.idTrack, oderslist.idManager, oderslist.loadingInfo, oderslist.unloadingInfo, oderslist.applicationNumber,customerClientId,textInfo';
       let data = [];
-      if (user[0].role == 'customerBoss' || user[0].role == 'admin') {
+      if (user.role == 'customerBoss' || user.role == 'admin') {
         [data] = await db.query(
-          `(SELECT ${listOfColumns} FROM oderslist left join customerorders on customerorders.orderId=oderslist._id ${whereCondition} ORDER BY _id DESC LIMIT 1000) ORDER BY date, accountNumber, _id`
+          `(SELECT ${listOfColumns} FROM oderslist left join customerorders on customerorders.orderId=oderslist._id ${whereCondition} ORDER BY _id DESC LIMIT 1000) ORDER BY date, accountNumber, _id`,
+          whereParams
         );
       } else {
         [data] = await db.query(
-          `(SELECT ${listOfColumns} FROM oderslist left join customerorders on customerorders.orderId=oderslist._id WHERE idCustomer=${user[0].customerId} and oderslist.idManager=${user[0].managerID} ORDER BY _id DESC LIMIT 1000) ORDER BY date, accountNumber, _id`
+          `(SELECT ${listOfColumns} FROM oderslist left join customerorders on customerorders.orderId=oderslist._id WHERE idCustomer = ? and oderslist.idManager = ? ORDER BY _id DESC LIMIT 1000) ORDER BY date, accountNumber, _id`,
+          [user.customerId, user.managerID]
         );
       }
       allData.ordersList = data;
-      if (user[0].role == 'customerBoss' || user[0].role == 'admin') {
+      if (user.role == 'customerBoss' || user.role == 'admin') {
         [data] = await db.query(
-          `SELECT * FROM trackdrivers WHERE _id in (SELECT distinct idTrackDriver FROM oderslist ${whereCondition})`
+          `SELECT * FROM trackdrivers WHERE _id in (SELECT distinct idTrackDriver FROM oderslist ${whereCondition})`,
+          whereParams
         );
       } else {
         [data] = await db.query(
-          `SELECT * FROM trackdrivers WHERE _id in (SELECT distinct idTrackDriver FROM oderslist WHERE idCustomer=${user[0].customerId} and idManager=${user[0].managerID})`
+          `SELECT * FROM trackdrivers WHERE _id in (SELECT distinct idTrackDriver FROM oderslist WHERE idCustomer = ? and idManager = ?)`,
+          [user.customerId, user.managerID]
         );
       }
       allData.driversList = data;
-      if (user[0].role == 'customerBoss' || user[0].role == 'admin') {
+      if (user.role == 'customerBoss' || user.role == 'admin') {
         [data] = await db.query(
-          `SELECT * FROM tracklist WHERE _id in (SELECT distinct idTrack FROM oderslist ${whereCondition})`
+          `SELECT * FROM tracklist WHERE _id in (SELECT distinct idTrack FROM oderslist ${whereCondition})`,
+          whereParams
         );
       } else {
         [data] = await db.query(
-          `SELECT * FROM tracklist WHERE _id in (SELECT distinct idTrack FROM oderslist WHERE idCustomer=${user[0].customerId} and idManager=${user[0].managerID})`
+          `SELECT * FROM tracklist WHERE _id in (SELECT distinct idTrack FROM oderslist WHERE idCustomer = ? and idManager = ?)`,
+          [user.customerId, user.managerID]
         );
       }
       allData.trackList = data;
-      [data] = await db.query(`SELECT * FROM oders WHERE _id="${user[0].customerId}"`);
+      [data] = await db.query(`SELECT * FROM oders WHERE _id = ?`, [user.customerId]);
       console.log(data);
-      if (user[0].role != 'admin') {
+      if (user.role != 'admin') {
         allData.customerData = data[0];
       } else {
         allData.customerData = {
@@ -56,18 +64,18 @@ let customerTasks = {
           companyName: 'Админстратор',
         };
       }
-      if (user[0].role != 'admin') {
-        [data] = await db.query(
-          `SELECT * FROM clientmanager WHERE odersId="${user[0].customerId}"`
-        );
+      if (user.role != 'admin') {
+        [data] = await db.query(`SELECT * FROM clientmanager WHERE odersId = ?`, [
+          user.customerId,
+        ]);
       } else {
         [data] = await db.query(`SELECT * FROM clientmanager`);
       }
       allData.managerList = data;
-      if (user[0].role != 'admin') {
-        [data] = await db.query(
-          `SELECT _id, name, role FROM users WHERE customerId="${user[0].customerId}"`
-        );
+      if (user.role != 'admin') {
+        [data] = await db.query(`SELECT _id, name, role FROM users WHERE customerId = ?`, [
+          user.customerId,
+        ]);
       } else {
         [data] = await db.query(`SELECT _id, name, role FROM users`);
       }
@@ -76,22 +84,23 @@ let customerTasks = {
       allData.citiesList = data;
       [data] = await db.query(`SELECT * FROM storelist`);
       allData.storelist = data;
-      if (user[0].role != 'customerBoss') {
+      if (user.role != 'customerBoss') {
         [data] = await db.query(
-          `SELECT * FROM customerorders WHERE customerId=${user[0].customerId} and idManager=${user[0].managerID} `
+          `SELECT * FROM customerorders WHERE customerId = ? and idManager = ?`,
+          [user.customerId, user.managerID]
         );
       } else {
-        [data] = await db.query(
-          `SELECT * FROM customerorders WHERE customerId=${user[0].customerId} `
-        );
+        [data] = await db.query(`SELECT * FROM customerorders WHERE customerId = ?`, [
+          user.customerId,
+        ]);
       }
       allData.customerOrders = data;
-      if (user[0].role != 'admin') {
-        [data] = await db.query(
-          `SELECT * FROM customerclients WHERE orderId="${user[0].customerId}" `
-        );
+      if (user.role != 'admin') {
+        [data] = await db.query(`SELECT * FROM customerclients WHERE orderId = ?`, [
+          user.customerId,
+        ]);
       } else {
-        [data] = await db.query(`SELECT * FROM customerclients `);
+        [data] = await db.query(`SELECT * FROM customerclients`);
       }
       allData.customerclients = data;
       callBack(allData);
@@ -133,7 +142,7 @@ let customerTasks = {
       idTrack: dataApp.idTrack,
     };
     try {
-      let [data] = await db.query(`INSERT INTO customerorders SET ?`, customerApp);
+      let [data] = await db.query(`INSERT INTO customerorders SET ?`, [customerApp]);
       callBack(data);
     } catch (err) {
       callBack({ error: err });
@@ -174,7 +183,7 @@ let customerTasks = {
       idTrack: dataApp.idTrack,
     };
     try {
-      await db.query(`UPDATE customerorders SET ? WHERE _id=?`, [customerApp, data.id]);
+      await db.query(`UPDATE customerorders SET ? WHERE _id = ?`, [customerApp, data.id]);
       callBack('success!');
     } catch (err) {
       callBack({ error: err });
@@ -183,7 +192,7 @@ let customerTasks = {
   delCustomerApp: async (id, callBack) => {
     console.log(id);
     try {
-      await db.query(`DELETE FROM customerorders WHERE _id=${id}`);
+      await db.query(`DELETE FROM customerorders WHERE _id = ?`, [id]);
       callBack('success!');
     } catch (err) {
       console.log(err);

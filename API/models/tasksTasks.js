@@ -5,7 +5,8 @@ let tasksTasks = {
     console.log(userId);
     try {
       let [data] = await db.query(
-        `SELECT * FROM taskstable where statusOfTask="Новое" and userId=${userId}`
+        `SELECT * FROM taskstable where statusOfTask = "Новое" and userId = ?`,
+        [userId]
       );
       callBack(data.length);
     } catch (err) {
@@ -17,16 +18,18 @@ let tasksTasks = {
     console.log(`Getting tasks data of user ${userId}`);
     let setData = {};
     try {
-      let [data] = await db.query(
-        `SELECT * FROM taskstable where userId=${userId} or senderId=${userId}`
-      );
+      let [data] = await db.query(`SELECT * FROM taskstable where userId = ? or senderId = ?`, [
+        userId,
+        userId,
+      ]);
       setData.taskstable = data;
-      [data] = await db.query(`SELECT customerId FROM users where _id=${userId}`);
+      [data] = await db.query(`SELECT customerId FROM users where _id = ?`, [userId]);
       let customerId = data[0].customerId;
       console.log(customerId);
       if (customerId != null) {
         [data] = await db.query(
-          `SELECT _id, name, customerId FROM users where customerId=${customerId} or customerId is null`
+          `SELECT _id, name, customerId FROM users where customerId = ? or customerId is null`,
+          [customerId]
         );
       } else {
         [data] = await db.query(`SELECT _id, name, customerId FROM users`);
@@ -41,7 +44,7 @@ let tasksTasks = {
   addNewTask: async (task, callBack) => {
     console.log(`adding task data:`, task);
     try {
-      let [data] = await db.query(`INSERT INTO taskstable set ?`, task);
+      let [data] = await db.query(`INSERT INTO taskstable set ?`, [task]);
       callBack(data);
     } catch (err) {
       callBack({ error: err });
@@ -50,7 +53,7 @@ let tasksTasks = {
   editTask: async (data, callBack) => {
     console.log(`edit task data:`, data);
     try {
-      await db.query(`UPDATE taskstable SET ${data.editField} = ? WHERE _id=?`, [
+      await db.query(`UPDATE taskstable SET ${data.editField} = ? WHERE _id = ?`, [
         data.newValue,
         data.id,
       ]);
@@ -62,7 +65,7 @@ let tasksTasks = {
   delTask: async (id, callBack) => {
     console.log(`delete `, id);
     try {
-      await db.query(`DELETE FROM taskstable WHERE _id=${id}`);
+      await db.query(`DELETE FROM taskstable WHERE _id = ?`, [id]);
       callBack('Success!');
     } catch (err) {
       console.log(err);

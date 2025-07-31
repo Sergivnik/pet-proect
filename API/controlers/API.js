@@ -1188,7 +1188,6 @@ module.exports.taskSignOut = (req, res) => {
 };
 module.exports.taskChangePassword = (req, res) => {
   res.set('Access-Control-Allow-Credentials', 'true');
-  console.log('API:', req.session.userId, req.session.login, req.body);
   if (req.session.login == req.body.login) {
     tasksUser.changePassword(req.session.userId, req.body, data => {
       console.log(data);

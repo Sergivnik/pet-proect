@@ -1,4 +1,5 @@
 const db = require('./db.js').promisePool;
+const options = require('./config.js');
 const bcryptjs = require('bcryptjs');
 
 let TasksUser = {
@@ -19,13 +20,13 @@ let TasksUser = {
 
     try {
       if (user.ownerId == undefined) {
-        let [currentUser] = await db.query(`SELECT * FROM users WHERE _id=?`, userId);
+        let [currentUser] = await db.query(`SELECT * FROM users WHERE _id = ?`, [userId]);
         let ownerId = currentUser[0].ownerId;
         user.ownerId = ownerId;
         console.log('INSERT INTO users SET ?', user);
-        await db.query('INSERT INTO users SET ?', user);
+        await db.query('INSERT INTO users SET ?', [user]);
       } else {
-        await db.query('INSERT INTO users SET ?', user);
+        await db.query('INSERT INTO users SET ?', [user]);
       }
       callback('success!');
     } catch (err) {
@@ -35,26 +36,26 @@ let TasksUser = {
   },
   checkUser: async (data, callback) => {
     try {
-      let user = await db.query(`SELECT * FROM users WHERE login="${data.login}"`);
+      let [user] = await db.query(`SELECT * FROM users WHERE login = ?`, [data.login]);
       user = user[0];
-      let ownerId = user[0].ownerId;
-      let owner = await db.query(`SELECT * FROM ownerlogist WHERE id=${ownerId}`);
-      owner = owner[0];
-      if (user.length > 0) {
-        console.log(data.password, user[0].password);
-        let check = bcryptjs.compareSync(data.password, user[0].password);
+      if (user) {
+        let ownerId = user.ownerId;
+        let [owner] = await db.query(`SELECT * FROM ownerlogist WHERE id = ?`, [ownerId]);
+        owner = owner[0];
+        console.log(data.password, user.password);
+        let check = bcryptjs.compareSync(data.password, user.password);
         if (check) {
           callback(
             {
-              name: user[0].name,
-              role: user[0].role,
-              login: user[0].login,
-              customerId: user[0].customerId,
-              managerID: user[0].managerID,
-              _id: user[0]._id,
+              name: user.name,
+              role: user.role,
+              login: user.login,
+              customerId: user.customerId,
+              managerID: user.managerID,
+              _id: user._id,
               owner: owner,
             },
-            user[0]._id
+            user._id
           );
         } else {
           callback({ error: 'password is wrong!' });
@@ -70,12 +71,16 @@ let TasksUser = {
     const salt = bcryptjs.genSaltSync(options.saltRounds);
     console.log('tasksUser:', userId, changeData);
     try {
-      let user = await db.query(`SELECT * FROM users WHERE _id="${userId}"`);
+      let [user] = await db.query(`SELECT * FROM users WHERE _id = ?`, [userId]);
+      console.log(user);
+      
       user = user[0];
-      let check = bcryptjs.compareSync(changeData.oldPassword, user[0].password);
+      let check = bcryptjs.compareSync(changeData.oldPassword, user.password);
+      console.log(check);
+
       if (check) {
         let password = bcryptjs.hashSync(changeData.newPassword, salt);
-        await db.query(`UPDATE users SET password="${password}" WHERE _id="${userId}"`);
+        await db.query(`UPDATE users SET password = ? WHERE _id = ?`, [password, userId]);
         callback('success!!');
       } else {
         callback({ error: 'wrong password!' });
