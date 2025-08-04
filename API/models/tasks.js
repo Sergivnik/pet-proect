@@ -157,7 +157,7 @@ var Tasks = {
   order5000: async function (userId, callback) {
     console.log('order5000');
     try {
-      let [userData] = await db.query(`SELECT * FROM users where _id=${userId}`);
+      let [userData] = await db.query(`SELECT * FROM users WHERE _id = ?`, [userId]);
       let ownerId = userData[0].ownerId;
       let [data] = await db.query(
         `(SELECT * FROM oderslist WHERE ownerId = ? ORDER BY _id DESC LIMIT 5000) ORDER BY date, accountNumber, _id`,
@@ -313,109 +313,108 @@ var Tasks = {
       }
     });
 
-    
     try {
       if (filterDate) {
-        [data] = await db.query(`SELECT DISTINCT date FROM oderslist where ${filterDate}`);
+        [data] = await db.query(`SELECT DISTINCT date FROM oderslist WHERE ${filterDate}`);
       } else [data] = await db.query(`SELECT DISTINCT date FROM oderslist`);
       setData.date = data;
       if (filterDriver) {
-        [data] = await db.query(`SELECT DISTINCT idDriver FROM oderslist where ${filterDriver}`);
+        [data] = await db.query(`SELECT DISTINCT idDriver FROM oderslist WHERE ${filterDriver}`);
       } else [data] = await db.query(`SELECT DISTINCT idDriver FROM oderslist`);
       setData.driver = data;
       if (filterOder) {
-        [data] = await db.query(`SELECT DISTINCT idCustomer FROM oderslist where ${filterOder}`);
+        [data] = await db.query(`SELECT DISTINCT idCustomer FROM oderslist WHERE ${filterOder}`);
       } else [data] = await db.query(`SELECT DISTINCT idCustomer FROM oderslist`);
       setData.customer = data;
       if (filterLoad) {
         [data] = await db.query(
-          `SELECT DISTINCT idLoadingPoint FROM oderslist where ${filterLoad}`
+          `SELECT DISTINCT idLoadingPoint FROM oderslist WHERE ${filterLoad}`
         );
       } else [data] = await db.query(`SELECT DISTINCT idLoadingPoint FROM oderslist`);
       setData.loadingPoint = data;
       if (filterUnload) {
         [data] = await db.query(
-          `SELECT DISTINCT idUnloadingPoint FROM oderslist where ${filterUnload}`
+          `SELECT DISTINCT idUnloadingPoint FROM oderslist WHERE ${filterUnload}`
         );
       } else [data] = await db.query(`SELECT DISTINCT idUnloadingPoint FROM oderslist`);
       setData.unloadingPoint = data;
       setData.filteredCustomerPrice = [];
       if (filterCustomerPrice) {
         [data] = await db.query(
-          `select min(customerPrice) as 'minCustomerPrice' FROM oderslist where ${filterCustomerPrice}`
+          `SELECT min(customerPrice) as 'minCustomerPrice' FROM oderslist WHERE ${filterCustomerPrice}`
         );
       } else {
         [data] = await db.query(
-          `select min(customerPrice) as 'minCustomerPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR);`
+          `SELECT min(customerPrice) as 'minCustomerPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
         );
       }
       setData.filteredCustomerPrice[0] = data[0].minCustomerPrice;
       if (filterCustomerPrice) {
         [data] = await db.query(
-          `select max(customerPrice) as 'maxCustomerPrice' FROM oderslist where ${filterCustomerPrice}`
+          `SELECT max(customerPrice) as 'maxCustomerPrice' FROM oderslist WHERE ${filterCustomerPrice}`
         );
       } else {
         [data] = await db.query(
-          `select max(customerPrice) as 'maxCustomerPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR);`
+          `SELECT max(customerPrice) as 'maxCustomerPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
         );
       }
       setData.filteredCustomerPrice[1] = data[0].maxCustomerPrice;
       setData.filteredDriverPrice = [];
       if (filterDriverPrice) {
         [data] = await db.query(
-          `select min(driverPrice) as 'minDriverPrice' FROM oderslist where ${filterDriverPrice}`
+          `SELECT min(driverPrice) as 'minDriverPrice' FROM oderslist WHERE ${filterDriverPrice}`
         );
       } else {
         [data] = await db.query(
-          `select min(driverPrice) as 'minDriverPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR);`
+          `SELECT min(driverPrice) as 'minDriverPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
         );
       }
       setData.filteredDriverPrice[0] = data[0].minDriverPrice;
       if (filterDriverPrice) {
         [data] = await db.query(
-          `select max(driverPrice) as 'maxDriverPrice' FROM oderslist where ${filterDriverPrice}`
+          `SELECT max(driverPrice) as 'maxDriverPrice' FROM oderslist WHERE ${filterDriverPrice}`
         );
       } else {
         [data] = await db.query(
-          `select max(driverPrice) as 'maxDriverPrice' FROM oderslist where date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR);`
+          `SELECT max(driverPrice) as 'maxDriverPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
         );
       }
       setData.filteredDriverPrice[1] = data[0].maxDriverPrice;
       if (filterProxy) {
-        [data] = await db.query(`SELECT DISTINCT proxy FROM oderslist where ${filterProxy}`);
+        [data] = await db.query(`SELECT DISTINCT proxy FROM oderslist WHERE ${filterProxy}`);
       } else [data] = await db.query(`SELECT DISTINCT proxy FROM oderslist`);
       setData.proxy = data;
       if (filterCompleted) {
         [data] = await db.query(
-          `SELECT DISTINCT completed FROM oderslist where ${filterCompleted}`
+          `SELECT DISTINCT completed FROM oderslist WHERE ${filterCompleted}`
         );
       } else [data] = await db.query(`SELECT DISTINCT completed FROM oderslist`);
       setData.proxy = data;
       if (filterDocuments) {
-        [data] = await db.query(`SELECT DISTINCT document FROM oderslist where ${filterDocuments}`);
+        [data] = await db.query(`SELECT DISTINCT document FROM oderslist WHERE ${filterDocuments}`);
       } else [data] = await db.query(`SELECT DISTINCT document FROM oderslist`);
       setData.documents = data;
       if (filterCustomerPayment) {
         [data] = await db.query(
-          `SELECT DISTINCT customerPayment FROM oderslist where ${filterCustomerPayment}`
+          `SELECT DISTINCT customerPayment FROM oderslist WHERE ${filterCustomerPayment}`
         );
       } else [data] = await db.query(`SELECT DISTINCT customerPayment FROM oderslist`);
       setData.customerPayment = data;
       if (filterDriverPayment) {
         [data] = await db.query(
-          `SELECT DISTINCT driverPayment FROM oderslist where ${filterDriverPayment}`
+          `SELECT DISTINCT driverPayment FROM oderslist WHERE ${filterDriverPayment}`
         );
       } else [data] = await db.query(`SELECT DISTINCT driverPayment FROM oderslist`);
       setData.driverPayment = data;
       if (filterAccount) {
         [data] = await db.query(
-          `SELECT DISTINCT accountNumber FROM oderslist where ${filterAccount}`
+          `SELECT DISTINCT accountNumber FROM oderslist WHERE ${filterAccount}`
         );
       } else [data] = await db.query(`SELECT DISTINCT accountNumber FROM oderslist`);
       setData.filterAccount = data;
 
       [data] = await db.query(
-        `(SELECT * FROM oderslist where ${filterStr} ORDER BY _id DESC LIMIT 50000) ORDER BY _id`
+        `(SELECT * FROM oderslist WHERE ${filterStr} ORDER BY _id DESC LIMIT 50000) ORDER BY _id`
       );
       setData.odersList = data;
       callback(setData);
@@ -452,7 +451,7 @@ var Tasks = {
     };
     if (oder.customerPrice === '') oder.customerPrice = null;
     if (oder.driverPrice === '') oder.driverPrice = null;
-    
+
     try {
       let [data] = await db.query('INSERT INTO oderslist SET ?', oder);
       addData.orderId = data.insertId;
@@ -502,11 +501,11 @@ var Tasks = {
       };
     }
     try {
-      await db.query(`UPDATE oderslist SET ? WHERE _id=?`, [newData, data._id]);
+      await db.query(`UPDATE oderslist SET ? WHERE _id = ?`, [newData, data._id]);
       if (data.colorTR == 'hotpink') {
-        let [q] = await db.query(`SELECT * FROM addtable where orderId=${data._id}`);
+        let [q] = await db.query(`SELECT * FROM addtable WHERE orderId = ?`, [data._id]);
         if (q.length) {
-          await db.query(`UPDATE addtable SET ? WHERE orderId=?`, [addData, data._id]);
+          await db.query(`UPDATE addtable SET ? WHERE orderId = ?`, [addData, data._id]);
         } else {
           await db.query(`INSERT INTO addtable SET ?`, addData);
         }
@@ -604,10 +603,10 @@ var Tasks = {
         break;
     }
     try {
-      let [userRole] = await db.query(`SELECT * FROM users WHERE _id=${userId}`);
+      let [userRole] = await db.query(`SELECT * FROM users WHERE _id = ?`, [userId]);
       console.log(userRole[0]);
       if (userRole[0].role == 'admin' || allowedField == true) {
-        let [data] = await db.query(`UPDATE oderslist SET ? WHERE _id=?`, [change, newdata.id]);
+        let [data] = await db.query(`UPDATE oderslist SET ? WHERE _id = ?`, [change, newdata.id]);
         callback(data);
       } else {
         callback({ error: 'Недостаточно прав для редактирования этого поля' });
@@ -638,35 +637,35 @@ var Tasks = {
       }
     });
     try {
-      let [dataelem] = await db.query(
-        `select * FROM pet_proect.oderslist where _id in (${idList})`
-      );
+      let [dataelem] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`, [
+        idList.split(','),
+      ]);
       for (const elem of dataelem) {
         if (elem.customerPayment == 'Ок')
           throw new Error('Некоторые заказы уже оплачены обновите страницу');
       }
-      let [dataOder] = await db.query(
-        `select * FROM pet_proect.oderslist where _id=${data.arr[0].id}`
-      );
+      let [dataOder] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id = ?`, [
+        data.arr[0].id,
+      ]);
       let customerId = dataOder[0].idCustomer;
       console.log(sumChosenOders);
       console.log(data.sumCustomerPayment + data.extraPayments);
       console.log(sumChosenOders == data.sumCustomerPayment + data.extraPayments);
       if (sumChosenOders == Number(data.sumCustomerPayment) + Number(data.extraPayments)) {
-        await db.query(`UPDATE oders SET extraPayments=Null WHERE _id=${customerId}`);
+        await db.query(`UPDATE oders SET extraPayments = NULL WHERE _id = ?`, [customerId]);
       } else {
-        await db.query(
-          `UPDATE oders SET extraPayments=${
-            data.extraPayments + Number(data.sumCustomerPayment) - sumChosenOders
-          } WHERE _id=${customerId}`
-        );
+        await db.query(`UPDATE oders SET extraPayments = ? WHERE _id = ?`, [
+          data.extraPayments + Number(data.sumCustomerPayment) - sumChosenOders,
+          customerId,
+        ]);
       }
       for (let i = 0; i < data.arr.length; i++) {
         let index = data.arr.findIndex(element => element.id == dataelem[i]._id);
         console.log(dataelem[i]._id, data.arr[index]);
         if (dataelem[i].customerPrice == data.arr[index].customerPrice) {
           await db.query(
-            `UPDATE oderslist SET customerPayment="Ок", dateOfPromise="${formattedNow}" WHERE _id=${data.arr[index].id}`
+            `UPDATE oderslist SET customerPayment = "Ок", dateOfPromise = ? WHERE _id = ?`,
+            [formattedNow, data.arr[index].id]
           );
         } else {
           if (
@@ -675,7 +674,8 @@ var Tasks = {
               data.arr[index].customerPrice
           ) {
             await db.query(
-              `UPDATE oderslist SET customerPayment="Ок", partialPaymentAmount=Null WHERE _id=${data.arr[index].id}`
+              `UPDATE oderslist SET customerPayment = "Ок", partialPaymentAmount = NULL WHERE _id = ?`,
+              [data.arr[index].id]
             );
           }
           if (
@@ -684,16 +684,17 @@ var Tasks = {
               data.arr[index].customerPrice
           ) {
             await db.query(
-              `UPDATE oderslist SET customerPayment="Частично оплачен", partialPaymentAmount=${
-                Number(data.arr[index].customerPrice) + Number(dataelem[i].partialPaymentAmount)
-              } WHERE _id=${data.arr[index].id}`
+              `UPDATE oderslist SET customerPayment = "Частично оплачен", partialPaymentAmount = ? WHERE _id = ?`,
+              [
+                Number(data.arr[index].customerPrice) + Number(dataelem[i].partialPaymentAmount),
+                data.arr[index].id,
+              ]
             );
           }
           if (dataelem[i].customerPayment != 'Частично оплачен') {
             await db.query(
-              `UPDATE oderslist SET customerPayment="Частично оплачен", partialPaymentAmount=${Number(
-                data.arr[index].customerPrice
-              )} WHERE _id=${data.arr[index].id}`
+              `UPDATE oderslist SET customerPayment = "Частично оплачен", partialPaymentAmount = ? WHERE _id = ?`,
+              [Number(data.arr[index].customerPrice), data.arr[index].id]
             );
           }
         }
@@ -707,9 +708,9 @@ var Tasks = {
       };
       console.log(paymentString);
       await db.query('INSERT INTO customerpayment SET ?', paymentString);
-      let [dataChanged] = await db.query(
-        `select * FROM pet_proect.oderslist where _id in (${idList})`
-      );
+      let [dataChanged] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`, [
+        idList.split(','),
+      ]);
       callback(dataChanged);
     } catch (err) {
       console.log(err);
@@ -720,18 +721,20 @@ var Tasks = {
   getDataById: async function (id, table, callback) {
     let dataById = {};
     try {
-      let [data] = await db.query(`select * FROM ${table} WHERE _id=${id}`);
+      let [data] = await db.query(`SELECT * FROM ${table} WHERE _id = ?`, [id]);
       dataById.order = data[0];
       dataById.date = data[0].date;
       dataById.accountNumber = data[0].accountNumber;
-      [dataById.customer] = await db.query(`select * FROM oders WHERE _id=${data[0].idCustomer}`);
-      [dataById.driver] = await db.query(
-        `select * FROM trackdrivers WHERE _id=${data[0].idTrackDriver}`
-      );
+      [dataById.customer] = await db.query(`SELECT * FROM oders WHERE _id = ?`, [
+        data[0].idCustomer,
+      ]);
+      [dataById.driver] = await db.query(`SELECT * FROM trackdrivers WHERE _id = ?`, [
+        data[0].idTrackDriver,
+      ]);
       if (data[0].idManager != null && data[0].idManager != '') {
-        [dataById.manager] = await db.query(
-          `select * FROM clientmanager WHERE _id=${data[0].idManager}`
-        );
+        [dataById.manager] = await db.query(`SELECT * FROM clientmanager WHERE _id = ?`, [
+          data[0].idManager,
+        ]);
       }
       callback(dataById);
     } catch (err) {
@@ -739,10 +742,10 @@ var Tasks = {
     }
   },
 
-  getDataBy_IdPromise: async function (id, table) {  
+  getDataBy_IdPromise: async function (id, table) {
     let dataById = {};
     try {
-      let [data] = await db.query(`select * FROM ${table} WHERE _id=${id}`);
+      let [data] = await db.query(`SELECT * FROM ${table} WHERE _id = ?`, [id]);
       dataById = data[0];
       return dataById;
     } catch (err) {
@@ -750,10 +753,9 @@ var Tasks = {
     }
   },
   getDataByIdPromise: async function (id, table) {
-    
     let dataById = {};
     try {
-      let [data] = await db.query(`select * FROM ${table} WHERE id=${id}`);
+      let [data] = await db.query(`SELECT * FROM ${table} WHERE id = ?`, [id]);
       dataById = data[0];
       return dataById;
     } catch (err) {
@@ -763,9 +765,10 @@ var Tasks = {
 
   del: async function (id, callback) {
     try {
-      let [data] = await db.query(`SELECT * FROM oderslist WHERE _id=${id}`);
-      await db.query(`DELETE FROM oderslist WHERE _id=${id}`);
-      if (data[0].colorTR == 'hotpink') await db.query(`DELETE FROM addtable WHERE orderId=${id}`);
+      let [data] = await db.query(`SELECT * FROM oderslist WHERE _id = ?`, [id]);
+      await db.query(`DELETE FROM oderslist WHERE _id = ?`, [id]);
+      if (data[0].colorTR == 'hotpink')
+        await db.query(`DELETE FROM addtable WHERE orderId = ?`, [id]);
       callback('Success!');
     } catch (err) {
       callback({ error: err });
@@ -774,16 +777,16 @@ var Tasks = {
   getDataFromTableById: async (id, table, callback) => {
     let dataFromTable = {};
     try {
-      let [data] = await db.query(`select * FROM ${table} WHERE _id=${id}`);
+      let [data] = await db.query(`SELECT * FROM ${table} WHERE _id = ?`, [id]);
       dataFromTable = data[0];
       callback(dataFromTable);
     } catch (err) {
       callback({ error: err });
     }
   },
-  editField: async (id, table, field, newValue, callback) => {   
+  editField: async (id, table, field, newValue, callback) => {
     try {
-      await db.query(`UPDATE ${table} SET ${field} = ${newValue} WHERE _id = ${id}`);
+      await db.query(`UPDATE ${table} SET ${field} = ? WHERE _id = ?`, [newValue, id]);
       callback('success!');
     } catch (err) {
       console.log(err);
@@ -820,7 +823,7 @@ var Tasks = {
     if (oder.driverPrice === '') oder.driverPrice = null;
     try {
       let [data] = await db.query('INSERT INTO oderslist SET ?', oder);
-      await db.query(`UPDATE customerorders set orderId =${data.insertId} WHERE _id=${appId}`);
+      await db.query(`UPDATE customerorders SET orderId = ? WHERE _id = ?`, [data.insertId, appId]);
       addData.orderId = data.insertId;
       if (oder.colorTR == 'hotpink') {
         await db.query(`INSERT INTO addtable SET ?`, addData);
