@@ -628,17 +628,11 @@ var Tasks = {
       .replace('T', ' ');
     console.log(now);
     let sumChosenOders = data.arr.reduce((sum, item) => sum + item.customerPrice, 0);
-    let idList = '';
-    data.arr.forEach(elem => {
-      if (idList == '') {
-        idList = elem.id;
-      } else {
-        idList = idList + ',' + elem.id;
-      }
-    });
+    let idList = data.arr.map(elem => elem.id);
+
     try {
       let [dataelem] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`, [
-        idList.split(','),
+        idList,
       ]);
       for (const elem of dataelem) {
         if (elem.customerPayment == 'Ок')
@@ -709,7 +703,7 @@ var Tasks = {
       console.log(paymentString);
       await db.query('INSERT INTO customerpayment SET ?', paymentString);
       let [dataChanged] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`, [
-        idList.split(','),
+        idList,
       ]);
       callback(dataChanged);
     } catch (err) {
