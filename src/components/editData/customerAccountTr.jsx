@@ -19,7 +19,7 @@ export const CustomerAccountTr = props => {
   const [value, setValue] = useState(null);
 
   useEffect(() => {
-    if (props.customer.TIN != customerData.TIN || props.customer.RCBIC != customerData.RCBIC) {
+    {
       setCustomerData(props.customer);
     }
   }, [props.customer]);
@@ -166,7 +166,7 @@ export const CustomerAccountTr = props => {
 
   return (
     <React.Fragment>
-      <tr>
+      <tr className="customerAccountTr">
         <td
           className="customerTd"
           onDoubleClick={() => {

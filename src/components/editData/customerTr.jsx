@@ -1,27 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import axios from "axios";
-import { editData, delData } from "../../actions/editDataAction.js";
-import { DOMENNAME } from "../../middlewares/initialState.js";
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import axios from 'axios';
+import { editData, delData } from '../../actions/editDataAction.js';
+import { DOMENNAME } from '../../middlewares/initialState.js';
 
-import "./editData.sass";
+import './editData.sass';
 
-export const CustomerTr = (props) => {
+export const CustomerTr = props => {
   const dispatch = useDispatch();
 
   let elem = props.elem;
   const [colNumber, setColNumber] = useState(null);
   const [currentElement, setCurrentElement] = useState(null);
   const [styleTr, setStyleTr] = useState(null);
-  const [styleTd, setStileTd] = useState("customerTd");
+  const [styleTd, setStileTd] = useState('customerTd');
   const [value, setValue] = useState(null);
+  const [TIN, setTIN] = useState(elem.TIN);
+  const [prevTIN, setPrevTIN] = useState(elem.TIN);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [requestTIN, setRequestTIN] = useState([]);
 
   const handleClickTr = () => {
     props.getCurrentId(elem._id);
-    setStyleTr("customerActiveTr");
-    setStileTd("customerTd tdZ10");
+    setStyleTr('customerActiveTr');
+    setStileTd('customerTd');
   };
-  const handleDBLclick = (e) => {
+  const handleDBLclick = e => {
     let column = e.currentTarget.cellIndex;
     setColNumber(column);
     switch (column) {
@@ -56,15 +60,15 @@ export const CustomerTr = (props) => {
         break;
     }
     props.getCurrentId(elem._id);
-    e.currentTarget.width = e.currentTarget.offsetWidth - 2 + "px";
-    e.currentTarget.height = e.currentTarget.offsetHeight - 2 + "px";
+    e.currentTarget.width = e.currentTarget.offsetWidth - 2 + 'px';
+    e.currentTarget.height = e.currentTarget.offsetHeight - 2 + 'px';
     setCurrentElement(e.currentTarget);
   };
-  const handleChange = (e) => {
+  const handleChange = e => {
     setValue(e.currentTarget.value);
   };
-  const handleEnter = (e) => {
-    if (e.key == "Enter") {
+  const handleEnter = e => {
+    if (e.key == 'Enter') {
       let { ...obj } = elem;
       switch (colNumber) {
         case 0:
@@ -75,6 +79,7 @@ export const CustomerTr = (props) => {
           break;
         case 2:
           obj.TIN = e.currentTarget.value;
+          setTIN(e.currentTarget.value);
           break;
         case 3:
           obj.address = e.currentTarget.value;
@@ -87,10 +92,10 @@ export const CustomerTr = (props) => {
           break;
         case 6:
           obj.phone = e.currentTarget.value;
-          let str = e.currentTarget.value.split("");
-          let newPhone = "";
-          str.forEach((elem) => {
-            if (elem != " " && elem != "-" && elem != "(" && elem != ")")
+          let str = e.currentTarget.value.split('');
+          let newPhone = '';
+          str.forEach(elem => {
+            if (elem != ' ' && elem != '-' && elem != '(' && elem != ')')
               newPhone = newPhone + elem;
           });
           obj.phone = newPhone;
@@ -105,60 +110,93 @@ export const CustomerTr = (props) => {
           break;
       }
       console.log(obj);
-      dispatch(editData(obj, "oders"));
+      dispatch(editData(obj, 'oders'));
       setColNumber(null);
     }
   };
-  const handleRadio = (e) => {
+  const handleRadio = e => {
     let { ...obj } = elem;
     obj.active = e.currentTarget.value;
-    dispatch(editData(obj, "oders"));
+    dispatch(editData(obj, 'oders'));
     setColNumber(null);
   };
   const handleClickDelete = () => {
-    let password = prompt("Подтвердите удаление", "Пароль");
-    if (password == "Пароль") {
-      dispatch(delData(elem._id, "oders"));
+    let password = prompt('Подтвердите удаление', 'Пароль');
+    if (password == 'Пароль') {
+      dispatch(delData(elem._id, 'oders'));
     }
   };
   const handleLoadContract = () => {
     axios
       .get(`${DOMENNAME}/API/getContractPDF?customer=${elem.value}`, {
-        responseType: "blob",
+        responseType: 'blob',
       })
-      .then((response) => {
-        const url = URL.createObjectURL(
-          new Blob([response.data], { type: "application/pdf" })
-        );
-        window.open(url, "_blank");
+      .then(response => {
+        const url = URL.createObjectURL(new Blob([response.data], { type: 'application/pdf' }));
+        window.open(url, '_blank');
         URL.revokeObjectURL(url);
       })
-      .catch((error) => {
-        console.error("Ошибка при загрузке PDF:", error);
+      .catch(error => {
+        console.error('Ошибка при загрузке PDF:', error);
       });
+  };
+  const handleSuggestionClick = suggestion => {
+    console.log(suggestion);
+    let newData = { ...elem };
+    newData.companyName = suggestion.data.name.short_with_opf || 'нет данных';
+    newData.KPP = suggestion.data.kpp || 'нет данных';
+    newData.address = suggestion.data.address.unrestricted_value || 'нет данных';
+    newData.OGRN = suggestion.data.ogrn || 'нет данных';
+    let fio = suggestion.data.fio;
+    if (fio) newData.bossName = fio.surname + ' ' + fio.name + ' ' + fio.patronymic || 'нет данных';
+    console.log(newData);
+    dispatch(editData(newData, 'oders'));
+    setShowSuggestions(false);
   };
 
   useEffect(() => {
     if (props.currentId != elem._id) {
       setColNumber(null);
       setStyleTr(null);
-      setStileTd("customerTd");
+      setStileTd('customerTd');
     }
   }, [props.currentId]);
   useEffect(() => {
     if (currentElement) currentElement.firstChild.focus();
   }, [currentElement]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         setColNumber(null);
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, []);
+  useEffect(() => {
+    if (TIN != null) {
+      if (TIN.length == 10 || TIN.length == 12) {
+        if (TIN != prevTIN) {
+          setPrevTIN(TIN);
+          setShowSuggestions(true);
+          const data = {
+            query: TIN,
+          };
+          axios
+            .post(DOMENNAME + '/API/dadataTIN', data)
+            .then(response => {
+              setRequestTIN(response.data.suggestions);
+              console.log(response.data.suggestions);
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        }
+      }
+    }
+  }, [TIN]);
 
   return (
     <tr onClick={handleClickTr} className={styleTr}>
@@ -198,7 +236,23 @@ export const CustomerTr = (props) => {
             value={value}
           />
         ) : (
-          elem.TIN
+          <>
+            {elem.TIN}
+            {showSuggestions && (
+              <div className="suggestionsTdDiv">
+                {requestTIN.map((suggestion, index) => {
+                  return (
+                    <div
+                      key={`suggestion-${index}`}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                    >
+                      <span className="suggestionsTdSpan">{suggestion.value}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </>
         )}
       </td>
       <td className={styleTd} onDoubleClick={handleDBLclick}>
@@ -279,7 +333,7 @@ export const CustomerTr = (props) => {
             >
               <path d="M19 9V7a7 7 0 0 0-14 0v2"></path>
               <polyline points="16 13 12 17 8 13"></polyline>
-              <line x1="12" y1="17" x2="12" y2="9"></line>{" "}
+              <line x1="12" y1="17" x2="12" y2="9"></line>{' '}
             </svg>
           </div>
         )}
@@ -288,28 +342,18 @@ export const CustomerTr = (props) => {
         {colNumber == 8 ? (
           <div>
             <span>
-              <input
-                type="radio"
-                name="active"
-                value={1}
-                onChange={handleRadio}
-              />
+              <input type="radio" name="active" value={1} onChange={handleRadio} />
               Да
             </span>
             <span>
-              <input
-                type="radio"
-                name="active"
-                value={0}
-                onChange={handleRadio}
-              />
+              <input type="radio" name="active" value={0} onChange={handleRadio} />
               Нет
             </span>
           </div>
         ) : elem.active == 1 ? (
-          "да"
+          'да'
         ) : (
-          "нет"
+          'нет'
         )}
         {styleTr != null && (
           <div className="customerPaymentTrClose" onClick={handleClickDelete}>

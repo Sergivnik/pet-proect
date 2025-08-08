@@ -1,26 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { CustomerAddTr } from "./customerAddTr.jsx";
-import { CustomerTr } from "./customerTr.jsx";
-import { CustomerManagerTr } from "./customerManagerTr.jsx";
-import { CustomerManagerAddTr } from "./customerManagerAddTr.jsx";
-import { addData, editData } from "../../actions/editDataAction.js";
-import { ChoiseTwoList } from "../choiseList/choiseTwoList.jsx";
-import { InputText } from "../myLib/inputText.jsx";
-import { CustomerAccountTr } from "./customerAccountTr.jsx";
-import { UserWindow } from "../userWindow/userWindow.jsx";
-import { CustomerAddDiv } from "./customerAddDiv.jsx";
-import { ContractForm } from "./contractForm/contractForm.jsx";
-import "./editData.sass";
-import { FormAddDoc } from "../userTrNew/formAddDoc.jsx";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { CustomerAddTr } from './customerAddTr.jsx';
+import { CustomerTr } from './customerTr.jsx';
+import { CustomerManagerTr } from './customerManagerTr.jsx';
+import { CustomerManagerAddTr } from './customerManagerAddTr.jsx';
+import { addData, editData } from '../../actions/editDataAction.js';
+import { ChoiseTwoList } from '../choiseList/choiseTwoList.jsx';
+import { InputText } from '../myLib/inputText.jsx';
+import { CustomerAccountTr } from './customerAccountTr.jsx';
+import { UserWindow } from '../userWindow/userWindow.jsx';
+import { CustomerAddDiv } from './customerAddDiv.jsx';
+import { ContractForm } from './contractForm/contractForm.jsx';
+import './editData.sass';
+import { FormAddDoc } from '../userTrNew/formAddDoc.jsx';
 
 export const CustomerTable = ({ id }) => {
   const dispatch = useDispatch();
-  const clientListFull = useSelector((state) => state.oderReducer.clientList);
-  const clientManagerFull = useSelector(
-    (state) => state.oderReducer.clientmanager
-  );
-  const orderList = useSelector((state) => state.oderReducer.originOdersList);
+  const clientListFull = useSelector(state => state.oderReducer.clientList);
+  const clientManagerFull = useSelector(state => state.oderReducer.clientmanager);
+  const orderList = useSelector(state => state.oderReducer.originOdersList);
 
   const [customerList, setCustomerList] = useState(clientListFull);
   const [currentCustomer, setCurrentCustomer] = useState(null);
@@ -44,39 +42,37 @@ export const CustomerTable = ({ id }) => {
   const [averagePaymentTerm, setAveragePaymentTerm] = useState(0);
   const [maxPaymentTerm, setMaxPaymentTerm] = useState(0);
 
-  const setValue = (data) => {
-    let arr = clientListFull.filter((elem) => elem._id == data._id);
-    let arrManager = clientManagerFull.filter(
-      (elem) => elem.odersId == data._id
-    );
+  const setValue = data => {
+    let arr = clientListFull.filter(elem => elem._id == data._id);
+    let arrManager = clientManagerFull.filter(elem => elem.odersId == data._id);
     setCustomerList(arr);
     setChosenId(data._id);
     setShowManagerTable(true);
     setClientManager(arrManager);
     setCurrentCustomer(arr[0]);
     console.log(data);
-    let manager = arrManager.find((manager) => manager.phone == data.value);
+    let manager = arrManager.find(manager => manager.phone == data.value);
     if (manager) setCurrentId(manager._id);
   };
-  const handleChangeBox = (e) => {
+  const handleChangeBox = e => {
     if (e.currentTarget.checked) {
       let [...arr] = clientListFull;
       setCheck(true);
       setCurrentCustomer(null);
-      setCustomerList(arr.filter((elem) => elem.active == 1));
+      setCustomerList(arr.filter(elem => elem.active == 1));
     } else {
       setCustomerList(clientListFull);
       setCheck(false);
     }
   };
-  const getCurrentId = (id) => {
+  const getCurrentId = id => {
     setCurrentId(id);
   };
   const handleClickAdd = () => {
     setShowAddTr(true);
   };
-  const handleAddCustomer = (data) => {
-    dispatch(addData(data, "oders"));
+  const handleAddCustomer = data => {
+    dispatch(addData(data, 'oders'));
     setShowAddTr(false);
     setIsNewCustomer(true);
   };
@@ -93,7 +89,7 @@ export const CustomerTable = ({ id }) => {
     setShowManagerTable(false);
     setCurrentCustomer(null);
     if (check) {
-      setCustomerList(clientListFull.filter((elem) => elem.active == 1));
+      setCustomerList(clientListFull.filter(elem => elem.active == 1));
     } else {
       setCustomerList(clientListFull);
     }
@@ -101,11 +97,11 @@ export const CustomerTable = ({ id }) => {
   const handleClickAddManager = () => {
     setShowAddManagerTr(true);
   };
-  const handleAddManager = (data) => {
-    dispatch(addData(data, "clientmanager"));
+  const handleAddManager = data => {
+    dispatch(addData(data, 'clientmanager'));
     setShowAddManagerTr(false);
   };
-  const handleChangeAddInfo = (e) => {
+  const handleChangeAddInfo = e => {
     e.preventDefault();
     setShowInput(true);
     console.log(customerList[0]);
@@ -113,19 +109,19 @@ export const CustomerTable = ({ id }) => {
   const getAddInfo = (name, text) => {
     let obj = { ...customerList[0] };
     obj.addInfo = text;
-    dispatch(editData(obj, "oders"));
+    dispatch(editData(obj, 'oders'));
     console.log(obj);
     setShowInput(false);
   };
-  const handleClickWindowClose = (windowId) => {
-    if (windowId == "customerAddWindow") setShowAddTr(false);
-    if (windowId == "contractAddWindow") setShowAddContract(false);
+  const handleClickWindowClose = windowId => {
+    if (windowId == 'customerAddWindow') setShowAddTr(false);
+    if (windowId == 'contractAddWindow') setShowAddContract(false);
   };
   const handleClickAddContract = () => {
     setShowAddContract(true);
   };
   const handleClickAddPdfContract = () => {
-    let currentElement = document.querySelector(".EDFmainForm");
+    let currentElement = document.querySelector('.EDFmainForm');
     setCurrentTD(currentElement);
     setShowAddPdfFile(true);
   };
@@ -134,16 +130,16 @@ export const CustomerTable = ({ id }) => {
   };
 
   useEffect(() => {
-    let [...arr] = clientListFull.filter((elem) => elem.active == 1);
+    let [...arr] = clientListFull.filter(elem => elem.active == 1);
     setCustomerList(arr);
   }, []);
   useEffect(() => {
     if (chosenId != null) {
-      let arr = clientListFull.filter((elem) => elem._id == chosenId);
+      let arr = clientListFull.filter(elem => elem._id == chosenId);
       setCustomerList(arr);
     } else {
       if (check) {
-        setCustomerList(clientListFull.filter((elem) => elem.active == 1));
+        setCustomerList(clientListFull.filter(elem => elem.active == 1));
       } else {
         setCustomerList(clientListFull);
       }
@@ -155,15 +151,13 @@ export const CustomerTable = ({ id }) => {
   }, [reset]);
   useEffect(() => {
     if (showManagerTable) {
-      let [...arr] = clientManagerFull.filter(
-        (elem) => elem.odersId == chosenId
-      );
+      let [...arr] = clientManagerFull.filter(elem => elem.odersId == chosenId);
       setClientManager(arr);
     }
   }, [clientManagerFull]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (showInput) {
           setShowInput(false);
         } else {
@@ -172,14 +166,14 @@ export const CustomerTable = ({ id }) => {
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showInput]);
   useEffect(() => {
-    let arr = clientListFull.filter((elem) => elem._id == id);
-    let arrManager = clientManagerFull.filter((elem) => elem.odersId == id);
+    let arr = clientListFull.filter(elem => elem._id == id);
+    let arrManager = clientManagerFull.filter(elem => elem.odersId == id);
     setCustomerList(arr);
     setChosenId(id);
     setShowManagerTable(true);
@@ -195,21 +189,15 @@ export const CustomerTable = ({ id }) => {
       let numberOfOrders = 0;
       let averagePaymentTerm = 0;
       let maxPaymentTerm = 0;
-      orderList.forEach((order) => {
-        if (
-          order.idCustomer == currentCustomer._id &&
-          order.customerPayment != "Ок"
-        ) {
+      orderList.forEach(order => {
+        if (order.idCustomer == currentCustomer._id && order.customerPayment != 'Ок') {
           sumOfDebt = sumOfDebt + Number(order.customerPrice);
         }
 
-        if (
-          order.idCustomer == currentCustomer._id &&
-          new Date(order.date) > yearAgo
-        ) {
+        if (order.idCustomer == currentCustomer._id && new Date(order.date) > yearAgo) {
           turnover = turnover + Number(order.customerPrice);
           numberOfOrders = numberOfOrders + 1;
-          if (order.customerPayment == "Ок" && order.dateOfPromise != null) {
+          if (order.customerPayment == 'Ок' && order.dateOfSubmission != null) {
             const date1 = new Date(order.date); // Первая дата
             const date2 = new Date(order.dateOfSubmission); // Вторая дата
 
@@ -231,6 +219,15 @@ export const CustomerTable = ({ id }) => {
       setLimit(currentCustomer.limit);
     }
   }, [currentCustomer]);
+
+  useEffect(() => {
+    if (chosenId != null && customerList.length == 1) {
+      let updatedCustomer = clientListFull.find(elem => elem._id == chosenId);
+      if (updatedCustomer) {
+        setCustomerList([updatedCustomer]);
+      }
+    }
+  }, [clientListFull, chosenId]);
 
   return (
     <React.Fragment>
@@ -275,10 +272,10 @@ export const CustomerTable = ({ id }) => {
             </tr>
           </thead>
           <tbody className="customerTbody">
-            {customerList.map((elem) => {
+            {customerList.map(elem => {
               return (
                 <CustomerTr
-                  key={"customer" + elem._id}
+                  key={'customer' + elem._id}
                   elem={elem}
                   getCurrentId={getCurrentId}
                   currentId={currentId}
@@ -304,9 +301,7 @@ export const CustomerTable = ({ id }) => {
               <tr>
                 <td className="customerTdHeader">КПП</td>
                 <td className="customerTdHeader">ОГРН</td>
-                <td className="customerTdHeader">
-                  ФИО директора в род. падеже
-                </td>
+                <td className="customerTdHeader">ФИО директора в род. падеже</td>
                 <td className="customerTdHeader">БИК</td>
                 <td className="customerTdHeader">р/сч</td>
                 <td className="customerTdHeader">кор/сч</td>
@@ -323,35 +318,27 @@ export const CustomerTable = ({ id }) => {
           <div className="tableManagerDiv">
             <header className="managerHeader">
               <div className="addContractBtnWrap">
-                <button
-                  className="addContractBtn"
-                  onClick={handleClickAddContract}
-                >
+                <button className="addContractBtn" onClick={handleClickAddContract}>
                   Создать договор
                 </button>
-                <button
-                  className="addContractBtn"
-                  onClick={handleClickAddPdfContract}
-                >
+                <button className="addContractBtn" onClick={handleClickAddPdfContract}>
                   Добавить договор
                 </button>
               </div>
               <div className="divAddInfo">
-                <span className="spanAddInfo">{"Особые условия "}</span>
+                <span className="spanAddInfo">{'Особые условия '}</span>
                 {!showInput && (
                   <span
                     className="spanAddInfoInput"
                     onDoubleClick={handleChangeAddInfo}
-                    onMouseDown={(e) => {
+                    onMouseDown={e => {
                       e.preventDefault();
                       return false;
                     }}
                   >
                     {customerList[0]
-                      ? ` ${
-                          customerList[0].addInfo ? customerList[0].addInfo : ""
-                        }`
-                      : ""}
+                      ? ` ${customerList[0].addInfo ? customerList[0].addInfo : ''}`
+                      : ''}
                   </span>
                 )}
                 {showInput && (
@@ -359,9 +346,7 @@ export const CustomerTable = ({ id }) => {
                     name="addInfo"
                     typeInput="text"
                     className="inputAddInfo"
-                    text={
-                      customerList[0].addInfo ? customerList[0].addInfo : ""
-                    }
+                    text={customerList[0].addInfo ? customerList[0].addInfo : ''}
                     getText={getAddInfo}
                   />
                 )}
@@ -373,22 +358,16 @@ export const CustomerTable = ({ id }) => {
             <div
               className={
                 debtOfCustomer < limit || limit == null
-                  ? "divDebtOfCustomer"
-                  : "divDebtOfCustomer red"
+                  ? 'divDebtOfCustomer'
+                  : 'divDebtOfCustomer red'
               }
             >
               {`Долг клиента равен ${debtOfCustomer} руб`}
               <div className="divInfoOfCustomer">
                 <div className="divInfoData">Оборот {turnover} руб</div>
-                <div className="divInfoData">
-                  Срок оплаты средний {averagePaymentTerm} дн
-                </div>
-                <div className="divInfoData">
-                  Срок оплаты иакс {maxPaymentTerm} дн
-                </div>
-                <div className="divInfoData">
-                  Кол-во заказов {numberOfOrders}{" "}
-                </div>
+                <div className="divInfoData">Срок оплаты средний {averagePaymentTerm} дн</div>
+                <div className="divInfoData">Срок оплаты иакс {maxPaymentTerm} дн</div>
+                <div className="divInfoData">Кол-во заказов {numberOfOrders} </div>
               </div>
             </div>
             <table className="managerTbl">
@@ -404,10 +383,10 @@ export const CustomerTable = ({ id }) => {
                 </tr>
               </thead>
               <tbody className="customerManagerTbody">
-                {clientManager.map((elem) => {
+                {clientManager.map(elem => {
                   return (
                     <CustomerManagerTr
-                      key={"customerManager" + elem._id}
+                      key={'customerManager' + elem._id}
                       elem={elem}
                       getCurrentId={getCurrentId}
                       currentId={currentId}
@@ -415,10 +394,7 @@ export const CustomerTable = ({ id }) => {
                   );
                 })}
                 {showAddManagerTr && (
-                  <CustomerManagerAddTr
-                    handleAddManager={handleAddManager}
-                    customerId={chosenId}
-                  />
+                  <CustomerManagerAddTr handleAddManager={handleAddManager} customerId={chosenId} />
                 )}
               </tbody>
             </table>
