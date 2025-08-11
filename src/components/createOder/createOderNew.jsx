@@ -58,6 +58,7 @@ export const CreateOderNew = (props) => {
   const [showAddFields, setShowAddFields] = useState(false);
   const [debtOfCustomer, setDebtOfCustomer] = useState(null);
   const [limit, setLimit] = useState(null);
+  const [isCustomerActive, setIsCustomerActive] = useState(true);
 
   useEffect(() => {
     if (props.clickSave) setMainDivStyle("crOderMainDiv");
@@ -163,7 +164,11 @@ export const CreateOderNew = (props) => {
       let customerLimit = clientList.find(
         (elem) => elem._id == odersData.idCustomer
       ).limit;
+      let isCustomerActive = clientList.find(
+        (elem) => elem._id == odersData.idCustomer
+      ).active;
       setLimit(customerLimit);
+      setIsCustomerActive(isCustomerActive);
     }
   }, [odersData.idCustomer]);
 
@@ -234,7 +239,10 @@ export const CreateOderNew = (props) => {
     if (e.target.className == "crOderDateP") {
       setShowDateInput(true);
     }
-    if (e.target.className == "crOderClientP") {
+    if (
+      e.target.className == "crOderClientP" ||
+      e.target.className == "crOderClientP red"
+    ) {
       setShowClientInput(true);
     }
     if (e.target.className == "crOderManagerP") {
@@ -502,10 +510,13 @@ export const CreateOderNew = (props) => {
                 </div>
               ) : (
                 <p
-                  className="crOderClientP"
+                  className={isCustomerActive ? "crOderClientP" : "crOderClientP red"}
                   onDoubleClick={handleDblClick}
                   onMouseDown={(e) => {
-                    if (e.target.className == "crOderClientP")
+                    if (
+                      e.target.className == "crOderClientP" ||
+                      e.target.className == "crOderClientP red"
+                    )
                       e.preventDefault();
                   }}
                 >
