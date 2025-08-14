@@ -13,16 +13,20 @@ let TasksCard = {
       await connection.beginTransaction();
 
       if (data.driverDebtsId.length > 0) {
+        let placeholders = data.driverDebtsId.map(() => '?').join(',');
         let [listDriverDebts] = await connection.query(
-          `SELECT * FROM driverdebts where id in (${data.driverDebtsId});`
+          `SELECT * FROM driverdebts where id in (${placeholders})`,
+          data.driverDebtsId
         );
         sumOfDriverDebts = listDriverDebts.reduce((sum, debt) => sum + Number(debt.sumOfDebt), 0);
         console.log(sumOfDriverDebts);
       }
 
       if (data.customerDebtsId.length > 0) {
+        let placeholders = data.customerDebtsId.map(() => '?').join(',');
         let [listOfCustomerDebts] = await connection.query(
-          `SELECT sum,interest,customerPrice FROM addtable, oderslist where _id=orderId and id in (${data.customerDebtsId})`
+          `SELECT sum,interest,customerPrice FROM addtable, oderslist where _id=orderId and id in (${placeholders})`,
+          data.customerDebtsId
         );
         sumOfCustomerDebts = listOfCustomerDebts.reduce(
           (sum, debt) =>
@@ -48,17 +52,27 @@ let TasksCard = {
       }
 
       if (data.driverDebtsId.length > 0) {
-        await connection.query(`UPDATE driverdebts set card=1 where id in (${data.driverDebtsId})`);
+        let placeholders = data.driverDebtsId.map(() => '?').join(',');
+        await connection.query(
+          `UPDATE driverdebts set card=1 where id in (${placeholders})`,
+          data.driverDebtsId
+        );
         let [dataId] = await connection.query(
-          `INSERT contractorspayments(idContractor,date,sum,category) VALUES (5,'${cardPayment.date}',${sumOfDriverDebts},2)`
+          `INSERT contractorspayments(idContractor,date,sum,category) VALUES (?,?,?,?)`,
+          [5, cardPayment.date, sumOfDriverDebts, 2]
         );
         driverPaymentId = dataId.insertId;
       }
 
       if (data.customerDebtsId.length > 0) {
-        await connection.query(`UPDATE addtable set card=1 where id in (${data.customerDebtsId})`);
+        let placeholders = data.customerDebtsId.map(() => '?').join(',');
+        await connection.query(
+          `UPDATE addtable set card=1 where id in (${placeholders})`,
+          data.customerDebtsId
+        );
         let [dataId] = await connection.query(
-          `INSERT contractorspayments(idContractor,date,sum,category) VALUES (5,'${cardPayment.date}',${sumOfCustomerDebts},3)`
+          `INSERT contractorspayments(idContractor,date,sum,category) VALUES (?,?,?,?)`,
+          [5, cardPayment.date, sumOfCustomerDebts, 3]
         );
         customerPaymentId = dataId.insertId;
       }

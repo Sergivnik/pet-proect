@@ -19,31 +19,32 @@ var TaskPaymentsDriver = {
     try {
       let check = true;
       for (let oderId of data.chosenOders) {
-        let [data] = await db.query(`SELECT * FROM oderslist WHERE _id=${oderId}`);
+        let [data] = await db.query(`SELECT * FROM oderslist WHERE _id=?`, [oderId]);
         if (data[0].driverPayment == 'Ок') check = false;
       }
       if (check) {
         await db.query('INSERT INTO driverpayment SET ?', paymentString);
         for (let oderId of data.chosenOders) {
-          await db.query(`UPDATE oderslist SET ? WHERE _id=${oderId}`, [
+          await db.query(`UPDATE oderslist SET ? WHERE _id=?`, [
             { driverPayment: 'Ок', dateOfPayment: paymentString.date },
+            oderId,
           ]);
         }
         for (let debt of data.chosenDebts) {
           let [chosenDebt] = await db.query(
-            `SELECT sumOfDebt, paidPartOfDebt from driverdebts WHERE id=${debt.id} `
+            `SELECT sumOfDebt, paidPartOfDebt from driverdebts WHERE id=?`,
+            [debt.id]
           );
           let sumOfDebt = Number(chosenDebt[0].sumOfDebt);
           let paidPart = Number(chosenDebt[0].paidPartOfDebt);
           if (sumOfDebt - paidPart == debt.sum) {
-            await db.query(
-              `UPDATE driverdebts SET paidPartOfDebt=0, debtClosed="Ок" WHERE id=${debt.id}`
-            );
+            await db.query(`UPDATE driverdebts SET paidPartOfDebt=0, debtClosed="Ок" WHERE id=?`, [
+              debt.id,
+            ]);
           } else {
             await db.query(
-              `UPDATE driverdebts SET paidPartOfDebt=${
-                paidPart + debt.sum
-              }, debtClosed="частично" WHERE id=${debt.id}`
+              `UPDATE driverdebts SET paidPartOfDebt=?, debtClosed="частично" WHERE id=?`,
+              [paidPart + debt.sum, debt.id]
             );
           }
           console.log(chosenDebt[0], debt.sum);

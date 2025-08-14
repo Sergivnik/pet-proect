@@ -24,9 +24,11 @@ var TasksOwnerLogist = {
 
   edit: async function (data, callback) {
     try {
-      await db.query(
-        `UPDATE ownerlogist SET ${data.editField}="${data.newValue}" WHERE _id=${data.id}`
-      );
+      await db.query(`UPDATE ownerlogist SET ??=? WHERE _id=?`, [
+        data.editField,
+        data.newValue,
+        data.id,
+      ]);
       callback('success');
     } catch (err) {
       callback({ error: err });
@@ -35,7 +37,7 @@ var TasksOwnerLogist = {
 
   delete: async function (id, callback) {
     try {
-      await db.query(`DELETE FROM ownerlogist WHERE _id=${id}`);
+      await db.query(`DELETE FROM ownerlogist WHERE _id=?`, [id]);
       callback('success!');
     } catch (err) {
       console.log(err);

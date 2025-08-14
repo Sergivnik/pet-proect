@@ -16,7 +16,7 @@ var TaskDocs = {
     }
     try {
       for (const id of listId) {
-        await db.query(`UPDATE oderslist SET accountNumber="${docNumber}" WHERE _id=${id}`);
+        await db.query(`UPDATE oderslist SET accountNumber=? WHERE _id=?`, [docNumber, id]);
       }
       callback('success');
     } catch (err) {
@@ -102,9 +102,9 @@ var TaskDocs = {
     let data;
     try {
       if (table == 'contractorspayments') {
-        [data] = await db.query(`SELECT * FROM ${table} WHERE id=${id}`);
+        [data] = await db.query(`SELECT * FROM ?? WHERE id=?`, [table, id]);
       } else {
-        [data] = await db.query(`SELECT * FROM ${table} WHERE _id=${id}`);
+        [data] = await db.query(`SELECT * FROM ?? WHERE _id=?`, [table, id]);
       }
       dataFromTable = data[0];
       return dataFromTable;
