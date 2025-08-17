@@ -54,7 +54,7 @@ export const MenuUser = props => {
   };
   const handleClickClientSpan = () => {
     console.log('admin', user.role);
-    if (user.role == 'admin') {
+    if (user._id == 3) {
       setShowClient(true);
       setIsTooltipVisible(false);
     }
