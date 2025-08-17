@@ -3,12 +3,12 @@ const db = require('./db.js').promisePool;
 var TaskDebts = {
   list: async function (userId, callback) {
     try {
-      let [owner] = await db.query(`SELECT ownerId FROM users WHERE _id=${userId}`);
+      let [owner] = await db.query(`SELECT ownerId FROM users WHERE _id=?`, [userId]);
       console.log(owner[0].ownerId);
       let ownerId = owner[0].ownerId;
-      let [data] = await db.query(
-        `SELECT * FROM driverdebts WHERE ownerId=${ownerId} order by date`
-      );
+      let [data] = await db.query(`SELECT * FROM driverdebts WHERE ownerId=? order by date`, [
+        ownerId,
+      ]);
       callback(data);
     } catch (err) {
       callback({ error: err });
@@ -34,9 +34,10 @@ var TaskDebts = {
   edit: async function (data, callback) {
     console.log(`UPDATE driverdebts SET ${data.editField}=${data.newValue} WHERE id=${data.id}`);
     try {
-      await db.query(
-        `UPDATE driverdebts SET ${data.editField}="${data.newValue}" WHERE id=${data.id}`
-      );
+      await db.query(`UPDATE driverdebts SET ${data.editField}=? WHERE id=?`, [
+        data.newValue,
+        data.id,
+      ]);
       callback('success');
     } catch (err) {
       callback({ error: err });
@@ -45,7 +46,7 @@ var TaskDebts = {
   del: async function (id, callback) {
     console.log(id);
     try {
-      await db.query(`DELETE FROM driverdebts WHERE id=${id}`);
+      await db.query(`DELETE FROM driverdebts WHERE id=?`, [id]);
       callback('success');
     } catch (err) {
       callback({ error: err });

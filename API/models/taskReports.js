@@ -10,40 +10,45 @@ let TasksReports = {
     let tableName = '';
     if (data.name == 'customer') {
       tableName = 'customerpayment';
-      idFilter = `idCustomer=${data.id}`;
+      idFilter = 'idCustomer=?';
     }
     if (data.name == 'driver') {
       tableName = 'driverpayment';
-      idFilter = `idDriver=${data.id}`;
+      idFilter = 'idDriver=?';
     }
     let dateBegin = data.dateBegin.slice(0, 10);
     console.log(dateBegin);
     try {
       let [dataPayment] = await db.query(
-        `SELECT * FROM ${tableName} where ${idFilter} and date>="${dateBegin}"`
+        `SELECT * FROM ${tableName} where ${idFilter} and date>=?`,
+        [data.id, dateBegin]
       );
       obj.payments = dataPayment;
-      let [dataOrder] = await db.query(
-        `SELECT * FROM oderslist where ${idFilter} and date>="${dateBegin}"`
-      );
+      let [dataOrder] = await db.query(`SELECT * FROM oderslist where ${idFilter} and date>=?`, [
+        data.id,
+        dateBegin,
+      ]);
       obj.orders = dataOrder;
       if (data.name == 'customer') {
         let [debt] = await db.query(
-          `SELECT SUM(customerPrice) as "debt" FROM oderslist where ${idFilter} and customerPayment!="Ок"`
+          `SELECT SUM(customerPrice) as "debt" FROM oderslist where ${idFilter} and customerPayment!="Ок"`,
+          [data.id]
         );
         obj.clearDebt = debt;
         [debt] = await db.query(
-          `SELECT SUM(partialPaymentAmount) as "debt" FROM oderslist where ${idFilter} and customerPayment="Частично оплачен"`
+          `SELECT SUM(partialPaymentAmount) as "debt" FROM oderslist where ${idFilter} and customerPayment="Частично оплачен"`,
+          [data.id]
         );
         obj.partDebt = debt;
-        [debt] = await db.query(
-          `SELECT SUM(extraPayments) as "debt"  FROM oders where _id=${data.id}`
-        );
+        [debt] = await db.query(`SELECT SUM(extraPayments) as "debt" FROM oders where _id=?`, [
+          data.id,
+        ]);
         obj.extraPayments = debt;
       }
       if (data.name == 'driver') {
         let [debt] = await db.query(
-          `SELECT SUM(driverPrice) as "debt" FROM oderslist where ${idFilter} and driverPayment!="Ок"`
+          `SELECT SUM(driverPrice) as "debt" FROM oderslist where ${idFilter} and driverPayment!="Ок"`,
+          [data.id]
         );
         obj.clearDebt = debt;
         obj.partDebt = [{ debt: 0 }];
@@ -76,9 +81,9 @@ let TasksReports = {
   editYearConst: async (data, userId, callBack) => {
     console.log(data);
     try {
-      let [user] = await db.query(`SELECT * FROM users where _id=${userId}`);
+      let [user] = await db.query(`SELECT * FROM users where _id=?`, [userId]);
       let ownerId = user[0].ownerId;
-      await db.query(`UPDATE yearconst SET ${data.name}=${data.data} WHERE ownerId=${ownerId}`);
+      await db.query(`UPDATE yearconst SET ${data.name}=? WHERE ownerId=?`, [data.data, ownerId]);
       callBack('success!');
     } catch (err) {
       callBack({ error: err });
