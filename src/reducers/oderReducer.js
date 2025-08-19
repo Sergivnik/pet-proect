@@ -14,6 +14,7 @@ import {
   DEL_PRINTED_MARK_FAILURE,
   ADD_ORDER_APP_SUCCESS,
   ADD_ORDER_APP_FAILURE,
+  CLEAR_REQUEST_STATUS,
 } from '../actions/oderActions.js';
 import {
   GET_DATA_SUCCESS,
@@ -100,6 +101,9 @@ import {
 
 export const oderReducer = (store = initialStore, action) => {
   switch (action.type) {
+    case CLEAR_REQUEST_STATUS: {
+      return { ...store, request: {} };
+    }
     case ADD_ODER_SUCCESS: {
       console.log(action);
       return update(store, {
@@ -449,7 +453,7 @@ export const oderReducer = (store = initialStore, action) => {
         ...store,
         request: {
           status: 'FAILURE',
-          error: true,
+          error: action.error,
         },
       };
     }

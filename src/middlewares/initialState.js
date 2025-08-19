@@ -20,7 +20,7 @@ export const GET_DATA_SUCCESS = 'DATA::GET_DATA_SUCCESS';
 export const GET_DATA_FAILURE = 'DATA::GET_DATA_FAILURE';
 export const GET_DATA_SUCCESS5000 = 'DATA::GET_DATA_SUCCESS5000';
 export const GET_DATA_FAILURE5000 = 'DATA::GET_DATA_FAILURE5000';
-export const GET_FILTER_SUCCESS = 'DATA::GET_FILTER_FAILURE';
+export const GET_FILTER_SUCCESS = 'DATA::GET_FILTER_SUCCESS';
 export const GET_FILTER_FAILURE = 'DATA::GET_FILTER_FAILURE';
 export const FILTER_DATA = 'FILTER_DATA';
 //export const GET_PAYMENTS_DATA = "DATA::GET_PAYMENTS_DATA";
@@ -55,7 +55,7 @@ export const filterData = filterObj => {
         })
         .catch(e => {
           console.log(e.message);
-          return dispatch(getDataFailure());
+          return dispatch(getDataFailure(e.message));
         });
     };
   } else
@@ -68,7 +68,7 @@ export const filterData = filterObj => {
         })
         .catch(e => {
           console.log(e.message);
-          dispatch(getFilterFailure());
+          dispatch(getFilterFailure(e.message));
         });
     };
 };
@@ -78,8 +78,9 @@ export const getFilterSuccess = dataServer => ({
   dataServer,
 });
 
-export const getFilterFailure = () => ({
+export const getFilterFailure = error => ({
   type: GET_FILTER_FAILURE,
+  error,
 });
 
 export const getDataRequest = () => ({

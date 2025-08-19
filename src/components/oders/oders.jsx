@@ -11,6 +11,7 @@ import { DriverDebtForm } from '../driverComponents/driverDebtForm.jsx';
 import { ContractorsPayments } from '../contractors/contractorsPayments.jsx';
 import { getData, filterData, getData5000 } from '../../middlewares/initialState.js';
 import { delOder } from '../../actions/oderActions.js';
+import { clearRequestStatus } from '../../actions/oderActions.js';
 import { EditDataForm } from '../editData/editDataForm.jsx';
 import { PrintFormBill } from '../printForm/printFormBill.jsx';
 import { BillsForm } from '../documents/billsForm.jsx';
@@ -134,6 +135,7 @@ export const Oders = () => {
   useEffect(() => {
     const onKeypress = e => {
       if (e.code == 'Escape') {
+        dispatch(clearRequestStatus());
         if (currentTR) currentTR.style.backgroundColor = '';
         setShowDelete(false);
         setShowEdit(false);
