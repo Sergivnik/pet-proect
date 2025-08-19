@@ -1,37 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { UserThead } from "./userThead.jsx";
-import { UserTr } from "./userTr.jsx";
-import { CreateOderNew } from "../createOder/createOderNew.jsx";
-import { UserWindow } from "../userWindow/userWindow.jsx";
-import { CustomerPaymentForm } from "../customerPaymentForm/customerPaymentForm.jsx";
-import { CustomerPayments } from "../customerPayments/customerPayments.jsx";
-import { DriverPaymentForm } from "../driverComponents/driverPaymentForm.jsx";
-import { DriverDebtForm } from "../driverComponents/driverDebtForm.jsx";
-import { ContractorsPayments } from "../contractors/contractorsPayments.jsx";
-import {
-  getData,
-  filterData,
-  getData5000,
-} from "../../middlewares/initialState.js";
-import { delOder } from "../../actions/oderActions.js";
-import { EditDataForm } from "../editData/editDataForm.jsx";
-import { PrintFormBill } from "../printForm/printFormBill.jsx";
-import { BillsForm } from "../documents/billsForm.jsx";
-import { Report } from "../reports/reports.jsx";
-import { SpecialTable } from "../specialTable/specialTable.jsx";
-import { authSignOut } from "../../actions/auth.js";
-import { ChangePassword } from "../auth/changePassword.jsx";
-import { getApps, getNewApp } from "../../actions/appAction.js";
-import { CustomerApps } from "../customerPart/cusstomerApp/customerApps.jsx";
-import { getNewTasks } from "../../actions/tasksActions.js";
-import { UserTaskTable } from "../userTask/userTaskTable.jsx";
-import { MenuUser } from "./taskBar/menuUser/menuUser.jsx";
-import { MenuAccount } from "./taskBar/menuAccount/menuAccount.jsx";
-import { MenuMain } from "./taskBar/menuAccount/menuMain/menuMain.jsx";
-import { PostForm } from "../postForm/postForm.tsx";
-import { DriverPaymentsList } from "../driverComponents/driverPaymentsList.tsx";
-import "./oders.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { UserThead } from './userThead.jsx';
+import { UserTr } from './userTr.jsx';
+import { CreateOderNew } from '../createOder/createOderNew.jsx';
+import { UserWindow } from '../userWindow/userWindow.jsx';
+import { CustomerPaymentForm } from '../customerPaymentForm/customerPaymentForm.jsx';
+import { CustomerPayments } from '../customerPayments/customerPayments.jsx';
+import { DriverPaymentForm } from '../driverComponents/driverPaymentForm.jsx';
+import { DriverDebtForm } from '../driverComponents/driverDebtForm.jsx';
+import { ContractorsPayments } from '../contractors/contractorsPayments.jsx';
+import { getData, filterData, getData5000 } from '../../middlewares/initialState.js';
+import { delOder } from '../../actions/oderActions.js';
+import { EditDataForm } from '../editData/editDataForm.jsx';
+import { PrintFormBill } from '../printForm/printFormBill.jsx';
+import { BillsForm } from '../documents/billsForm.jsx';
+import { Report } from '../reports/reports.jsx';
+import { SpecialTable } from '../specialTable/specialTable.jsx';
+import { authSignOut } from '../../actions/auth.js';
+import { ChangePassword } from '../auth/changePassword.jsx';
+import { getApps, getNewApp } from '../../actions/appAction.js';
+import { CustomerApps } from '../customerPart/cusstomerApp/customerApps.jsx';
+import { getNewTasks } from '../../actions/tasksActions.js';
+import { UserTaskTable } from '../userTask/userTaskTable.jsx';
+import { MenuUser } from './taskBar/menuUser/menuUser.jsx';
+import { MenuAccount } from './taskBar/menuAccount/menuAccount.jsx';
+import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
+import { PostForm } from '../postForm/postForm.tsx';
+import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
+import './oders.sass';
 
 export const Oders = () => {
   const dispatch = useDispatch();
@@ -54,17 +50,15 @@ export const Oders = () => {
     setAddData(0);
   }, [dispatch]);
 
-  const odersList = useSelector((state) => state.oderReducer.odersList);
-  const clientList = useSelector((state) => state.oderReducer.clientList);
-  const income = useSelector((state) => state.oderReducer.income);
-  const expenses = useSelector((state) => state.oderReducer.expenses);
-  const filteredAccountList = useSelector(
-    (state) => state.oderReducer.filteredAccountList
-  );
-  const requestStatus = useSelector((state) => state.oderReducer.request);
-  const user = useSelector((state) => state.oderReducer.currentUser);
-  const numberApps = useSelector((state) => state.customerReducer.newAppNumber);
-  const tasksNumber = useSelector((state) => state.tasksReducer.tasksNumber);
+  const odersList = useSelector(state => state.oderReducer.odersList);
+  const clientList = useSelector(state => state.oderReducer.clientList);
+  const income = useSelector(state => state.oderReducer.income);
+  const expenses = useSelector(state => state.oderReducer.expenses);
+  const filteredAccountList = useSelector(state => state.oderReducer.filteredAccountList);
+  const requestStatus = useSelector(state => state.oderReducer.request);
+  const user = useSelector(state => state.oderReducer.currentUser);
+  const numberApps = useSelector(state => state.customerReducer.newAppNumber);
+  const tasksNumber = useSelector(state => state.tasksReducer.tasksNumber);
 
   const [oders, setOders] = useState(odersList.slice(-1000));
 
@@ -118,10 +112,7 @@ export const Oders = () => {
   }, []);
   useEffect(() => {
     console.log(income, expenses, addSum);
-    let addSum = clientList.reduce(
-      (s, item) => s + Number(item.extraPayments),
-      0
-    );
+    let addSum = clientList.reduce((s, item) => s + Number(item.extraPayments), 0);
     let income100 = Math.round(Number(income) * 100);
     let expenses100 = Math.round(Number(expenses) * 100);
     let addSum100 = Math.round(Number(addSum) * 100);
@@ -129,7 +120,7 @@ export const Oders = () => {
     setSumAccount(sum);
   }, [income, expenses]);
   useEffect(() => {
-    console.log("test");
+    console.log('test');
     if (numberApps != null) {
       setShowNewApps(true);
     } else {
@@ -141,9 +132,9 @@ export const Oders = () => {
     if (tasksNumber > 0) setShowTasks(true);
   }, [tasksNumber]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
-        if (currentTR) currentTR.style.backgroundColor = "";
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
+        if (currentTR) currentTR.style.backgroundColor = '';
         setShowDelete(false);
         setShowEdit(false);
         setTrId(null);
@@ -154,24 +145,24 @@ export const Oders = () => {
           dispatch(filterData(filterList));
         }
       }
-      if (e.ctrlKey && e.code == "KeyK") {
+      if (e.ctrlKey && e.code == 'KeyK') {
         e.preventDefault();
-        if (user.role == "admin") setShowSecretTable(true);
+        if (user.role == 'admin') setShowSecretTable(true);
       }
-      if (e.ctrlKey && e.code == "KeyP") {
+      if (e.ctrlKey && e.code == 'KeyP') {
         e.preventDefault();
         setShowTasks(true);
       }
-      if (e.code == "Delete" && currentElem) {
+      if (e.code == 'Delete' && currentElem) {
         if (currentElem.completed == 0) {
-          console.log("I am listening Delete", trId, currentElem);
+          console.log('I am listening Delete', trId, currentElem);
           handleClickDelete();
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [trId, showDelete, showWindow, showSecretTable, showTasks]);
 
@@ -195,7 +186,7 @@ export const Oders = () => {
 
   useEffect(() => {
     if (showLast) {
-      let div = document.getElementsByClassName("odersDiv")[0];
+      let div = document.getElementsByClassName('odersDiv')[0];
       div.scrollTop = div.scrollHeight + 300;
     }
   }, [oders]);
@@ -203,67 +194,67 @@ export const Oders = () => {
   const writeFilterList = (chosenList, name) => {
     let { ...arr } = filterList;
     switch (name) {
-      case "Date":
+      case 'Date':
         arr.date = chosenList;
         setFilterList(arr);
         let arrdate = [];
-        let localDate = "";
-        chosenList = chosenList.map((elem) => {
-          arrdate = elem.split("-");
+        let localDate = '';
+        chosenList = chosenList.map(elem => {
+          arrdate = elem.split('-');
           localDate = `${arrdate[0]}-${Number(arrdate[1]) + 1}-${arrdate[2]}`;
           return localDate;
         });
         arr.date = chosenList;
         break;
-      case "Driver":
+      case 'Driver':
         arr.driver = chosenList;
         setFilterList(arr);
         break;
-      case "Customer":
+      case 'Customer':
         arr.oder = chosenList;
         setFilterList(arr);
         break;
-      case "LoadingCity":
+      case 'LoadingCity':
         arr.cityLoading = chosenList;
         setFilterList(arr);
         break;
-      case "UnloadingCity":
+      case 'UnloadingCity':
         arr.cityUnloading = chosenList;
         setFilterList(arr);
         break;
-      case "CustomerPrice":
+      case 'CustomerPrice':
         arr.customerPrice = chosenList;
         setFilterList(arr);
         break;
-      case "DriverPrice":
+      case 'DriverPrice':
         arr.driverPrice = chosenList;
         setFilterList(arr);
         break;
-      case "Proxy":
+      case 'Proxy':
         arr.proxy = chosenList;
         setFilterList(arr);
         break;
-      case "Completed":
+      case 'Completed':
         arr.completed = chosenList;
         setFilterList(arr);
         break;
-      case "Documents":
+      case 'Documents':
         arr.documents = chosenList;
         setFilterList(arr);
         break;
-      case "CustomerPayment":
+      case 'CustomerPayment':
         arr.customerPayment = chosenList;
         setFilterList(arr);
         break;
-      case "DriverPayment":
+      case 'DriverPayment':
         arr.driverPayment = chosenList;
         setFilterList(arr);
         break;
-      case "AccountList":
+      case 'AccountList':
         let tempArr = [];
         console.log(filteredAccountList, chosenList);
-        chosenList.forEach((element) => {
-          tempArr.push(filteredAccountList.find((item) => item._id == element));
+        chosenList.forEach(element => {
+          tempArr.push(filteredAccountList.find(item => item._id == element));
         });
         console.log(tempArr);
         arr.accountList = tempArr;
@@ -275,7 +266,7 @@ export const Oders = () => {
     dispatch(filterData(arr));
   };
 
-  const onScroll = (event) => {
+  const onScroll = event => {
     let heightTable = event.target.children[0].clientHeight;
     let heightDiv = event.target.clientHeight;
     let length = odersList.length;
@@ -285,15 +276,12 @@ export const Oders = () => {
         event.target.scrollTop = 300;
       }
     }
-    if (
-      event.target.scrollTop > heightTable - heightDiv - 50 &&
-      oders.length > 90
-    ) {
+    if (event.target.scrollTop > heightTable - heightDiv - 50 && oders.length > 90) {
       setAddData(addData - 10);
       if (addData != 0) {
         event.target.scrollTop = 1800;
       } else {
-        let div = document.getElementsByClassName("odersDiv")[0];
+        let div = document.getElementsByClassName('odersDiv')[0];
         div.scrollTop = div.scrollHeight;
       }
     }
@@ -303,16 +291,16 @@ export const Oders = () => {
   const handleClick = () => {
     let newElem;
     if (trId != null) {
-      let currentElem = oders.find((elem) => elem._id == trId);
+      let currentElem = oders.find(elem => elem._id == trId);
       newElem = { ...currentElem };
-      newElem.document = "Нет";
-      newElem.customerPayment = "Нет";
-      newElem.driverPayment = "Нет";
+      newElem.document = 'Нет';
+      newElem.customerPayment = 'Нет';
+      newElem.driverPayment = 'Нет';
     }
     setShowCreateOder(!showCreateOder);
     setWindowWidth(1400);
     setShowWindow(true);
-    setWindowHeader("Добавить заказ");
+    setWindowHeader('Добавить заказ');
     setChildren(<CreateOderNew addOder={addOder} elem={newElem} />);
   };
 
@@ -324,92 +312,92 @@ export const Oders = () => {
     setTrId(null);
   };
 
-  const getCurrentTR = (id) => {
+  const getCurrentTR = id => {
     setTrId(id);
   };
 
   const handleClickTR = (e, elem) => {
     setCurrentElem(elem);
     let curTR = e.currentTarget;
-    if (currentTR) currentTR.style.backgroundColor = "";
+    if (currentTR) currentTR.style.backgroundColor = '';
     setCurrentTR(curTR);
-    if (e.target.tagName == "TD") {
+    if (e.target.tagName == 'TD') {
       setTrId(e.currentTarget.id);
-      curTR.style.backgroundColor = "#ccc";
+      curTR.style.backgroundColor = '#ccc';
       setShowDelete(true);
     }
-    if (e.target.tagName == "P") {
+    if (e.target.tagName == 'P') {
       setTrId(e.currentTarget.id);
-      curTR.style.backgroundColor = "#ccc";
+      curTR.style.backgroundColor = '#ccc';
       setShowDelete(true);
     }
   };
   const handleClickDelete = () => {
-    let check = confirm("100% ?");
+    let check = confirm('100% ?');
     if (check) {
       dispatch(delOder(trId));
       setTrId(null);
     }
   };
   const [children, setChildren] = useState(null);
-  const handleClickBtnMenu = (e) => {
+  const handleClickBtnMenu = e => {
     setShowDropDownMenu(false);
     setShowVerticalMenu(false);
-    if (e.target.name == "dataEdit") {
+    if (e.target.name == 'dataEdit') {
       setShowEditDataWindow(true);
     }
-    if (e.target.name == "customerApp") {
+    if (e.target.name == 'customerApp') {
       setShowAppWindow(true);
     }
-    if (e.target.name == "post") {
+    if (e.target.name == 'post') {
       setShowPostForm(true);
     }
     if (!showWindow) {
       let btnClick = e.target.name;
-      if (btnClick == "customPay") {
-        setWindowHeader("Оплата заказчика");
+      if (btnClick == 'customPay') {
+        setWindowHeader('Оплата заказчика');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<CustomerPaymentForm />);
       }
-      if (btnClick == "customPayments") {
-        setWindowHeader("Входящие платежи");
+      if (btnClick == 'customPayments') {
+        setWindowHeader('Входящие платежи');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<CustomerPayments />);
       }
-      if (btnClick == "driverPay") {
-        setWindowHeader("Оплата перевозчику");
+      if (btnClick == 'driverPay') {
+        setWindowHeader('Оплата перевозчику');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<DriverPaymentForm />);
       }
-      if (btnClick == "driverPayments") {
-        setWindowHeader("Платежи перевозчикам");
+      if (btnClick == 'driverPayments') {
+        setWindowHeader('Платежи перевозчикам');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<DriverPaymentsList />);
       }
-      if (btnClick == "driversDebt") {
-        setWindowHeader("Задолженность перевозчика");
+      if (btnClick == 'driversDebt') {
+        setWindowHeader('Задолженность перевозчика');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<DriverDebtForm />);
       }
-      if (btnClick == "otherPay") {
-        setWindowHeader("Прочие расходы");
+      if (btnClick == 'otherPay') {
+        setWindowHeader('Прочие расходы');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<ContractorsPayments />);
       }
-      if (btnClick == "bill") {
-        setWindowHeader("Выставление счета");
+      if (btnClick == 'bill') {
+        setWindowHeader('Выставление счета');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<BillsForm />);
       }
-      if (btnClick == "reports") {
-        setWindowHeader("Отчеты");
+      if (btnClick == 'reports') {
+        setWindowHeader('Отчеты');
         setShowWindow(true);
         setWindowWidth(1200);
         setChildren(<Report />);
@@ -437,12 +425,12 @@ export const Oders = () => {
     setShowPostForm(false);
   };
   const handleClickMainDiv = () => {
-    let contextDiv = document.querySelector(".divContext");
+    let contextDiv = document.querySelector('.divContext');
     if (contextDiv != null) {
       contextDiv.blur();
     }
   };
-  const handleClickGenerate = (elem) => {
+  const handleClickGenerate = elem => {
     setCurrentElem(elem);
     console.log(elem);
     setShowPrintForm(true);
@@ -505,12 +493,7 @@ export const Oders = () => {
           {children}
         </UserWindow>
       )}
-      {showPrintForm && (
-        <PrintFormBill
-          elem={currentElem}
-          closePrintForm={handleClosePrintForm}
-        />
-      )}
+      {showPrintForm && <PrintFormBill elem={currentElem} closePrintForm={handleClosePrintForm} />}
       {showEditDataWindow && (
         <UserWindow
           header="Редактирование данных"
@@ -570,11 +553,7 @@ export const Oders = () => {
           <PostForm />
         </UserWindow>
       )}
-      <div
-        className="odersDiv"
-        onScroll={onScroll}
-        onClick={handleClickMainDiv}
-      >
+      <div className="odersDiv" onScroll={onScroll} onClick={handleClickMainDiv}>
         <table className="odersTable">
           <UserThead
             handleClick={handleClick}
@@ -583,7 +562,7 @@ export const Oders = () => {
             trId={trId}
           />
           <tbody className="odersTbody">
-            {oders.map((elem) => {
+            {oders.map(elem => {
               return (
                 <UserTr
                   key={elem._id}
@@ -612,8 +591,11 @@ export const Oders = () => {
           <UserTaskTable />
         </UserWindow>
       )}
-      {requestStatus.status == "LOADING" && (
-        <div className="requestStatus">Loading...</div>
+      {requestStatus.status == 'REQUEST' && (
+        <div className="requestStatus">{requestStatus.message}</div>
+      )}
+      {requestStatus.status == 'FAILURE' && (
+        <div className="requestStatus">{requestStatus.error ? requestStatus.error : 'Error'}</div>
       )}
     </React.Fragment>
   );

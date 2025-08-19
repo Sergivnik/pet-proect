@@ -62,11 +62,18 @@ import {
 import {
   CREATE_NEW_INVOICE_SUCCESS,
   CREATE_NEW_INVOICE_FAILURE,
+  CREATE_NEW_INVOICE_REQUEST,
   SEND_EMAIL_SUCCESS,
   SEND_EMAIL_FAILURE,
   CREATE_APP_SUCCESS,
   GET_PDF_WITHOUT_STAMP_SUCCESS,
   GET_PDF_WITHOUT_STAMP_FAILURE,
+  CREATE_DOC_WITHOUT_STAMP_REQUEST,
+  CREATE_DOC_WITHOUT_STAMP_SUCCESS,
+  CREATE_DOC_WITHOUT_STAMP_FAILURE,
+  CREATE_SOMEDOC_NEW_REQUEST,
+  ADD_CONSIGNMENT_NOTE_SUCCESS,
+  ADD_CONSIGNMENT_NOTE_FAILURE,
 } from '../actions/documentAction.js';
 import {
   EDIT_ADDDATA_SUCCESS,
@@ -570,7 +577,8 @@ export const oderReducer = (store = initialStore, action) => {
       return {
         ...store,
         request: {
-          status: 'LOADING',
+          status: 'REQUEST',
+          message: 'LOADING...',
           error: null,
         },
       };
@@ -985,6 +993,8 @@ export const oderReducer = (store = initialStore, action) => {
     }
 
     case CREATE_NEW_INVOICE_SUCCESS: {
+      console.log('hi25');
+
       let [...arr] = store.odersList;
       let docNumber = action.invoiceNumber;
       if (!isNaN(docNumber)) {
@@ -997,7 +1007,13 @@ export const oderReducer = (store = initialStore, action) => {
         let index = arr.findIndex(elem => elem._id == id);
         arr[index].accountNumber = docNumber;
       });
-      return { ...store, odersList: arr, originOdersList: arr };
+      return { ...store, odersList: arr, originOdersList: arr, request: {} };
+    }
+    case CREATE_NEW_INVOICE_REQUEST: {
+      return { ...store, request: { status: 'REQUEST', message: 'Create new invoice' } };
+    }
+    case CREATE_NEW_INVOICE_FAILURE: {
+      return { ...store, request: { status: 'FAILURE', error: action.error } };
     }
     case SEND_EMAIL_SUCCESS: {
       let index = store.odersList.findIndex(item => item._id == Number(action.id));
@@ -1230,8 +1246,6 @@ export const oderReducer = (store = initialStore, action) => {
       return { ...store, request: {} };
     }
     case DEL_DRIVER_PAYMENT_SUCCESS_ORDER: {
-      console.log('hi1');
-
       const arrPayments = [...store.driverpayments];
       const arrOriginOders = [...store.originOdersList];
       const arrOders = [...store.odersList];
@@ -1274,6 +1288,27 @@ export const oderReducer = (store = initialStore, action) => {
         driverDebtList: arrDebts,
         expenses: expenses,
       };
+    }
+    case CREATE_SOMEDOC_NEW_REQUEST: {
+      return { ...store, request: { status: 'REQUEST', message: 'SAVING' } };
+    }
+    case ADD_CONSIGNMENT_NOTE_SUCCESS: {
+      return { ...store, request: {} };
+    }
+    case ADD_CONSIGNMENT_NOTE_FAILURE: {
+      return { ...store, request: { status: 'FAILURE', error: 'error' } };
+    }
+    case CREATE_DOC_WITHOUT_STAMP_REQUEST: {
+      return {
+        ...store,
+        request: { status: 'REQUEST', message: 'Saving new invoice without stamp...' },
+      };
+    }
+    case CREATE_DOC_WITHOUT_STAMP_SUCCESS: {
+      return { ...store, request: {} };
+    }
+    case CREATE_DOC_WITHOUT_STAMP_FAILURE: {
+      return { ...store, request: { status: 'FAILURE', error: action.error } };
     }
 
     default:

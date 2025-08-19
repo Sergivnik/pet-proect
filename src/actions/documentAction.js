@@ -8,12 +8,14 @@ export const ADD_PDF_DOC_SUCCESS = 'ADD_PDF_DOC_SUCCESS';
 export const ADD_PDF_DOC_FAILURE = 'ADD_PDF_DOC_FAILURE';
 export const CREATE_NEW_INVOICE_SUCCESS = 'CREATE_NEW_INVOICE_SUCCESS';
 export const CREATE_NEW_INVOICE_FAILURE = 'CREATE_NEW_INVOICE_FAILURE';
+export const CREATE_NEW_INVOICE_REQUEST = 'CREATE_NEW_INVOICE_REQUEST';
 export const ADD_CONSIGNMENT_NOTE_SUCCESS = 'ADD_CONSIGNMENT_NOTE_SUCCESS';
 export const ADD_CONSIGNMENT_NOTE_FAILURE = 'ADD_CONSIGNMENT_NOTE_FAILURE';
 export const SEND_EMAIL_SUCCESS = 'SEND_EMAIL_SUCCESS';
 export const SEND_EMAIL_FAILURE = 'SEND_EMAIL_FAILURE';
 export const CREATE_DOC_WITHOUT_STAMP_SUCCESS = 'CREATE_DOC_WITHOUT_STAMP_SUCCESS';
 export const CREATE_DOC_WITHOUT_STAMP_FAILURE = 'CREATE_DOC_WITHOUT_STAMP_FAILURE';
+export const CREATE_DOC_WITHOUT_STAMP_REQUEST = 'CREATE_DOC_WITHOUT_STAMP_REQUEST';
 export const GET_PDF_WITHOUT_STAMP_SUCCESS = 'GET_PDF_WITHOUT_STAMP_SUCCESS';
 export const GET_PDF_WITHOUT_STAMP_FAILURE = 'GET_PDF_WITHOUT_STAMP_FAILURE';
 export const CREATE_APP_SUCCESS = 'CREATE_APP_SUCCESS';
@@ -103,11 +105,16 @@ export const createNewInvoiceSuccess = (invoiceNumber, arrOrderId) => ({
   invoiceNumber,
   arrOrderId,
 });
-export const createNewInvoiceFailure = () => ({
+export const createNewInvoiceFailure = error => ({
   type: CREATE_NEW_INVOICE_FAILURE,
+  error,
+});
+export const createNewInvoiceRequest = () => ({
+  type: CREATE_NEW_INVOICE_REQUEST,
 });
 export const createNewInvoice = (docHtml, invoiceNumber, year, customer, arrOrderId) => {
   return dispatch => {
+    dispatch(createNewInvoiceRequest());
     axios
       .post(DOMENNAME + '/API/createDoc', {
         body: {
@@ -123,7 +130,7 @@ export const createNewInvoice = (docHtml, invoiceNumber, year, customer, arrOrde
       })
       .catch(e => {
         console.log(e.message);
-        dispatch(createNewInvoiceFailure());
+        dispatch(createNewInvoiceFailure(e.message));
       });
   };
 };
@@ -185,11 +192,16 @@ export const createDocWithoutStampSuccess = invoiceNumber => ({
   type: CREATE_DOC_WITHOUT_STAMP_SUCCESS,
   invoiceNumber,
 });
-export const createDocWithoutStampFailure = () => ({
+export const createDocWithoutStampFailure = error => ({
   type: CREATE_DOC_WITHOUT_STAMP_FAILURE,
+  error,
+});
+export const createDocWithoutStampRequest = () => ({
+  type: CREATE_DOC_WITHOUT_STAMP_REQUEST,
 });
 export const createDocWithoutStamp = (docHtml, invoiceNumber, year, customer) => {
   return dispatch => {
+    dispatch(createDocWithoutStampRequest());
     axios
       .post(DOMENNAME + '/API/createDocWithoutStamp', {
         body: {
@@ -204,7 +216,7 @@ export const createDocWithoutStamp = (docHtml, invoiceNumber, year, customer) =>
       })
       .catch(e => {
         console.log(e.message);
-        dispatch(createDocWithoutStampFailure());
+        dispatch(createDocWithoutStampFailure(e.message));
       });
   };
 };
@@ -249,6 +261,7 @@ export const addSomeDocNew = (id, typeDoc, file) => {
   formData.append('typeDoc', typeDoc);
   formData.append('permission', false);
   return dispatch => {
+    dispatch(addSomeDocNewRequest());
     axios
       .post(DOMENNAME + '/API/addSomePdfDocNew', formData, {
         headers: {
@@ -286,3 +299,6 @@ export const addSomeDocNew = (id, typeDoc, file) => {
       });
   };
 };
+export const addSomeDocNewRequest = () => ({
+  type: CREATE_SOMEDOC_NEW_REQUEST,
+});
