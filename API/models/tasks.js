@@ -630,15 +630,20 @@ var Tasks = {
     let sumChosenOders = data.arr.reduce((sum, item) => sum + item.customerPrice, 0);
     let idList = data.arr.map(elem => elem.id);
 
+    // Начинаем транзакцию
+    const connection = await db.getConnection();
+    await connection.beginTransaction();
+
     try {
-      let [dataelem] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`, [
-        idList,
-      ]);
+      let [dataelem] = await connection.query(
+        `SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`,
+        [idList]
+      );
       for (const elem of dataelem) {
         if (elem.customerPayment == 'Ок')
           throw new Error('Некоторые заказы уже оплачены обновите страницу');
       }
-      let [dataOder] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id = ?`, [
+      let [dataOder] = await connection.query(`SELECT * FROM pet_proect.oderslist WHERE _id = ?`, [
         data.arr[0].id,
       ]);
       let customerId = dataOder[0].idCustomer;
@@ -646,9 +651,9 @@ var Tasks = {
       console.log(data.sumCustomerPayment + data.extraPayments);
       console.log(sumChosenOders == data.sumCustomerPayment + data.extraPayments);
       if (sumChosenOders == Number(data.sumCustomerPayment) + Number(data.extraPayments)) {
-        await db.query(`UPDATE oders SET extraPayments = NULL WHERE _id = ?`, [customerId]);
+        await connection.query(`UPDATE oders SET extraPayments = NULL WHERE _id = ?`, [customerId]);
       } else {
-        await db.query(`UPDATE oders SET extraPayments = ? WHERE _id = ?`, [
+        await connection.query(`UPDATE oders SET extraPayments = ? WHERE _id = ?`, [
           data.extraPayments + Number(data.sumCustomerPayment) - sumChosenOders,
           customerId,
         ]);
@@ -657,7 +662,7 @@ var Tasks = {
         let index = data.arr.findIndex(element => element.id == dataelem[i]._id);
         console.log(dataelem[i]._id, data.arr[index]);
         if (dataelem[i].customerPrice == data.arr[index].customerPrice) {
-          await db.query(
+          await connection.query(
             `UPDATE oderslist SET customerPayment = "Ок", dateOfPromise = ? WHERE _id = ?`,
             [formattedNow, data.arr[index].id]
           );
@@ -667,7 +672,7 @@ var Tasks = {
             dataelem[i].customerPrice - dataelem[i].partialPaymentAmount ==
               data.arr[index].customerPrice
           ) {
-            await db.query(
+            await connection.query(
               `UPDATE oderslist SET customerPayment = "Ок", partialPaymentAmount = NULL WHERE _id = ?`,
               [data.arr[index].id]
             );
@@ -677,7 +682,7 @@ var Tasks = {
             dataelem[i].customerPrice - dataelem[i].partialPaymentAmount !=
               data.arr[index].customerPrice
           ) {
-            await db.query(
+            await connection.query(
               `UPDATE oderslist SET customerPayment = "Частично оплачен", partialPaymentAmount = ? WHERE _id = ?`,
               [
                 Number(data.arr[index].customerPrice) + Number(dataelem[i].partialPaymentAmount),
@@ -686,7 +691,7 @@ var Tasks = {
             );
           }
           if (dataelem[i].customerPayment != 'Частично оплачен') {
-            await db.query(
+            await connection.query(
               `UPDATE oderslist SET customerPayment = "Частично оплачен", partialPaymentAmount = ? WHERE _id = ?`,
               [Number(data.arr[index].customerPrice), data.arr[index].id]
             );
@@ -701,14 +706,24 @@ var Tasks = {
         listOfOders: JSON.stringify(data.arr),
       };
       console.log(paymentString);
-      await db.query('INSERT INTO customerpayment SET ?', paymentString);
-      let [dataChanged] = await db.query(`SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`, [
-        idList,
-      ]);
+      await connection.query('INSERT INTO customerpayment SET ?', paymentString);
+      let [dataChanged] = await connection.query(
+        `SELECT * FROM pet_proect.oderslist WHERE _id IN (?)`,
+        [idList]
+      );
+
+      // Подтверждаем транзакцию
+      await connection.commit();
+
       callback(dataChanged);
     } catch (err) {
+      // Откатываем транзакцию в случае ошибки
+      await connection.rollback();
       console.log(err);
       callback({ error: err });
+    } finally {
+      // Освобождаем соединение
+      connection.release();
     }
   },
 
