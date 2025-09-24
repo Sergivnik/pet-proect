@@ -4,7 +4,7 @@ import { getOwnerLogist } from '../../actions/ownerLogistAction';
 import { ClientDetails } from './clientDetails.tsx';
 import { ClientData } from './types.ts';
 import { AddClientForm } from './addClientForm.tsx';
-import { delData } from '../../actions/editDataAction';
+import { delOwnerLogist } from '../../actions/ownerLogistAction';
 import './clientForm.sass';
 
 export const ClientForm = () => {
@@ -36,7 +36,7 @@ export const ClientForm = () => {
     if (selectedClientId) {
       const confirm = window.confirm('Вы уверены, что хотите удалить этого клиента?');
       if (confirm) {
-        dispatch(delData(selectedClientId, 'ownerlogist'));
+        dispatch(delOwnerLogist(selectedClientId));
         setSelectedClientId(null);
       }
     }

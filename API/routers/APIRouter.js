@@ -35,6 +35,7 @@ router.get('/getLogTxt', tasksAPI.sendLog);
 router.get('/getDriverPayments', driverAPI.getDriverPayments);
 router.get('/sendReportEmail/:email', API.taskSendReportEmail);
 router.get('/ownerlogist', ownerLogistAPI.getOwnerLogist);
+router.post('/addNewOwnerLogist', ownerLogistAPI.addOwnerLogist);
 router.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'));
 });
@@ -81,6 +82,7 @@ router.delete('/:id', API.taskDel);
 router.delete('/deleteDataPatmenrs/:id', API.taskDeletePayments);
 router.delete('/deletedriverDebt/:id', API.taskDeleteDebt);
 router.delete('/deleteData/:id', API.taskDeleteData);
+router.delete('/deleteOwnerLogist/:id', ownerLogistAPI.deleteOwnerLogist);
 router.delete('/deleteContractorPayment/:id', API.deleteContractorPayment);
 router.delete('/deleteAddData/:id', API.deleteAddData);
 router.delete('/deleteCustomerApp/:id', customerAPI.taskDelCustomerApp);

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
 import { ClientData } from './types';
-import { addData } from '../../actions/editDataAction';
+import { addNewOwnerLogist } from '../../actions/ownerLogistAction';
 import { formatDateToRu, toInputDateValue } from '../myLib/myLib.js';
 import { URL } from '../../middlewares/initialState';
 import './clientForm.sass';
@@ -221,7 +221,7 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addData(newClient, 'ownerlogist'));
+    dispatch(addNewOwnerLogist(newClient));
     onBack();
   };
 

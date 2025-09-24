@@ -1,4 +1,4 @@
-const TasksUser = require('./taskUser.js');
+// const TasksUser = require('./taskUser.js');
 const db = require('./db.js').promisePool;
 
 let TasksDada = {
@@ -33,19 +33,8 @@ let TasksDada = {
       let [user] = await connection.query(`SELECT * FROM users WHERE _id=?`, userId);
 
       let ownerId = user[0].ownerId;
-      if (newData.editTable != 'ownerlogist' && newData.editTable != 'cities') {
+      if (newData.editTable != 'cities') {
         newData.newData.ownerId = ownerId;
-      }
-      let newUser = {};
-      if (newData.editTable === 'ownerlogist') {
-        newUser = {
-          login: newData.newData.login,
-          password: newData.newData.password,
-          name: newData.newData.bossName,
-          role: 'admin',
-        };
-        delete newData.newData.login;
-        delete newData.newData.password;
       }
       console.log(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
 
@@ -53,23 +42,7 @@ let TasksDada = {
         `INSERT INTO ${newData.editTable} SET ?`,
         newData.newData
       );
-      if (newData.editTable === 'ownerlogist') {
-        newUser.ownerId = data.insertId;
-        await TasksUser.addNewUser(newUser, () => {
-          console.log('New user added');
-        });
-      }
-      if (newData.editTable === 'ownerlogist') {
-        let newYearConst = {
-          lastyeartaxdebt: 0,
-          taxadvance: 0,
-          fixedincometax: 0,
-          deposit: 0,
-          ownerId: data.insertId,
-        };
-        console.log(`INSERT INTO yearconst SET ?`, newYearConst);
-        await connection.query(`INSERT INTO yearconst SET ?`, newYearConst);
-      }
+
       await connection.commit();
       callback(data);
     } catch (err) {
@@ -232,69 +205,6 @@ let TasksDada = {
           }
         } catch (err) {
           console.log(err);
-          callback({ error: err });
-        }
-        break;
-      case 'ownerlogist':
-        console.log(`Deleted ownerlogist`, id);
-
-        try {
-          let [data] = await db.query(`SELECT * FROM oderslist WHERE ownerId=${id}`);
-          check = data.length;
-
-          [data] = await db.query(`SELECT * FROM tracklist WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM trackdrivers WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM customerclients WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM customerorders WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM customerpayment WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM clientmanager WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM drivers WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM incomereport WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM oders WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM storelist WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM taskstable WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM users WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          [data] = await db.query(`SELECT * FROM cardpayment WHERE ownerId=${id}`);
-          check = check + data.length;
-
-          console.log(`Total related records found: ${check}`);
-
-          if (check == 0) {
-            await db.query(`DELETE FROM ownerlogist WHERE id=${id}`);
-            console.log(`Deleted ownerlogist with id: ${id}`);
-            callback('success!');
-          } else {
-            callback({
-              error: 'Данного клиента нельзя удалить, так как существуют связанные записи',
-              NoErr: 'userErr1',
-            });
-          }
-        } catch (err) {
-          console.log('Error in delData for ownerlogist:', err);
           callback({ error: err });
         }
         break;
