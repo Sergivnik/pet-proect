@@ -1,21 +1,19 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { editOder } from "../../actions/oderActions.js";
-import { getPdf, getWithoutStampPdf } from "../../actions/documentAction.js";
-import { FormAddDoc } from "../userTrNew/formAddDoc.jsx";
-import { FormAddEmailData } from "../userTrNew/fornAddEmailData.jsx";
-import { UserWindow } from "../userWindow/userWindow.jsx";
-import { AppFormExtra } from "../documents/appFormExtra.jsx";
-import { DocForm } from "../documents/docForm.jsx";
-import { CreateAppForm } from "../customerPart/cusstomerApp/createAppForm.tsx";
+import React, { useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { editOder } from '../../actions/oderActions.js';
+import { getPdf, getWithoutStampPdf } from '../../actions/documentAction.js';
+import { FormAddDoc } from '../userTrNew/formAddDoc.jsx';
+import { FormAddEmailData } from '../userTrNew/fornAddEmailData.jsx';
+import { UserWindow } from '../userWindow/userWindow.jsx';
+import { AppFormExtra } from '../documents/appFormExtra.jsx';
+import { DocForm } from '../documents/docForm.jsx';
+import { CreateAppForm } from '../customerPart/cusstomerApp/createAppForm.tsx';
 
-export const TdAccountNumber = (props) => {
-  const orderList = useSelector((state) => state.oderReducer.odersList);
-  const appList = useSelector((state) => state.customerReducer.customerOrders);
+export const TdAccountNumber = props => {
+  const orderList = useSelector(state => state.oderReducer.odersList);
+  const appList = useSelector(state => state.customerReducer.customerOrders);
 
-  const order = props.elem
-    ? orderList.find((elem) => elem._id == props.elem._id)
-    : null;
+  const order = props.elem ? orderList.find(elem => elem._id == props.elem._id) : null;
 
   const dispatch = useDispatch();
   const [showEdit, setShowEdit] = useState(false);
@@ -29,58 +27,58 @@ export const TdAccountNumber = (props) => {
   const [currentTD, setCurrentTD] = useState(null);
   const [showContextEmail, setShowContextEmail] = useState(true);
   const [typeDoc, setTypeDoc] = useState(null);
-  const [appBtn, setAppBtn] = useState("");
+  const [appBtn, setAppBtn] = useState('');
   const [top, setTop] = useState(0);
-  const [classTD, setClassTD] = useState("odersTd");
+  const [classTD, setClassTD] = useState('odersTd');
   const [divBottomCoord, setDivBottomCoord] = useState(null);
   const [isAppExist, setIsAppExist] = useState(false);
   const [showDocForm, setShowDocForm] = useState(false);
   const [printObj, setPrintObj] = useState({ number: null, odersListId: [] });
 
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     let element = e.currentTarget;
-    if (e.target.tagName != "TD") return false;
+    if (e.target.tagName != 'TD') return false;
     if (props.edit) {
       setShowEdit(true);
-      e.currentTarget.parentElement.style.backgroundColor = "#fff";
+      e.currentTarget.parentElement.style.backgroundColor = '#fff';
       setCurrentId(e.currentTarget.parentElement.id);
       setCurrentElement(element);
     }
   };
-  const handleEnter = (e) => {
-    if (e.key == "Enter") {
-      dispatch(editOder(currentId, "accountNumber", e.currentTarget.value));
+  const handleEnter = e => {
+    if (e.key == 'Enter') {
+      dispatch(editOder(currentId, 'accountNumber', e.currentTarget.value));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);
     }
   };
   const handleDeleteBill = () => {
-    dispatch(editOder(currentId, "accountNumber", null));
+    dispatch(editOder(currentId, 'accountNumber', null));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);
     setShowContextMenu(false);
   };
-  const handleContaxtMenu = (e) => {
+  const handleContaxtMenu = e => {
     e.preventDefault();
     setCurrentId(e.currentTarget.parentElement.id);
     setShowContextMenu(true);
-    let div = document.querySelector(".odersDiv");
+    let div = document.querySelector('.odersDiv');
     setDivBottomCoord(div.clientHeight - e.clientY);
   };
   const handleClickPrint = () => {
-    dispatch(getPdf(currentId, "doc"));
+    dispatch(getPdf(currentId, 'doc'));
     setShowContextMenu(false);
   };
   const handleClickPrintTTN = () => {
-    if (props.elem.accountNumber !== null && props.elem.document == "Ок") {
-      let a = dispatch(getPdf(currentId, "ttn"));
+    if (props.elem.accountNumber !== null && props.elem.document == 'Ок') {
+      let a = dispatch(getPdf(currentId, 'ttn'));
       console.log(a);
       setShowContextMenu(false);
     } else {
       setShowContextMenu(false);
-      alert("Нет привязанных ТТН");
+      alert('Нет привязанных ТТН');
     }
   };
   const handleClickPrintWithoutStamp = () => {
@@ -88,7 +86,7 @@ export const TdAccountNumber = (props) => {
     setShowContextMenu(false);
   };
   const handleClickAddDoc = (e, typeDoc) => {
-    if (props.elem.accountNumber !== null || typeDoc !== "ttn") {
+    if (props.elem.accountNumber !== null || typeDoc !== 'ttn') {
       const TD = e.currentTarget.parentElement.parentElement;
       setCurrentTD(TD);
       setShowInputFile(true);
@@ -96,37 +94,42 @@ export const TdAccountNumber = (props) => {
       setTypeDoc(typeDoc);
     } else {
       setShowContextMenu(false);
-      alert("Не гоже привязывать ТТН без счета!");
+      alert('Не гоже привязывать ТТН без счета!');
     }
   };
-  const handleClickSendDoc = (e) => {
+  const handleClickSendDoc = e => {
     let TD = e.currentTarget.parentElement.parentElement;
     setCurrentTD(TD);
     setShowEmailData(true);
     setShowContextMenu(false);
   };
-  const handleClickClose = (isSuccess) => {
+  const handleClickClose = isSuccess => {
     setShowInputFile(false);
     setShowEmailData(false);
-    if (isSuccess) alert("Не забудьте внести номер заявки в заказ!!!");
+    if (isSuccess) alert('Не забудьте внести номер заявки в заказ!!!');
   };
-  const handleClikPrintApp = (e) => {
-    if (appBtn == "Печать заявки") {
-      dispatch(getPdf(currentId, "app"));
+  const handleClikPrintApp = e => {
+    if (appBtn == 'Печать заявки') {
+      dispatch(getPdf(currentId, 'app'));
       setShowContextMenu(false);
     } else {
       // надо будет убрать потом
       let elem = e.currentTarget;
       if (elem) console.log(elem, elem.getBoundingClientRect());
-      setTop(Math.round(elem.getBoundingClientRect().y - 200));
+      const rect = elem.getBoundingClientRect();
+      const top = rect.top + window.scrollY - 130;
+      setTop(Math.round(top));
       setShowAppForm(true);
       setShowContextMenu(false);
     }
   };
-  const handleClikCreateApp = (e) => {
-    let elem = e.currentTarget;
+  const handleClikCreateApp = e => {
+    let elem = e.currentTarget.parentElement.parentElement;
     if (elem) console.log(elem, elem.getBoundingClientRect());
-    setTop(Math.round(elem.getBoundingClientRect().y - 100));
+    const rect = elem.getBoundingClientRect();
+    const top = rect.top + window.scrollY - 130;
+    setTop(Math.round(top));
+    console.log(top);
     setShowContextMenu(false);
     setShowCreateAppForm(true);
   };
@@ -149,15 +152,15 @@ export const TdAccountNumber = (props) => {
     setPrintObj(obj);
     setShowDocForm(true);
     setShowContextMenu(false);
-    if (props.elem.customerPayment == "Ок") {
-      alert("Счет уже оплачен!!!");
+    if (props.elem.customerPayment == 'Ок') {
+      alert('Счет уже оплачен!!!');
       setShowDocForm(false);
     }
   };
   const handleClickCloseDoc = () => {
     setShowDocForm(false);
   };
-  const getNewNumber = (newNumber) => {
+  const getNewNumber = newNumber => {
     let { ...obj } = printObj;
     obj.number = newNumber;
     setPrintObj(obj);
@@ -170,7 +173,7 @@ export const TdAccountNumber = (props) => {
 
   useEffect(() => {
     if (showContextMenu) {
-      let DivContextAll = document.querySelectorAll(".divContext");
+      let DivContextAll = document.querySelectorAll('.divContext');
       let DivContext;
       if (DivContextAll.length > 1) {
         DivContext = DivContextAll[1];
@@ -179,16 +182,15 @@ export const TdAccountNumber = (props) => {
       }
       let heghtDivContext = DivContext.clientHeight;
       if (divBottomCoord - heghtDivContext < 0) {
-        DivContext.style.top =
-          DivContext.offsetTop + divBottomCoord - heghtDivContext + "px";
+        DivContext.style.top = DivContext.offsetTop + divBottomCoord - heghtDivContext + 'px';
       }
       let customerPayment = props.customerPayment;
       if (
-        customerPayment == "Нет" ||
-        customerPayment == "Печать" ||
-        customerPayment == "Мыло" ||
-        customerPayment == "Ок" ||
-        customerPayment == "Почта"
+        customerPayment == 'Нет' ||
+        customerPayment == 'Печать' ||
+        customerPayment == 'Мыло' ||
+        customerPayment == 'Ок' ||
+        customerPayment == 'Почта'
       ) {
         setShowContextEmail(true);
       } else {
@@ -209,16 +211,16 @@ export const TdAccountNumber = (props) => {
     if (props.elem) {
       if (props.currentTR == props.elem._id && props.elem.applicationNumber) {
         console.log(props.currentTR, props.elem._id);
-        setClassTD("odersTd backGroundGrey");
+        setClassTD('odersTd backGroundGrey');
       } else {
-        setClassTD("odersTd");
+        setClassTD('odersTd');
       }
     }
   }, [props.currentTR]);
   useEffect(() => {
     if (showContextMenu) {
       let id = props.elem ? props.elem._id : null;
-      let check = appList.find((app) => app.orderId == id);
+      let check = appList.find(app => app.orderId == id);
       console.log(check);
       if (check) {
         setIsAppExist(true);
@@ -228,29 +230,25 @@ export const TdAccountNumber = (props) => {
     }
   }, [showContextMenu]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (showEdit) {
           setShowEdit(false);
           setCurrentId(null);
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showEdit]);
   useEffect(() => {
-    setAppBtn("Печать заявки");
+    setAppBtn('Печать заявки');
   }, [orderList]);
 
   return (
-    <td
-      className={classTD}
-      onDoubleClick={handleDBLClick}
-      onContextMenu={handleContaxtMenu}
-    >
+    <td className={classTD} onDoubleClick={handleDBLClick} onContextMenu={handleContaxtMenu}>
       {showEdit ? (
         <div className="divChoise">
           <input name="accountNumber" type="text" onKeyDown={handleEnter} />
@@ -260,7 +258,7 @@ export const TdAccountNumber = (props) => {
       )}
       {showContextMenu ? (
         <div tabIndex="0" className="divContext">
-          {props.accountNumber == null || props.accountNumber == "" ? (
+          {props.accountNumber == null || props.accountNumber == '' ? (
             <p className="contextmenu" onClick={handleCreateBill}>
               Создать счет
             </p>
@@ -280,35 +278,24 @@ export const TdAccountNumber = (props) => {
           </p>
           <hr className="contextMenuHr" />
           <p className="contextmenu" onClick={handleClikCreateApp}>
-            {isAppExist ? "Изменить заявку" : "Создать заявку"}
+            {isAppExist ? 'Изменить заявку' : 'Создать заявку'}
           </p>
           <p className="contextmenu" onClick={handleClikPrintApp}>
             {appBtn}
             {/*Печать заявки*/}
           </p>
-          <p
-            className="contextmenu"
-            onClick={(e) => handleClickAddDoc(e, "app")}
-          >
+          <p className="contextmenu" onClick={e => handleClickAddDoc(e, 'app')}>
             Добавить Заявку pdf
           </p>
           <hr className="contextMenuHr" />
           <p
-            className={
-              props.elem.accountNumber != null
-                ? "contextmenu"
-                : "contextmenu greyFont"
-            }
-            onClick={(e) => handleClickAddDoc(e, "ttn")}
+            className={props.elem.accountNumber != null ? 'contextmenu' : 'contextmenu greyFont'}
+            onClick={e => handleClickAddDoc(e, 'ttn')}
           >
             Добавить ТТН
           </p>
           <p
-            className={
-              props.elem.accountNumber != null
-                ? "contextmenu"
-                : "contextmenu greyFont"
-            }
+            className={props.elem.accountNumber != null ? 'contextmenu' : 'contextmenu greyFont'}
             onClick={handleClickPrintTTN}
           >
             Печать ТТН
@@ -343,7 +330,7 @@ export const TdAccountNumber = (props) => {
           width={800}
           height={800}
           left="-50vw"
-          top={`-${top}px`}
+          top={`${-1 * top}px`}
           handleClickWindowClose={handleClickUserWindowClose}
           windowId="fillApplication"
         >
@@ -363,7 +350,7 @@ export const TdAccountNumber = (props) => {
           width={1200}
           height={700}
           left="-70vw"
-          top={`-${top}px`}
+          top={`${-1 * top}px`}
           handleClickWindowClose={handleClickUserWindowClose}
           windowId="createApplication"
         >
