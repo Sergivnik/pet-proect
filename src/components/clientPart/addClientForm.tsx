@@ -221,8 +221,12 @@ export const AddClientForm: React.FC<AddClientFormProps> = ({ onBack }) => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    dispatch(addNewOwnerLogist(newClient));
-    onBack();
+    if (newClient.login && newClient.password && newClient.bossName) {
+      dispatch(addNewOwnerLogist(newClient));
+      onBack();
+    } else {
+      alert('Логин, пароль и руководитель обязательны для заполнения');
+    }
   };
 
   const renderInput = (field: keyof ClientData, value: string | null) => {
