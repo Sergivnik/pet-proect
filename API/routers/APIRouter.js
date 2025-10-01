@@ -66,6 +66,7 @@ router.post('/editCustomerApp', customerAPI.taskEditCustomerApp);
 router.post('/addNewTask', tasksAPI.tasksAddData);
 router.post('/makeCardPayment', cardAPI.makeCardPayment);
 router.post('/addPostTrack', postAPI.addPostTrack);
+// moved to ReportRouter mounted at /API/reports
 
 router.patch('/edit', API.taskEdit);
 router.patch('/editOderNew', API.taskEditNew);

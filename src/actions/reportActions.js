@@ -13,6 +13,14 @@ export const GET_REPORT_PDF_FAILURE = 'GET_REPORT_PDF_FAILURE';
 export const EDIT_YEAR_CONST_SUCCESS = 'EDIT_YEAR_CONST_SUCCESS';
 export const EDIT_YEAR_CONST_FAILURE = 'EDIT_YEAR_CONST_FAILURE';
 
+// ReceiptIntoBankAccount: поступления по диапазону дат
+export const GET_RECEIPTS_BY_DATE_SUCCESS = 'GET_RECEIPTS_BY_DATE_SUCCESS';
+export const GET_RECEIPTS_BY_DATE_FAILURE = 'GET_RECEIPTS_BY_DATE_FAILURE';
+
+// ReceiptIntoBankAccount: рейсы по диапазону дат
+export const GET_TRIPS_BY_DATE_SUCCESS = 'GET_TRIPS_BY_DATE_SUCCESS';
+export const GET_TRIPS_BY_DATE_FAILURE = 'GET_TRIPS_BY_DATE_FAILURE';
+
 export const getReportData = data => {
   console.log(data);
   return dispatch => {
@@ -131,4 +139,48 @@ export const editYearConstSuccess = (name, data) => ({
 });
 export const editYearConstFailure = () => ({
   type: EDIT_YEAR_CONST_FAILURE,
+});
+
+// Получить суммы поступлений по клиентам за период
+export const getReceiptsByDate = (dateBegin, dateEnd) => {
+  return dispatch => {
+    axios
+      .post(DOMENNAME + '/API/reports/receiptsByDate', { dateBegin, dateEnd })
+      .then(res => {
+        return dispatch(getReceiptsByDateSuccess(res.data));
+      })
+      .catch(e => {
+        console.log(e.message);
+        return dispatch(getReceiptsByDateFailure());
+      });
+  };
+};
+export const getReceiptsByDateSuccess = data => ({
+  type: GET_RECEIPTS_BY_DATE_SUCCESS,
+  data,
+});
+export const getReceiptsByDateFailure = () => ({
+  type: GET_RECEIPTS_BY_DATE_FAILURE,
+});
+
+// Получить суммы рейсов по клиентам за период
+export const getTripsByDate = (dateBegin, dateEnd) => {
+  return dispatch => {
+    axios
+      .post(DOMENNAME + '/API/reports/tripsByDate', { dateBegin, dateEnd })
+      .then(res => {
+        return dispatch(getTripsByDateSuccess(res.data));
+      })
+      .catch(e => {
+        console.log(e.message);
+        return dispatch(getTripsByDateFailure());
+      });
+  };
+};
+export const getTripsByDateSuccess = data => ({
+  type: GET_TRIPS_BY_DATE_SUCCESS,
+  data,
+});
+export const getTripsByDateFailure = () => ({
+  type: GET_TRIPS_BY_DATE_FAILURE,
 });

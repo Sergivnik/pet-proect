@@ -118,6 +118,55 @@ let TasksReports = {
       callBack({ error: err });
     }
   },
+  receiptsByDate: async (dateBegin, dateEnd, userId, callBack) => {
+    try {
+      // Нормализуем даты до формата YYYY-MM-
+      console.log(dateBegin, dateEnd);
+      const begin =
+        typeof dateBegin === 'string'
+          ? dateBegin.slice(0, 10)
+          : new Date(dateBegin).toISOString().slice(0, 10);
+      const end =
+        typeof dateEnd === 'string'
+          ? dateEnd.slice(0, 10)
+          : new Date(dateEnd).toISOString().slice(0, 10);
+
+      const [rows] = await db.query(
+        `SELECT idCustomer as customerId, SUM(sumOfPayment) as sumIn
+         FROM customerpayment
+         WHERE date>=? AND date<=?
+         GROUP BY idCustomer`,
+        [begin, end]
+      );
+      callBack(rows);
+    } catch (err) {
+      callBack({ error: err });
+    }
+  },
+  tripsByDate: async (dateBegin, dateEnd, userId, callBack) => {
+    console.log(dateBegin, dateEnd);
+    try {
+      const begin =
+        typeof dateBegin === 'string'
+          ? dateBegin.slice(0, 10)
+          : new Date(dateBegin).toISOString().slice(0, 10);
+      const end =
+        typeof dateEnd === 'string'
+          ? dateEnd.slice(0, 10)
+          : new Date(dateEnd).toISOString().slice(0, 10);
+
+      const [rows] = await db.query(
+        `SELECT idCustomer as customerId, SUM(customerPrice) as sumTrips
+         FROM oderslist
+         WHERE date>=? AND date<=?
+         GROUP BY idCustomer`,
+        [begin, end]
+      );
+      callBack(rows);
+    } catch (err) {
+      callBack({ error: err });
+    }
+  },
 };
 
 module.exports = TasksReports;

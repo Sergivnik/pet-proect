@@ -1,32 +1,37 @@
-import React, { useState } from "react";
-import { DriverReport } from "./driverReport.jsx";
-import { ReconciliationAct } from "./reconciliationAct.jsx";
-import { TaxesDriver } from "./taxesReport.jsx";
-import { IncomeReport } from "./incomeReport.jsx";
-import { CardReport } from "./cardReport.tsx";
+import React, { useState } from 'react';
+import { DriverReport } from './driverReport.jsx';
+import { ReconciliationAct } from './reconciliationAct.jsx';
+import { TaxesDriver } from './taxesReport.jsx';
+import { IncomeReport } from './incomeReport.jsx';
+import { CardReport } from './cardReport.tsx';
+import { ReceiptIntoBankAccount } from './receiptIntoBankAccount.tsx';
 
-import "./reports.sass";
+import './reports.sass';
 
 export const Report = () => {
   const [currentReport, setCurrentReport] = useState(null);
 
-  const handleClickBtnMenu = (e) => {
+  const handleClickBtnMenu = e => {
     let btnName = e.currentTarget.name;
     switch (btnName) {
-      case "drivers":
+      case 'drivers':
         setCurrentReport(<DriverReport />);
         break;
-      case "reconciliationAct":
+      case 'reconciliationAct':
         setCurrentReport(<ReconciliationAct />);
         break;
-      case "taxesReport":
+      case 'taxesReport':
         setCurrentReport(<TaxesDriver />);
         break;
-      case "incomeReport":
+      case 'incomeReport':
         setCurrentReport(<IncomeReport />);
         break;
-      case "cardReport":
-        setCurrentReport(<CardReport/>)
+      case 'cardReport':
+        setCurrentReport(<CardReport />);
+        break;
+      case 'receiptIntoBankAccount':
+        setCurrentReport(<ReceiptIntoBankAccount />);
+        break;
       default:
         break;
     }
@@ -34,40 +39,27 @@ export const Report = () => {
   return (
     <div className="mainReportForm">
       <header className="headerReportForm">
-        <button
-          name="drivers"
-          className="headerReportBtn"
-          onClick={handleClickBtnMenu}
-        >
+        <button name="drivers" className="headerReportBtn" onClick={handleClickBtnMenu}>
           Отчет по водителям
         </button>
-        <button
-          name="reconciliationAct"
-          className="headerReportBtn"
-          onClick={handleClickBtnMenu}
-        >
+        <button name="reconciliationAct" className="headerReportBtn" onClick={handleClickBtnMenu}>
           Акт сверки с заказчиком
         </button>
-        <button
-          name="taxesReport"
-          className="headerReportBtn"
-          onClick={handleClickBtnMenu}
-        >
+        <button name="taxesReport" className="headerReportBtn" onClick={handleClickBtnMenu}>
           Отчет по УСН
         </button>
-        <button
-          name="incomeReport"
-          className="headerReportBtn"
-          onClick={handleClickBtnMenu}
-        >
+        <button name="incomeReport" className="headerReportBtn" onClick={handleClickBtnMenu}>
           Отчет по доходам
         </button>
+        <button name="cardReport" className="headerReportBtn" onClick={handleClickBtnMenu}>
+          Карта
+        </button>
         <button
-          name="cardReport"
+          name="receiptIntoBankAccount"
           className="headerReportBtn"
           onClick={handleClickBtnMenu}
         >
-          Карта
+          Анализ поступлений
         </button>
       </header>
       <main className="reportTable">{currentReport}</main>
