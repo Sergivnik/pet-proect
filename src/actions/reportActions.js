@@ -1,6 +1,9 @@
 import axios from 'axios';
 import { DOMENNAME } from '../middlewares/initialState';
 
+// Общий экземпляр axios с передачей cookies
+const api = axios.create({ withCredentials: true });
+
 export const GET_REPORT_DATA_SUCCESS = 'GET_REPORT_DATA_SUCCESS';
 export const GET_REPORT_DATA_FAILURE = 'GET_REPORT_DATA_FAILURE';
 export const SAVE_REPORT_PDF_REQUEST = 'SAVE_REPORT_PDF_REQUEST';
@@ -24,7 +27,7 @@ export const GET_TRIPS_BY_DATE_FAILURE = 'GET_TRIPS_BY_DATE_FAILURE';
 export const getReportData = data => {
   console.log(data);
   return dispatch => {
-    axios
+    api
       .post(DOMENNAME + '/API/getReportData', { body: data })
       .then(res => {
         return dispatch(getReportDataSuccess(res.data, data));
@@ -47,7 +50,7 @@ export const saveReportPdf = docHtml => {
   console.log(docHtml);
   return dispatch => {
     dispatch(saveReportPdfRequest());
-    axios
+    api
       .post(DOMENNAME + '/API/saveReportPdf', { body: docHtml })
       .then(res => {
         console.log(res.data);
@@ -72,7 +75,7 @@ export const saveReportPdfFailure = message => ({
 
 export const sendReportEmail = email => {
   return dispatch => {
-    axios
+    api
       .get(DOMENNAME + '/API/sendReportEmail/' + email)
       .then(res => {
         console.log(res.data);
@@ -92,8 +95,7 @@ export const sendReportEmailFailure = () => ({
 });
 export const getReportPdf = () => {
   return dispatch => {
-    axios
-      .create({ withCredentials: true })
+    api
       .get(DOMENNAME + '/API/getReportPdf', {
         responseType: 'blob',
       })
@@ -119,8 +121,7 @@ export const getReportPdfFailure = () => ({
 });
 export const editYearConst = (name, data) => {
   return dispatch => {
-    axios
-      .create({ withCredentials: true })
+    api
       .post(DOMENNAME + '/API/editYearConst', { name: name, data: data })
       .then(res => {
         console.log(res.data);
@@ -144,9 +145,10 @@ export const editYearConstFailure = () => ({
 // Получить суммы поступлений по клиентам за период
 export const getReceiptsByDate = (dateBegin, dateEnd) => {
   return dispatch => {
-    axios
+    api
       .post(DOMENNAME + '/API/reports/receiptsByDate', { dateBegin, dateEnd })
       .then(res => {
+        console.log(res.data);
         return dispatch(getReceiptsByDateSuccess(res.data));
       })
       .catch(e => {
@@ -166,9 +168,10 @@ export const getReceiptsByDateFailure = () => ({
 // Получить суммы рейсов по клиентам за период
 export const getTripsByDate = (dateBegin, dateEnd) => {
   return dispatch => {
-    axios
+    api
       .post(DOMENNAME + '/API/reports/tripsByDate', { dateBegin, dateEnd })
       .then(res => {
+        console.log(res.data);
         return dispatch(getTripsByDateSuccess(res.data));
       })
       .catch(e => {

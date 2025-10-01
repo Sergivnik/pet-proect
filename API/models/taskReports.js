@@ -121,7 +121,10 @@ let TasksReports = {
   receiptsByDate: async (dateBegin, dateEnd, userId, callBack) => {
     try {
       // Нормализуем даты до формата YYYY-MM-
-      console.log(dateBegin, dateEnd);
+      console.log(dateBegin, dateEnd, userId);
+      // Получаем ownerId пользователя
+      let [user] = await db.query(`SELECT * FROM users where _id=?`, [userId]);
+      const ownerId = user[0].ownerId;
       const begin =
         typeof dateBegin === 'string'
           ? dateBegin.slice(0, 10)
@@ -134,18 +137,23 @@ let TasksReports = {
       const [rows] = await db.query(
         `SELECT idCustomer as customerId, SUM(sumOfPayment) as sumIn
          FROM customerpayment
-         WHERE date>=? AND date<=?
-         GROUP BY idCustomer`,
-        [begin, end]
+         WHERE ownerId=? AND date>=? AND date<=?
+         GROUP BY idCustomer
+         ORDER BY sumIn DESC`,
+        [ownerId, begin, end]
       );
       callBack(rows);
     } catch (err) {
+      console.log(err);
       callBack({ error: err });
     }
   },
   tripsByDate: async (dateBegin, dateEnd, userId, callBack) => {
-    console.log(dateBegin, dateEnd);
+    console.log(dateBegin, dateEnd, userId);
     try {
+      // Получаем ownerId пользователя
+      let [user] = await db.query(`SELECT * FROM users where _id=?`, [userId]);
+      const ownerId = user[0].ownerId;
       const begin =
         typeof dateBegin === 'string'
           ? dateBegin.slice(0, 10)
@@ -158,12 +166,14 @@ let TasksReports = {
       const [rows] = await db.query(
         `SELECT idCustomer as customerId, SUM(customerPrice) as sumTrips
          FROM oderslist
-         WHERE date>=? AND date<=?
-         GROUP BY idCustomer`,
-        [begin, end]
+         WHERE ownerId=? AND date>=? AND date<=?
+         GROUP BY idCustomer
+         ORDER BY sumTrips DESC`,
+        [ownerId, begin, end]
       );
       callBack(rows);
     } catch (err) {
+      console.log(err);
       callBack({ error: err });
     }
   },

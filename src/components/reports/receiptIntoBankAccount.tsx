@@ -1,17 +1,23 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getTripsByDate, getReceiptsByDate } from '../../actions/reportActions.js';
 import './reports.sass';
 
 export const ReceiptIntoBankAccount = () => {
   const dispatch = useDispatch();
+  const receiptsByDate: any[] = useSelector(
+    (state: any) => state.reportReducer?.receiptsByDate || []
+  );
+  const tripsByDate: any[] = useSelector((state: any) => state.reportReducer?.tripsByDate || []);
+  const clientList: any[] = useSelector((state: any) => state.oderReducer?.clientList || []);
   const [dateBegin, setDateBegin] = useState<Date | null>(null);
   const [dateEnd, setDateEnd] = useState<Date | null>(null);
   const [showReport, setShowReport] = useState<boolean>(false);
   const [reportData, setReportData] = useState<
     { id: number; customerName: string; sumIn: number; sumTrips: number }[]
   >([]);
-
+  const [hoveredRowId, setHoveredRowId] = useState<number | null>(null);
+  const [selectedRowId, setSelectedRowId] = useState<number | null>(null);
 
   const handleEnter = (e: any) => {
     if (e.key == 'Enter') {
@@ -43,6 +49,34 @@ export const ReceiptIntoBankAccount = () => {
     setShowReport(true);
     setReportData([]);
   };
+  useEffect(() => {
+    if (!showReport) return;
+    const findName = (id: number) => {
+      const rec = clientList.find(c => Number(c._id) === Number(id) || Number(c.id) === Number(id));
+      return (rec && rec.value) || `Клиент ${id}`;
+    };
+    const map = new Map<
+      number,
+      { id: number; customerName: string; sumIn: number; sumTrips: number }
+    >();
+    receiptsByDate.forEach((row: any) => {
+      const id = Number(row.customerId);
+      const sumIn = Number(row.sumIn) || 0;
+      map.set(id, { id, customerName: findName(id), sumIn, sumTrips: 0 });
+    });
+    tripsByDate.forEach((row: any) => {
+      const id = Number(row.customerId);
+      const sumTrips = Number(row.sumTrips) || 0;
+      if (map.has(id)) {
+        const item = map.get(id)!;
+        item.sumTrips = sumTrips;
+        map.set(id, item);
+      } else {
+        map.set(id, { id, customerName: findName(id), sumIn: 0, sumTrips });
+      }
+    });
+    setReportData(Array.from(map.values()));
+  }, [receiptsByDate, tripsByDate, showReport, clientList]);
   return (
     <div className="divContainer">
       <header className="taxReportHeader">
@@ -97,7 +131,18 @@ export const ReceiptIntoBankAccount = () => {
             </thead>
             <tbody>
               {reportData.map(row => (
-                <tr key={`receiptTable${row.id}`}>
+                <tr
+                  key={`receiptTable${row.id}`}
+                  onMouseEnter={() => setHoveredRowId(row.id)}
+                  onMouseLeave={() => setHoveredRowId(null)}
+                  onClick={() => setSelectedRowId(row.id)}
+                  style={{
+                    opacity: hoveredRowId === row.id ? 0.6 : 1,
+                    backgroundColor: selectedRowId === row.id ? '#e6f0ff' : 'transparent',
+                    cursor: 'pointer',
+                    transition: 'opacity 120ms ease, background-color 120ms ease',
+                  }}
+                >
                   <td className="taxReportTableTd">{row.customerName}</td>
                   <td className="taxReportTableTd">{row.sumIn.toLocaleString()}</td>
                   <td className="taxReportTableTd">{row.sumTrips.toLocaleString()}</td>
