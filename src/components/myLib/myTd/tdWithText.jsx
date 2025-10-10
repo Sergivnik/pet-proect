@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import "./userTd.sass";
+import React, { useEffect, useState } from 'react';
+import './userTd.sass';
 
-export const TdWithText = (props) => {
+export const TdWithText = props => {
   const text = props.text;
   const name = props.name;
   const elem = props.elem;
@@ -9,22 +9,28 @@ export const TdWithText = (props) => {
   const [showInput, setShowInput] = useState(false);
   const [fieldValue, setFieldValue] = useState(text);
 
-  const setValue = (e) => {
+  const setValue = e => {
     setFieldValue(e.currentTarget.value);
   };
   const handleDblClick = () => {
     setShowInput(true);
   };
-  const handleEnter = (e) => {
-    console.log("hi");
-    if (e.key == "Enter") {
+
+  const handleCellClick = e => {
+    if (props.onCellClick && props.paymentId) {
+      props.onCellClick(props.paymentId, e);
+    }
+  };
+  const handleEnter = e => {
+    console.log('hi');
+    if (e.key == 'Enter') {
       props.getData(fieldValue, name, elem);
       setShowInput(false);
     }
   };
-  const formatBigNumber = (number) => {
+  const formatBigNumber = number => {
     // Проверяем, что значение не null и является строкой
-    if (number === null || typeof number !== "string") {
+    if (number === null || typeof number !== 'string') {
       return null;
     }
 
@@ -39,9 +45,9 @@ export const TdWithText = (props) => {
   };
   useEffect(() => {
     if (showInput) {
-      let div = document.querySelector(".myTdDivChoise");
+      let div = document.querySelector('.myTdDivChoise');
       let parent = div.parentNode;
-      div.style.width = parent.clientWidth + "px";
+      div.style.width = parent.clientWidth + 'px';
     }
   }, [showInput]);
   useEffect(() => {
@@ -51,8 +57,15 @@ export const TdWithText = (props) => {
       setFieldValue(text);
     }
   }, [props.text]);
+  const cellClassName = props.isSelected ? 'myTd selected-cell' : 'myTd';
+
   return (
-    <td className="myTd" onDoubleClick={handleDblClick}>
+    <td
+      className={cellClassName}
+      onDoubleClick={handleDblClick}
+      onClick={handleCellClick}
+      style={props.isSelected ? { backgroundColor: '#d3d3d3' } : {}}
+    >
       {showInput ? (
         <div className="myTdDivChoise">
           <input
