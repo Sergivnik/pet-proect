@@ -103,6 +103,7 @@ export const Oders = () => {
   const [sumAccount, setSumAccount] = useState(0);
   const [editTable, setEditTable] = useState(null);
   const [idEdit, setIdEdit] = useState(null);
+  const [showDriversTrips, setShowDriversTrips] = useState(false);
 
   useEffect(() => {
     console.log(requestStatus);
@@ -155,6 +156,10 @@ export const Oders = () => {
         e.preventDefault();
         setShowTasks(true);
       }
+      if (e.ctrlKey && e.code == 'KeyS') {
+        e.preventDefault();
+        handleClickDriversTrips();
+      }
       if (e.code == 'Delete' && currentElem) {
         if (currentElem.completed == 0) {
           console.log('I am listening Delete', trId, currentElem);
@@ -166,7 +171,7 @@ export const Oders = () => {
     return () => {
       document.removeEventListener('keydown', onKeypress);
     };
-  }, [trId, showDelete, showWindow, showSecretTable, showTasks]);
+  }, [trId, showDelete, showWindow, showSecretTable, showTasks, showDriversTrips]);
 
   useEffect(() => {
     let length = odersList.length;
@@ -446,6 +451,14 @@ export const Oders = () => {
   const handleClickExit = () => {
     dispatch(authSignOut());
   };
+  const handleClickDriversTrips = () => {
+    console.log('driversTrips', showDriversTrips);
+    if (showDriversTrips) {
+      setShowDriversTrips(false);
+    } else {
+      setShowDriversTrips(true);
+    }
+  };
   const handleClickUser = () => {
     setShowUserWindow(true);
   };
@@ -483,6 +496,7 @@ export const Oders = () => {
           handleClickTasks={handleClickTasks}
           handleClickUser={handleClickUser}
           handleClickExit={handleClickExit}
+          handleClickDriversTrips={handleClickDriversTrips}
         />
       </div>
       {showWindow && (
@@ -563,24 +577,34 @@ export const Oders = () => {
             writeFilterList={writeFilterList}
             trId={trId}
           />
-          <tbody className="odersTbody">
-            {oders.map(elem => {
-              return (
-                <UserTr
-                  key={elem._id}
-                  elem={elem}
-                  handleClickTR={handleClickTR}
-                  showEdit={showEdit}
-                  showDelete={showDelete}
-                  handleClickDelete={handleClickDelete}
-                  trId={trId}
-                  getCurrentTR={getCurrentTR}
-                  handleClickGenerate={handleClickGenerate}
-                  handleClickCtrl={handleClickCtrl}
-                />
-              );
-            })}
-          </tbody>
+          {showDriversTrips ?(
+            <tbody className="odersTbody">
+              <tr>
+                <td>
+                  <h1>Рейсы водителей на прямую</h1>
+                </td>
+              </tr>
+            </tbody>
+          ) : (
+            <tbody className="odersTbody">
+              {oders.map(elem => {
+                return (
+                  <UserTr
+                    key={elem._id}
+                    elem={elem}
+                    handleClickTR={handleClickTR}
+                    showEdit={showEdit}
+                    showDelete={showDelete}
+                    handleClickDelete={handleClickDelete}
+                    trId={trId}
+                    getCurrentTR={getCurrentTR}
+                    handleClickGenerate={handleClickGenerate}
+                    handleClickCtrl={handleClickCtrl}
+                  />
+                );
+              })}
+            </tbody>
+          ) }
         </table>
       </div>
       {showTasks && (

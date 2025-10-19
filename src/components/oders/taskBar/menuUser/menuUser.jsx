@@ -59,6 +59,10 @@ export const MenuUser = props => {
       setIsTooltipVisible(false);
     }
   };
+  const handleClickDriversTrips = () => {
+    props.handleClickDriversTrips();
+    setIsTooltipVisible(false);
+  };
 
   useEffect(() => {
     return () => {
@@ -103,6 +107,9 @@ export const MenuUser = props => {
                 Добавление клиента ctrl+К
               </span>
             )}
+            <span className="tooltipSpanTask" onClick={handleClickDriversTrips}>
+              Рейсы водителей на прямую ctrl+D
+            </span>
           </div>
         )}
       </span>
