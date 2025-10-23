@@ -145,6 +145,11 @@ var Tasks = {
         [ownerId]
       );
       allData.odersList = odersList;
+      const [driverorderlist] = await db.query(
+       `(SELECT * FROM driverorderlist WHERE ownerId = ? ORDER BY _id DESC LIMIT 5000) ORDER BY date, accountNumber, _id`,
+        [ownerId]
+      );
+      allData.driverorderlist = driverorderlist;
 
       callback(allData);
     } catch (err) {

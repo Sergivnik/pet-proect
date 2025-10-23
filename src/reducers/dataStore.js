@@ -10,6 +10,7 @@ export const initialStore = {
   filteredUnloading: [],
   odersList: [],
   originOdersList: [],
+  driverOrderList: [],
   filteredCustomerPrice: [],
   filteredDriverPrice: [],
   statusCustomerPay: [

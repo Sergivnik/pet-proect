@@ -1,5 +1,30 @@
 import update from 'react-addons-update';
 import { initialStore } from './dataStore.js';
+
+// Функция для сортировки списка заказов
+const sortOrdersList = ordersList => {
+  return ordersList.sort((a, b) => {
+    if (a.date < b.date) return -1;
+    if (a.date > b.date) return 1;
+    if (a.date == b.date) {
+      if ((b.accountNumber == null || b.accountNumber == '') && a.accountNumber) return -1;
+      if ((a.accountNumber == null || a.accountNumber == '') && b.accountNumber) return 1;
+      if (
+        (b.accountNumber == null || b.accountNumber == '') &&
+        (a.accountNumber == null || a.accountNumber == '')
+      ) {
+        if (a._id < b._id) return -1;
+        if (a._id > b._id) return 1;
+      }
+      if (a.accountNumber < b.accountNumber) return -1;
+      if (a.accountNumber > b.accountNumber) return 1;
+      if (a.accountNumber == b.accountNumber) {
+        if (a._id < b._id) return -1;
+        if (a._id > b._id) return 1;
+      }
+    }
+  });
+};
 import {
   ADD_ODER_SUCCESS,
   DEL_ODER_SUCCESS,
@@ -412,27 +437,7 @@ export const oderReducer = (store = initialStore, action) => {
             store.accountList.find(elem => elem.value == item.accountNumber)
           );
       });
-      let ordersList = action.dataServer.odersList.sort((a, b) => {
-        if (a.date < b.date) return -1;
-        if (a.date > b.date) return 1;
-        if (a.date == b.date) {
-          if ((b.accountNumber == null || b.accountNumber == '') && a.accountNumber) return -1;
-          if ((a.accountNumber == null || a.accountNumber == '') && b.accountNumber) return 1;
-          if (
-            (b.accountNumber == null || b.accountNumber == '') &&
-            (a.accountNumber == null || a.accountNumber == '')
-          ) {
-            if (a._id < b._id) return -1;
-            if (a._id > b._id) return 1;
-          }
-          if (a.accountNumber < b.accountNumber) return -1;
-          if (a.accountNumber > b.accountNumber) return 1;
-          if (a.accountNumber == b.accountNumber) {
-            if (a._id < b._id) return -1;
-            if (a._id > b._id) return 1;
-          }
-        }
-      });
+      let ordersList = sortOrdersList(action.dataServer.odersList);
       return {
         ...store,
         odersList: ordersList,
@@ -467,27 +472,8 @@ export const oderReducer = (store = initialStore, action) => {
         }
         i++;
       });
-      let ordersList = action.dataServer.odersList.sort((a, b) => {
-        if (a.date < b.date) return -1;
-        if (a.date > b.date) return 1;
-        if (a.date == b.date) {
-          if ((b.accountNumber == null || b.accountNumber == '') && a.accountNumber) return -1;
-          if ((a.accountNumber == null || a.accountNumber == '') && b.accountNumber) return 1;
-          if (
-            (b.accountNumber == null || b.accountNumber == '') &&
-            (a.accountNumber == null || a.accountNumber == '')
-          ) {
-            if (a._id < b._id) return -1;
-            if (a._id > b._id) return 1;
-          }
-          if (a.accountNumber < b.accountNumber) return -1;
-          if (a.accountNumber > b.accountNumber) return 1;
-          if (a.accountNumber == b.accountNumber) {
-            if (a._id < b._id) return -1;
-            if (a._id > b._id) return 1;
-          }
-        }
-      });
+      let ordersList = sortOrdersList(action.dataServer.odersList);
+      let driverOrderList = sortOrdersList(action.dataServer.driverorderlist);
       let clone = [];
       ordersList.forEach(elem => {
         clone.push(Object.assign({}, elem));
@@ -508,6 +494,7 @@ export const oderReducer = (store = initialStore, action) => {
         trackdrivers: action.dataServer.trackdrivers,
         tracklist: action.dataServer.tracklist,
         originOdersList: clone,
+        driverOrderList: driverOrderList,
         filteredCustomerPrice: [
           Number(action.dataServer.minCustomerPrice),
           Number(action.dataServer.maxCustomerPrice),
@@ -537,27 +524,7 @@ export const oderReducer = (store = initialStore, action) => {
       };
     }
     case GET_DATA_SUCCESS5000: {
-      let ordersList = action.dataServer.sort((a, b) => {
-        if (a.date < b.date) return -1;
-        if (a.date > b.date) return 1;
-        if (a.date == b.date) {
-          let condotion = (b.accountNumber == null || b.accountNumber == '') && a.accountNumber;
-          if (condotion) return -1;
-          if (
-            (b.accountNumber == null || b.accountNumber == '') &&
-            (a.accountNumber == null || a.accountNumber == '')
-          ) {
-            if (a._id < b._id) return -1;
-            if (a._id > b._id) return 1;
-          }
-          if (a.accountNumber < b.accountNumber) return -1;
-          if (a.accountNumber > b.accountNumber) return 1;
-          if (a.accountNumber == b.accountNumber) {
-            if (a._id < b._id) return -1;
-            if (a._id > b._id) return 1;
-          }
-        }
-      });
+      let ordersList = sortOrdersList(action.dataServer);
       let clone = [];
       ordersList.forEach(elem => {
         clone.push(Object.assign({}, elem));
