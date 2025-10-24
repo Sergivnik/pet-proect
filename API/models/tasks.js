@@ -146,7 +146,7 @@ var Tasks = {
       );
       allData.odersList = odersList;
       const [driverorderlist] = await db.query(
-       `(SELECT * FROM driverorderlist WHERE ownerId = ? ORDER BY _id DESC LIMIT 5000) ORDER BY date, accountNumber, _id`,
+        `(SELECT * FROM driverorderlist WHERE ownerId = ? ORDER BY _id DESC LIMIT 5000) ORDER BY date, accountNumber, _id`,
         [ownerId]
       );
       allData.driverorderlist = driverorderlist;
@@ -175,255 +175,407 @@ var Tasks = {
   },
 
   filter: async function (datafilter, callback) {
-    let filterStr = '';
-    let filterDate = '';
-    let filterDriver = '';
-    let filterOder = '';
-    let filterLoad = '';
-    let filterUnload = '';
-    let filterCustomerPrice = '';
-    let filterDriverPrice = '';
-    let filterProxy = '';
-    let filterCompleted = '';
-    let filterDocuments = '';
-    let filterCustomerPayment = '';
-    let filterDriverPayment = '';
-    let filterAccount = '';
-    let filterArr = [];
-    let setData = {};
-    if (datafilter.date.length) {
-      let felterDateStr = null;
-      datafilter.date.forEach(element => {
-        if (felterDateStr) {
-          felterDateStr = felterDateStr + ',' + `'${element}'`;
-        } else {
-          felterDateStr = `'${element}'`;
-        }
-      });
-      filterArr[0] = `date in (${felterDateStr}) `;
-    }
-    if (datafilter.driver.length) {
-      filterArr[1] = `idDriver in (${datafilter.driver})`;
-    }
-    if (datafilter.oder.length) {
-      filterArr[2] = `idCustomer in (${datafilter.oder})`;
-    }
-    if (datafilter.cityLoading.length) {
-      let str = '';
-      let cityLoadingStr = null;
-      datafilter.cityLoading.forEach(elem => {
-        str = `JSON_CONTAINS(idLoadingPoint, '${elem}')`;
-        cityLoadingStr ? (cityLoadingStr = cityLoadingStr + ' or ' + str) : (cityLoadingStr = str);
-      });
-      filterArr[3] = '(' + cityLoadingStr + ')';
-    }
-    if (datafilter.cityUnloading.length) {
-      let str = '';
-      let cityUnloadingStr = null;
-      datafilter.cityUnloading.forEach(elem => {
-        str = `JSON_CONTAINS(idUnloadingPoint, '${elem}')`;
-        cityUnloadingStr
-          ? (cityUnloadingStr = cityUnloadingStr + ' or ' + str)
-          : (cityUnloadingStr = str);
-      });
-      filterArr[4] = '(' + cityUnloadingStr + ')';
-    }
-    if (datafilter.customerPrice.length) {
-      filterArr[5] = ` customerPrice between ${datafilter.customerPrice[0]} and ${datafilter.customerPrice[1]}`;
-    }
-    if (datafilter.driverPrice.length) {
-      filterArr[6] = ` driverPrice between ${datafilter.driverPrice[0]} and ${datafilter.driverPrice[1]}`;
-    }
-    if (datafilter.proxy.length) {
-      filterArr[7] = `proxy in (${datafilter.proxy})`;
-    }
-    if (datafilter.completed.length) {
-      filterArr[8] = `completed in (${datafilter.completed})`;
-    }
-    if (datafilter.documents.length) {
-      filterArr[9] = `document in (${datafilter.documents})`;
-    }
-    if (datafilter.customerPayment.length) {
-      filterArr[10] = `customerPayment in (${datafilter.customerPayment})`;
-    }
-    if (datafilter.driverPayment.length) {
-      filterArr[11] = `driverPayment in (${datafilter.driverPayment})`;
-    }
-    if (datafilter.accountList.length) {
-      let accountStr = '';
-      datafilter.accountList.forEach(elem => {
-        if (accountStr == '') {
-          accountStr = `"${elem.value}"`;
-        } else {
-          accountStr = accountStr + `, "${elem.value}"`;
-        }
-      });
-      filterArr[12] = `accountNumber in (${accountStr})`;
-    }
+    // Оптимизированное построение фильтров
+    const buildFilters = () => {
+      const filters = [];
 
-    filterArr.forEach((str, index) => {
-      if (str) {
-        filterStr ? (filterStr = filterStr + ' and ' + str) : (filterStr = str);
-        if (index != 0) {
-          filterDate ? (filterDate = filterDate + ' and ' + str) : (filterDate = str);
-        }
-        if (index != 1) {
-          filterDriver ? (filterDriver = filterDriver + ' and ' + str) : (filterDriver = str);
-        }
-        if (index != 2) {
-          filterOder ? (filterOder = filterOder + ' and ' + str) : (filterOder = str);
-        }
-        if (index != 3) {
-          filterLoad ? (filterLoad = filterLoad + ' and ' + str) : (filterLoad = str);
-        }
-        if (index != 4) {
-          filterUnload ? (filterUnload = filterUnload + ' and ' + str) : (filterUnload = str);
-        }
-        if (index != 5) {
-          filterCustomerPrice
-            ? (filterCustomerPrice = filterCustomerPrice + ' and ' + str)
-            : (filterCustomerPrice = str);
-        }
-        if (index != 6) {
-          filterDriverPrice
-            ? (filterDriverPrice = filterDriverPrice + ' and ' + str)
-            : (filterDriverPrice = str);
-        }
-        if (index != 7) {
-          filterProxy ? (filterProxy = filterProxy + ' and ' + str) : (filterProxy = str);
-        }
-        if (index != 8) {
-          filterCompleted
-            ? (filterCompleted = filterCompleted + ' and ' + str)
-            : (filterCompleted = str);
-        }
-        if (index != 9) {
-          filterDocuments
-            ? (filterDocuments = filterDocuments + ' and ' + str)
-            : (filterDocuments = str);
-        }
-        if (index != 10) {
-          filterCustomerPayment
-            ? (filterCustomerPayment = filterCustomerPayment + ' and ' + str)
-            : (filterCustomerPayment = str);
-        }
-        if (index != 11) {
-          filterDriverPayment
-            ? (filterDriverPayment = filterDriverPayment + ' and ' + str)
-            : (filterDriverPayment = str);
-        }
-        if (index != 12) {
-          filterAccount ? (filterAccount = filterAccount + ' and ' + str) : (filterAccount = str);
-        }
-      }
-    });
+      // Вспомогательные функции для построения условий
+      const buildInCondition = (values, field) => {
+        if (!values || values.length === 0) return null;
+        return `${field} in (${values.join(',')})`;
+      };
+
+      const buildDateCondition = dates => {
+        if (!dates || dates.length === 0) return null;
+        const dateStr = dates.map(d => `'${d}'`).join(',');
+        return `date in (${dateStr})`;
+      };
+
+      const buildJsonContainsCondition = (values, field) => {
+        if (!values || values.length === 0) return null;
+        const conditions = values.map(v => `JSON_CONTAINS(${field}, '${v}')`);
+        return `(${conditions.join(' OR ')})`;
+      };
+
+      const buildRangeCondition = (range, field) => {
+        if (!range || range.length !== 2) return null;
+        return `${field} BETWEEN ${range[0]} AND ${range[1]}`;
+      };
+
+      const buildAccountCondition = accounts => {
+        if (!accounts || accounts.length === 0) return null;
+        const accountStr = accounts.map(a => `"${a.value}"`).join(',');
+        return `accountNumber in (${accountStr})`;
+      };
+
+      // Построение всех фильтров
+      const dateFilter = buildDateCondition(datafilter.date);
+      const driverFilter = buildInCondition(datafilter.driver, 'idDriver');
+      const customerFilter = buildInCondition(datafilter.oder, 'idCustomer');
+      const loadingFilter = buildJsonContainsCondition(datafilter.cityLoading, 'idLoadingPoint');
+      const unloadingFilter = buildJsonContainsCondition(
+        datafilter.cityUnloading,
+        'idUnloadingPoint'
+      );
+      const customerPriceFilter = buildRangeCondition(datafilter.customerPrice, 'customerPrice');
+      const driverPriceFilter = buildRangeCondition(datafilter.driverPrice, 'driverPrice');
+      const proxyFilter = buildInCondition(datafilter.proxy, 'proxy');
+      const completedFilter = buildInCondition(datafilter.completed, 'completed');
+      const documentsFilter = buildInCondition(datafilter.documents, 'document');
+      const customerPaymentFilter = buildInCondition(datafilter.customerPayment, 'customerPayment');
+      const driverPaymentFilter = buildInCondition(datafilter.driverPayment, 'driverPayment');
+      const accountFilter = buildAccountCondition(datafilter.accountList);
+
+      return {
+        main: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        date: [
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        driver: [
+          dateFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        customer: [
+          dateFilter,
+          driverFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        loading: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        unloading: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        customerPrice: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        driverPrice: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        proxy: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        completed: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        documents: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        customerPayment: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          driverPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        driverPayment: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          accountFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+        account: [
+          dateFilter,
+          driverFilter,
+          customerFilter,
+          loadingFilter,
+          unloadingFilter,
+          customerPriceFilter,
+          driverPriceFilter,
+          proxyFilter,
+          completedFilter,
+          documentsFilter,
+          customerPaymentFilter,
+          driverPaymentFilter,
+        ]
+          .filter(Boolean)
+          .join(' AND '),
+      };
+    };
+
+    const filters = buildFilters();
+    let setData = {};
+
+    // Оптимизированные запросы с использованием кэширования
+    const executeQueries = async () => {
+      const queries = [
+        { key: 'date', sql: `SELECT DISTINCT date FROM oderslist WHERE ${filters.date || '1=1'}` },
+        {
+          key: 'driver',
+          sql: `SELECT DISTINCT idDriver FROM oderslist WHERE ${filters.driver || '1=1'}`,
+        },
+        {
+          key: 'customer',
+          sql: `SELECT DISTINCT idCustomer FROM oderslist WHERE ${filters.customer || '1=1'}`,
+        },
+        {
+          key: 'loadingPoint',
+          sql: `SELECT DISTINCT idLoadingPoint FROM oderslist WHERE ${filters.loading || '1=1'}`,
+        },
+        {
+          key: 'unloadingPoint',
+          sql: `SELECT DISTINCT idUnloadingPoint FROM oderslist WHERE ${filters.unloading || '1=1'}`,
+        },
+        {
+          key: 'proxy',
+          sql: `SELECT DISTINCT proxy FROM oderslist WHERE ${filters.proxy || '1=1'}`,
+        },
+        {
+          key: 'completed',
+          sql: `SELECT DISTINCT completed FROM oderslist WHERE ${filters.completed || '1=1'}`,
+        },
+        {
+          key: 'documents',
+          sql: `SELECT DISTINCT document FROM oderslist WHERE ${filters.documents || '1=1'}`,
+        },
+        {
+          key: 'customerPayment',
+          sql: `SELECT DISTINCT customerPayment FROM oderslist WHERE ${filters.customerPayment || '1=1'}`,
+        },
+        {
+          key: 'driverPayment',
+          sql: `SELECT DISTINCT driverPayment FROM oderslist WHERE ${filters.driverPayment || '1=1'}`,
+        },
+        {
+          key: 'filterAccount',
+          sql: `SELECT DISTINCT accountNumber FROM oderslist WHERE ${filters.account || '1=1'}`,
+        },
+      ];
+
+      // Выполняем все запросы параллельно
+      const results = await Promise.all(
+        queries.map(async ({ key, sql }) => {
+          const [data] = await db.query(sql);
+          return { key, data };
+        })
+      );
+
+      // Преобразуем результаты в объект
+      results.forEach(({ key, data }) => {
+        setData[key] = data;
+      });
+    };
 
     try {
-      if (filterDate) {
-        [data] = await db.query(`SELECT DISTINCT date FROM oderslist WHERE ${filterDate}`);
-      } else [data] = await db.query(`SELECT DISTINCT date FROM oderslist`);
-      setData.date = data;
-      if (filterDriver) {
-        [data] = await db.query(`SELECT DISTINCT idDriver FROM oderslist WHERE ${filterDriver}`);
-      } else [data] = await db.query(`SELECT DISTINCT idDriver FROM oderslist`);
-      setData.driver = data;
-      if (filterOder) {
-        [data] = await db.query(`SELECT DISTINCT idCustomer FROM oderslist WHERE ${filterOder}`);
-      } else [data] = await db.query(`SELECT DISTINCT idCustomer FROM oderslist`);
-      setData.customer = data;
-      if (filterLoad) {
-        [data] = await db.query(
-          `SELECT DISTINCT idLoadingPoint FROM oderslist WHERE ${filterLoad}`
-        );
-      } else [data] = await db.query(`SELECT DISTINCT idLoadingPoint FROM oderslist`);
-      setData.loadingPoint = data;
-      if (filterUnload) {
-        [data] = await db.query(
-          `SELECT DISTINCT idUnloadingPoint FROM oderslist WHERE ${filterUnload}`
-        );
-      } else [data] = await db.query(`SELECT DISTINCT idUnloadingPoint FROM oderslist`);
-      setData.unloadingPoint = data;
-      setData.filteredCustomerPrice = [];
-      if (filterCustomerPrice) {
-        [data] = await db.query(
-          `SELECT min(customerPrice) as 'minCustomerPrice' FROM oderslist WHERE ${filterCustomerPrice}`
-        );
-      } else {
-        [data] = await db.query(
-          `SELECT min(customerPrice) as 'minCustomerPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
-        );
-      }
-      setData.filteredCustomerPrice[0] = data[0].minCustomerPrice;
-      if (filterCustomerPrice) {
-        [data] = await db.query(
-          `SELECT max(customerPrice) as 'maxCustomerPrice' FROM oderslist WHERE ${filterCustomerPrice}`
-        );
-      } else {
-        [data] = await db.query(
-          `SELECT max(customerPrice) as 'maxCustomerPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
-        );
-      }
-      setData.filteredCustomerPrice[1] = data[0].maxCustomerPrice;
-      setData.filteredDriverPrice = [];
-      if (filterDriverPrice) {
-        [data] = await db.query(
-          `SELECT min(driverPrice) as 'minDriverPrice' FROM oderslist WHERE ${filterDriverPrice}`
-        );
-      } else {
-        [data] = await db.query(
-          `SELECT min(driverPrice) as 'minDriverPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
-        );
-      }
-      setData.filteredDriverPrice[0] = data[0].minDriverPrice;
-      if (filterDriverPrice) {
-        [data] = await db.query(
-          `SELECT max(driverPrice) as 'maxDriverPrice' FROM oderslist WHERE ${filterDriverPrice}`
-        );
-      } else {
-        [data] = await db.query(
-          `SELECT max(driverPrice) as 'maxDriverPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`
-        );
-      }
-      setData.filteredDriverPrice[1] = data[0].maxDriverPrice;
-      if (filterProxy) {
-        [data] = await db.query(`SELECT DISTINCT proxy FROM oderslist WHERE ${filterProxy}`);
-      } else [data] = await db.query(`SELECT DISTINCT proxy FROM oderslist`);
-      setData.proxy = data;
-      if (filterCompleted) {
-        [data] = await db.query(
-          `SELECT DISTINCT completed FROM oderslist WHERE ${filterCompleted}`
-        );
-      } else [data] = await db.query(`SELECT DISTINCT completed FROM oderslist`);
-      setData.proxy = data;
-      if (filterDocuments) {
-        [data] = await db.query(`SELECT DISTINCT document FROM oderslist WHERE ${filterDocuments}`);
-      } else [data] = await db.query(`SELECT DISTINCT document FROM oderslist`);
-      setData.documents = data;
-      if (filterCustomerPayment) {
-        [data] = await db.query(
-          `SELECT DISTINCT customerPayment FROM oderslist WHERE ${filterCustomerPayment}`
-        );
-      } else [data] = await db.query(`SELECT DISTINCT customerPayment FROM oderslist`);
-      setData.customerPayment = data;
-      if (filterDriverPayment) {
-        [data] = await db.query(
-          `SELECT DISTINCT driverPayment FROM oderslist WHERE ${filterDriverPayment}`
-        );
-      } else [data] = await db.query(`SELECT DISTINCT driverPayment FROM oderslist`);
-      setData.driverPayment = data;
-      if (filterAccount) {
-        [data] = await db.query(
-          `SELECT DISTINCT accountNumber FROM oderslist WHERE ${filterAccount}`
-        );
-      } else [data] = await db.query(`SELECT DISTINCT accountNumber FROM oderslist`);
-      setData.filterAccount = data;
+      // Выполняем оптимизированные запросы
+      await executeQueries();
 
-      [data] = await db.query(
-        `(SELECT * FROM oderslist WHERE ${filterStr} ORDER BY _id DESC LIMIT 50000) ORDER BY _id`
+      // Обработка ценовых фильтров
+      const priceQueries = [
+        {
+          key: 'minCustomerPrice',
+          sql: filters.customerPrice
+            ? `SELECT min(customerPrice) as 'minCustomerPrice' FROM oderslist WHERE ${filters.customerPrice}`
+            : `SELECT min(customerPrice) as 'minCustomerPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`,
+        },
+        {
+          key: 'maxCustomerPrice',
+          sql: filters.customerPrice
+            ? `SELECT max(customerPrice) as 'maxCustomerPrice' FROM oderslist WHERE ${filters.customerPrice}`
+            : `SELECT max(customerPrice) as 'maxCustomerPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`,
+        },
+        {
+          key: 'minDriverPrice',
+          sql: filters.driverPrice
+            ? `SELECT min(driverPrice) as 'minDriverPrice' FROM oderslist WHERE ${filters.driverPrice}`
+            : `SELECT min(driverPrice) as 'minDriverPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`,
+        },
+        {
+          key: 'maxDriverPrice',
+          sql: filters.driverPrice
+            ? `SELECT max(driverPrice) as 'maxDriverPrice' FROM oderslist WHERE ${filters.driverPrice}`
+            : `SELECT max(driverPrice) as 'maxDriverPrice' FROM oderslist WHERE date > DATE_ADD(SYSDATE(),INTERVAL -5 YEAR)`,
+        },
+      ];
+
+      const priceResults = await Promise.all(
+        priceQueries.map(async ({ key, sql }) => {
+          const [data] = await db.query(sql);
+          return { key, data: data[0] };
+        })
       );
-      setData.odersList = data;
+
+      // Устанавливаем ценовые фильтры
+      setData.filteredCustomerPrice = [
+        priceResults.find(r => r.key === 'minCustomerPrice').data.minCustomerPrice,
+        priceResults.find(r => r.key === 'maxCustomerPrice').data.maxCustomerPrice,
+      ];
+      setData.filteredDriverPrice = [
+        priceResults.find(r => r.key === 'minDriverPrice').data.minDriverPrice,
+        priceResults.find(r => r.key === 'maxDriverPrice').data.maxDriverPrice,
+      ];
+
+      // Финальный запрос для получения отфильтрованных заказов
+      const [odersList] = await db.query(
+        `(SELECT * FROM oderslist WHERE ${filters.main || '1=1'} ORDER BY _id DESC LIMIT 50000) ORDER BY _id`
+      );
+      setData.odersList = odersList;
+
       callback(setData);
     } catch (err) {
+      console.error('Filter error:', err);
       callback({ error: err });
     }
   },

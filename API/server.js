@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const compression = require('compression');
 const mysql2 = require('mysql2/promise');
 const path = require('path');
 const http = require('http');
@@ -10,6 +11,21 @@ const os = require('os');
 const { nativePool } = require('./models/db.js');
 
 const app = express();
+// Настраиваем gzip
+app.use(
+  compression({
+    threshold: 0, // сжимать всё, даже мелкие ответы
+    filter: (req, res) => {
+      const accepted = compression.filter(req, res);
+      if (accepted) {
+        console.log(`[GZIP ✅] ${req.method} ${req.url}`);
+      } else {
+        console.log(`[NO GZIP ❌] ${req.method} ${req.url}`);
+      }
+      return accepted;
+    },
+  })
+);
 const server = http.createServer(app);
 
 const io = socketIo(server, {
@@ -140,4 +156,3 @@ setInterval(() => {
   console.log('In queue:', nativePool._connectionQueue.length);
   console.log('-------------------------------');
 }, 500000);
-
