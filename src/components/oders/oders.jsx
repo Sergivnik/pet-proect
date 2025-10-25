@@ -28,6 +28,7 @@ import { MenuAccount } from './taskBar/menuAccount/menuAccount.jsx';
 import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
 import { PostForm } from '../postForm/postForm.tsx';
 import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
+import { DriverTr } from './driverTr.tsx';
 import './oders.sass';
 
 export const Oders = () => {
@@ -60,6 +61,7 @@ export const Oders = () => {
   const user = useSelector(state => state.oderReducer.currentUser);
   const numberApps = useSelector(state => state.customerReducer.newAppNumber);
   const tasksNumber = useSelector(state => state.tasksReducer.tasksNumber);
+  const driverOrderList = useSelector(state => state.oderReducer.driverOrderList);
 
   const [oders, setOders] = useState(odersList.slice(-1000));
 
@@ -577,13 +579,11 @@ export const Oders = () => {
             writeFilterList={writeFilterList}
             trId={trId}
           />
-          {showDriversTrips ?(
+          {showDriversTrips ? (
             <tbody className="odersTbody">
-              <tr>
-                <td>
-                  <h1>Рейсы водителей на прямую</h1>
-                </td>
-              </tr>
+              {driverOrderList.map(elem => {
+                return <DriverTr key={`driverTr${elem._id}`} elem={elem} />;
+              })}
             </tbody>
           ) : (
             <tbody className="odersTbody">
@@ -604,7 +604,7 @@ export const Oders = () => {
                 );
               })}
             </tbody>
-          ) }
+          )}
         </table>
       </div>
       {showTasks && (
