@@ -29,6 +29,7 @@ import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
 import { PostForm } from '../postForm/postForm.tsx';
 import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
 import { DriverTr } from './driverTr.tsx';
+import { VirtualizedTbody } from './VirtualizedTbody.tsx';
 import './oders.sass';
 
 export const Oders = () => {
@@ -580,11 +581,7 @@ export const Oders = () => {
             trId={trId}
           />
           {showDriversTrips ? (
-            <tbody className="odersTbody">
-              {driverOrderList.map(elem => {
-                return <DriverTr key={`driverTr${elem._id}`} elem={elem} />;
-              })}
-            </tbody>
+            <VirtualizedTbody items={driverOrderList} RowComponent={DriverTr} />
           ) : (
             <tbody className="odersTbody">
               {oders.map(elem => {
