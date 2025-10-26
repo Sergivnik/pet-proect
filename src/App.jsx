@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { Clock } from "./components/myLib/clock/clock.jsx";
 import { DOMENNAME } from "./middlewares/initialState";
-import { Canvas } from "react-three-fiber";
+import { Canvas } from "@react-three/fiber";
 import "./app.sass";
 import { Text3DComponent } from "./components/threeJsComponent/textComponent.jsx";
 import { PerspectiveCamera } from "@react-three/drei";

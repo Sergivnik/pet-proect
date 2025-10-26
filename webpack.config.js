@@ -1,58 +1,64 @@
-// webpack.config.js
 const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+
+const isDevelopment = process.env.NODE_ENV !== "production";
 
 module.exports = {
-  entry: {
-    main: path.resolve(__dirname, "./src/index.js"),
-  },
+  mode: isDevelopment ? "development" : "production",
+  entry: "./src/index.js",
   output: {
-    path: path.resolve(__dirname, "./API/public"),
+    path: path.resolve(__dirname, "API/public"),
     filename: "[name].bundle.js",
+    clean: true, // очищает старые бандлы
   },
-  mode: "development",
+  devtool: isDevelopment ? "eval-source-map" : "source-map",
   devServer: {
     historyApiFallback: true,
-    contentBase: path.resolve(__dirname, "./dist"),
+    static: {
+      directory: path.resolve(__dirname, "dist"),
+    },
     open: true,
     compress: true,
     hot: true,
     port: 8080,
   },
-  devtool: "source-map",
-  plugins: [
-    new HtmlWebpackPlugin({
-      title: "webpack Boilerplate",
-      template: path.resolve(__dirname, "./src/template.html"), // шаблон
-      filename: "index.html", // название выходного файла
-    }),
-    new webpack.HotModuleReplacementPlugin(),
-  ],
   module: {
     rules: [
-      // CSS, PostCSS, Sass
-      {
-        test: /\.s[ac]ss|css$/i,
-        use: ["style-loader", "css-loader", "sass-loader"],
-      },
       {
         test: /\.(js|jsx|ts|tsx)$/,
         include: path.resolve(__dirname, "src"),
-        loader: "babel-loader",
-        exclude: /node_modules/,
-        options: {
-          presets: ["@babel/env", "@babel/react"],
-          plugins: [
-            [
-              "@babel/plugin-proposal-class-properties",
-              {
-                loose: true,
-              },
-            ],
-          ],
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: ["@babel/preset-env", "@babel/preset-react"],
+            plugins: [
+              isDevelopment && "react-refresh/babel",
+              ["@babel/plugin-transform-class-properties", { loose: true }],
+            ].filter(Boolean),
+          },
         },
+      },
+      {
+        test: /\.s[ac]ss$/i,
+        use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },
+  resolve: {
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      template: "./src/template.html",
+      filename: "index.html",
+    }),
+    isDevelopment && new webpack.HotModuleReplacementPlugin(),
+    isDevelopment && new ReactRefreshWebpackPlugin(),
+  ].filter(Boolean),
 };

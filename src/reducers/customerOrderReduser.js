@@ -1,4 +1,4 @@
-import update from "react-addons-update";
+//import update from "react-addons-update";
 import { customerStore } from "./customerStore.js";
 import {
   GET_CUSTOMER_DATA_SUCCESS,

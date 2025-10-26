@@ -1,47 +1,52 @@
+// VirtualizedTbody.tsx
 import React, { forwardRef } from 'react';
-import { FixedSizeList as List } from 'react-window';
+import { FixedSizeList, ListChildComponentProps } from 'react-window';
 
-interface Props {
+interface VirtualizedTbodyProps {
   items: any[];
   RowComponent: React.ComponentType<{ elem: any }>;
   height?: number;
   rowHeight?: number;
 }
 
+// Для корректного рендера <tbody> вместо <div>
 const TBodyWrapper = forwardRef<HTMLTableSectionElement, any>((props, ref) => (
   <tbody {...props} ref={ref} />
 ));
 
-export const VirtualizedTbody: React.FC<Props> = ({
+export const VirtualizedTbody: React.FC<VirtualizedTbodyProps> = ({
   items,
   RowComponent,
   height = 700,
   rowHeight = 44,
 }) => {
+  // Функция для рендера строки
+  const Row = ({ index, style }: ListChildComponentProps) => {
+    const elem = items[index];
+    return (
+      <tr
+        key={elem._id || index}
+        style={{
+          ...style,
+          display: 'table',
+          width: '100%',
+          tableLayout: 'fixed',
+        }}
+      >
+        <RowComponent elem={elem} />
+      </tr>
+    );
+  };
+
   return (
-    <List
+    <FixedSizeList
       height={height}
       itemCount={items.length}
       itemSize={rowHeight}
-      width="100px"
+      width="100%"
       innerElementType={TBodyWrapper}
-    >
-      {({ index, style }) => {
-        const elem = items[index];
-        return (
-          <tr
-            style={{
-              ...style,
-              display: 'table',
-              width: '100%',
-              tableLayout: 'fixed',
-            }}
-            key={elem._id}
-          >
-            <RowComponent elem={elem} />
-          </tr>
-        );
-      }}
-    </List>
+      // ⚠️ передаём Row через функцию, иначе TS ругается
+      children={(props: ListChildComponentProps) => <Row {...props} />}
+    />
   );
 };
