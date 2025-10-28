@@ -4,6 +4,7 @@ import { getDataDriverDebt } from "../../actions/driverActions.js";
 import { makeCardPayment } from "../../actions/cardAction.js";
 import { dateLocal, findValueBy_Id } from "../myLib/myLib.js";
 import { TdSum } from "./tdSum.tsx";
+import { Customer } from "../tsTypes.ts";
 
 import "./reports.sass";
 
@@ -49,28 +50,6 @@ interface Driver {
   addInfo: string;
 }
 
-export interface Customer {
-  id: number;
-  value: string;
-  extraPayments: number;
-  companyName: string;
-  TIN: string;
-  address: string;
-  email: string;
-  phone: string;
-  contract: string;
-  active: boolean;
-  postAddress: string;
-  addInfo: string;
-  KPP: string;
-  OGRN: string;
-  Acc: string;
-  CorAcc: string;
-  RCBIC: string;
-  bossName: string;
-  bankName: string;
-  bankAddress: string;
-}
 interface cardTransaction {
   driverDebtsId: number[];
   customerDebtsId: number[];

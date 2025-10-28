@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import axios from 'axios';
-import { ClientData } from './types';
+import { ClientData } from '../tsTypes.js'; 
 import { addNewOwnerLogist } from '../../actions/ownerLogistAction';
 import { formatDateToRu, toInputDateValue } from '../myLib/myLib.js';
 import { URL } from '../../middlewares/initialState';

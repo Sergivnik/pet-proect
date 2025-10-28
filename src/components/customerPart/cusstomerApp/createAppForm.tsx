@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Order } from "../../postForm/postForm.tsx";
+import { OrderType } from "../../tsTypes.js";
 import { CustomerCreateApp } from "../customerOrders/customerCreateApp.jsx";
 import { AppCustomerDriverPart } from "./appCustomerDriverPart.jsx";
 import { AppFormExtra } from "../../documents/appFormExtra.jsx";
 import "./customerApps.sass";
 
 interface AppFormProps {
-  order: Order;
+  order: OrderType;
 }
 
 export const CreateAppForm = ({ order }: AppFormProps) => {

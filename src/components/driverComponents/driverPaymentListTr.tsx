@@ -1,38 +1,26 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  DriverDebt,
-  DriverDebtInfo,
-  DriverPayment,
-  Point,
-  TrackDriver,
-} from "./driverPaymentsList";
-import { Driver } from "../editData/driverAccountTr";
-import { Order } from "../postForm/postForm.js";
-import { findValueBy_Id, findValueById } from "../myLib/myLib.js";
-import { delDriverPayment } from "../../actions/driverActions.js";
-import "./driverForms.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { DriverDebt, DriverDebtInfo, DriverPayment, Point, TrackDriver } from '../tsTypes.js';
+import { Driver } from '../tsTypes.js';
+import { OrderType } from '../tsTypes.js';
+import { findValueBy_Id, findValueById } from '../myLib/myLib.js';
+import { delDriverPayment } from '../../actions/driverActions.js';
+import './driverForms.sass';
 
 export const DriverPaymentListTr = (props: any) => {
   const [showOrderList, setShowOrderList] = useState<boolean>(false);
   const [showDebtList, setShowDebtList] = useState<boolean>(false);
-  const [classNameTr, setClassNameTr] = useState<string>("");
+  const [classNameTr, setClassNameTr] = useState<string>('');
   let payment: DriverPayment = props.payment;
   let orderList: number[] = payment.listOfOders;
   let debtList: DriverDebtInfo[] = payment.listOfDebts;
 
-  const driverList: Driver[] = useSelector(
-    (state: any) => state.oderReducer.driverlist
-  );
-  const orderFullList: Order[] = useSelector(
-    (state: any) => state.oderReducer.originOdersList
-  );
+  const driverList: Driver[] = useSelector((state: any) => state.oderReducer.driverlist);
+  const orderFullList: OrderType[] = useSelector((state: any) => state.oderReducer.originOdersList);
   const trackDriverList: TrackDriver[] = useSelector(
     (state: any) => state.oderReducer.trackdrivers
   );
-  const pointList: Point[] = useSelector(
-    (state: any) => state.oderReducer.citieslist
-  );
+  const pointList: Point[] = useSelector((state: any) => state.oderReducer.citieslist);
   const driverDebtList: DriverDebt[] = useSelector(
     (state: any) => state.oderReducer.driverDebtList
   );
@@ -41,29 +29,25 @@ export const DriverPaymentListTr = (props: any) => {
 
   const handleClickTr = (payment: DriverPayment) => {
     console.log(payment);
-    if (classNameTr == "") {
-      setClassNameTr("blueTr");
+    if (classNameTr == '') {
+      setClassNameTr('blueTr');
     } else {
-      setClassNameTr("");
+      setClassNameTr('');
     }
     if (payment.listOfOders.length > 0) setShowOrderList(!showOrderList);
     if (payment.listOfDebts.length > 0) setShowDebtList(!showDebtList);
   };
   const handleClickDelete = () => {
-    let password = prompt("Подтвердите удаление", "Пароль");
-    if (password == "Пароль") {
+    let password = prompt('Подтвердите удаление', 'Пароль');
+    if (password == 'Пароль') {
       dispatch(delDriverPayment(payment.id));
     }
   };
   return (
     <React.Fragment>
       <tr onClick={() => handleClickTr(payment)} className={classNameTr}>
-        <td className="driverPaymentTd">
-          {new Date(payment.date).toLocaleDateString()}
-        </td>
-        <td className="driverPaymentTd">
-          {findValueBy_Id(payment.idDriver, driverList).value}
-        </td>
+        <td className="driverPaymentTd">{new Date(payment.date).toLocaleDateString()}</td>
+        <td className="driverPaymentTd">{findValueBy_Id(payment.idDriver, driverList).value}</td>
         <td className="driverPaymentTd">{payment.sumOfPayment}</td>
         <td className="driverPaymentTd">
           {showOrderList == false && showDebtList == false ? (
@@ -71,10 +55,7 @@ export const DriverPaymentListTr = (props: any) => {
           ) : (
             <React.Fragment>
               <span>{payment.sumOfPayment}</span>
-              <div
-                className="customerPaymentTrClose"
-                onClick={handleClickDelete}
-              >
+              <div className="customerPaymentTrClose" onClick={handleClickDelete}>
                 <svg width="20px" height="20px" viewBox="0 0 60 60">
                   <g transform="translate(232.000000, 228.000000)">
                     <polygon points="-207,-205 -204,-205 -204,-181 -207,-181    " />
@@ -106,19 +87,16 @@ export const DriverPaymentListTr = (props: any) => {
               </thead>
               <tbody>
                 {orderList.map((orderId: number) => {
-                  let order: Order | null =
-                    findValueBy_Id(orderId, orderFullList) || null;
+                  let order: OrderType | null = findValueBy_Id(orderId, orderFullList) || null;
                   console.log(order);
                   if (order != null) {
                     let trackdriver: TrackDriver = findValueBy_Id(
                       order.idTrackDriver,
                       trackDriverList
                     );
-                    let pointLoadList: string[] = order.idLoadingPoint.map(
-                      (idPoint: number) => {
-                        return findValueBy_Id(idPoint, pointList).value;
-                      }
-                    );
+                    let pointLoadList: string[] = order.idLoadingPoint.map((idPoint: number) => {
+                      return findValueBy_Id(idPoint, pointList).value;
+                    });
                     let pointUnloadList: string[] = order.idUnloadingPoint.map(
                       (idPoint: number) => {
                         return findValueBy_Id(idPoint, pointList).value;
@@ -130,16 +108,10 @@ export const DriverPaymentListTr = (props: any) => {
                           {new Date(order.date).toLocaleDateString()}
                         </td>
                         <td className="driverPaymentTd">{trackdriver.value}</td>
-                        <td className="driverPaymentTd">
-                          {pointLoadList.join(" - ")}
-                        </td>
-                        <td className="driverPaymentTd">
-                          {pointUnloadList.join(" - ")}
-                        </td>
+                        <td className="driverPaymentTd">{pointLoadList.join(' - ')}</td>
+                        <td className="driverPaymentTd">{pointUnloadList.join(' - ')}</td>
                         <td className="driverPaymentTd">{order.driverPrice}</td>
-                        <td className="driverPaymentTd">
-                          {order.accountNumber}
-                        </td>
+                        <td className="driverPaymentTd">{order.accountNumber}</td>
                       </tr>
                     );
                   } else {
@@ -171,9 +143,8 @@ export const DriverPaymentListTr = (props: any) => {
                 </tr>
               </thead>
               <tbody>
-                {debtList.map((debtInfo) => {
-                  let debt: DriverDebt | null =
-                    findValueById(debtInfo.id, driverDebtList) || null;
+                {debtList.map(debtInfo => {
+                  let debt: DriverDebt | null = findValueById(debtInfo.id, driverDebtList) || null;
                   if (debt != null) {
                     return (
                       <tr key={`payment${payment.id}-debt${debt.id}`}>

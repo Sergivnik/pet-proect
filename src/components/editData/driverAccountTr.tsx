@@ -4,28 +4,10 @@ import axios from 'axios';
 import { editData } from '../../actions/editDataAction.js';
 import { TdWithText } from '../myLib/myTd/tdWithText.jsx';
 import { URL } from '../../middlewares/initialState';
+import { Driver } from '../tsTypes.js';
 
 import './editData.sass';
-export interface Driver {
-  _id: number;
-  value: string;
-  phone: string;
-  companyName: string;
-  TIN: string;
-  address: string;
-  currentAccount: string;
-  contract: string;
-  active: boolean;
-  addInfo: string;
-  KPP: string;
-  OGRN: string;
-  Acc: string;
-  CorAcc: string;
-  RCBIC: string;
-  bossName: string;
-  bankName: string;
-  bankAddress: string;
-}
+
 interface Props {
   driver: Driver;
 }

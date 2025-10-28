@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getOwnerLogist } from '../../actions/ownerLogistAction';
 import { ClientDetails } from './clientDetails.tsx';
-import { ClientData } from './types.ts';
+import { ClientData } from '../tsTypes.ts';
 import { AddClientForm } from './addClientForm.tsx';
 import { delOwnerLogist } from '../../actions/ownerLogistAction';
 import './clientForm.sass';

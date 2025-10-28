@@ -1,60 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import { Customer } from "../reports/cardReport.tsx";
-import { TdDriver } from "../userTd/tdDriver.jsx";
-import { TdLoadingPoint } from "../userTd/tdLoadingPoint.jsx";
-import { TdUnoadingPoint } from "../userTd/tdUnloadingPoint.jsx";
-import { addPostTrack } from "../../actions/postAction.js";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import { TdDriver } from '../userTd/tdDriver.jsx';
+import { TdLoadingPoint } from '../userTd/tdLoadingPoint.jsx';
+import { TdUnoadingPoint } from '../userTd/tdUnloadingPoint.jsx';
+import { addPostTrack } from '../../actions/postAction.js';
+import { CustomerShort, OrderType, Customer } from '../tsTypes.ts';
 
-import "./postForm.sass";
-
-export type documentStatus = "Ок" | "Нет" | "Факс" | "Сдал";
-export type customerPaymentStatus =
-  | "Ок"
-  | "Нет"
-  | "Мыло"
-  | "Печать"
-  | "Почта"
-  | "Обещал оплату"
-  | "Отдал клиенту"
-  | "Частично оплачен";
-export type driverPaymentStatus = "Ок" | "Нет";
-
-export interface CustomerShort {
-  _id: number;
-  value: string;
-}
-
-export interface Order {
-  _id: number;
-  date: Date;
-  idDriver: number;
-  idCustomer: number;
-  idLoadingPoint: number[];
-  idUnloadingPoint: number[];
-  customerPrice: number;
-  driverPrice: number;
-  proxy: boolean;
-  completed: boolean;
-  document: documentStatus;
-  dateOfSubmission: Date;
-  customerPayment: customerPaymentStatus;
-  dateOfPromise: Date;
-  driverPayment: driverPaymentStatus;
-  dateOfPayment: Date;
-  accountNumber: number;
-  partialPaymentAmount: number;
-  idTrackDriver: number;
-  idTrack: number;
-  idManager: number;
-  loadingInfo: string[];
-  unloadingInfo: string[];
-  applicationNumber: number;
-  colorTR: string;
-  wasItPrinted: boolean;
-  postTracker: string;
-}
+import './postForm.sass';
 
 export const PostForm = () => {
   const dispatch: any = useDispatch();
@@ -62,12 +15,8 @@ export const PostForm = () => {
   let now: Date = new Date();
   let year: number = now.getFullYear();
   let dateString: string = `${year}-01-01`;
-  const customerList: Customer[] = useSelector(
-    (state: any) => state.oderReducer.clientList
-  );
-  const orderList: Order[] = useSelector(
-    (state: any) => state.oderReducer.originOdersList
-  );
+  const customerList: Customer[] = useSelector((state: any) => state.oderReducer.clientList);
+  const orderList: OrderType[] = useSelector((state: any) => state.oderReducer.originOdersList);
   const status: any = useSelector((state: any) => state.oderReducer.request);
 
   const [showChoiseList, setShowChoiseList] = useState<boolean>(true);
@@ -76,34 +25,31 @@ export const PostForm = () => {
   const [checkBoxNoPay, setCheckBoxNoPay] = useState<boolean>(true);
   const [checkBoxPost, setCheckBoxPost] = useState<boolean>(true);
   const [dateBegin, setDateBegin] = useState<string>(dateString);
-  const [custometShort, setCustomerShort] = useState<CustomerShort | null>(
-    null
-  );
-  const [postOrderList, setPostOrderList] = useState<Order[]>(orderList);
+  const [custometShort, setCustomerShort] = useState<CustomerShort | null>(null);
+  const [postOrderList, setPostOrderList] = useState<OrderType[]>(orderList);
   const [choisenList, setChoisenList] = useState<number[]>([]);
   const [accountList, setAccountList] = useState<number[]>([]);
-  const [postTrackNumber, setPostTrackNumber] = useState<string>("");
+  const [postTrackNumber, setPostTrackNumber] = useState<string>('');
   const [showInputTrack, setShowInputTrack] = useState<boolean>(true);
 
   useEffect(() => {
     let date: Date = new Date(dateBegin);
-    let arr: Order[] = orderList.filter(
-      (order: Order) => order.customerPayment == "Почта" && order.date >= date
+    let arr: OrderType[] = orderList.filter(
+      (order: OrderType) => order.customerPayment == 'Почта' && order.date >= date
     );
     setPostOrderList(arr);
   }, []);
   useEffect(() => {
     let date: Date = new Date(dateBegin);
-    let arr: Order[] = orderList.filter((order: Order) => {
+    let arr: OrderType[] = orderList.filter((order: OrderType) => {
       if (custometShort) {
         if (custometShort._id == order.idCustomer) {
           if (new Date(order.date) >= date) {
             if (checkBoxPost) {
-              if (order.customerPayment == "Почта" && order.postTracker == null)
-                return order;
+              if (order.customerPayment == 'Почта' && order.postTracker == null) return order;
             } else {
               if (checkBoxNoPay) {
-                if (order.customerPayment != "Ок") return order;
+                if (order.customerPayment != 'Ок') return order;
               } else {
                 return order;
               }
@@ -124,7 +70,7 @@ export const PostForm = () => {
     setChoisenList([]);
     setAccountList([]);
   };
-  const handleChoiseDblClick = (e) => {
+  const handleChoiseDblClick = e => {
     e.preventDefault();
     setShowChoiseList(true);
   };
@@ -132,7 +78,7 @@ export const PostForm = () => {
     setCheckBoxNoPay(!checkBoxNoPay);
     setShowOrderList(true);
   };
-  const handleDateDblClick = (e) => {
+  const handleDateDblClick = e => {
     e.preventDefault();
     setShowChoiseDate(true);
   };
@@ -154,7 +100,7 @@ export const PostForm = () => {
       arrId.push(id);
       arrAccount.push(accountNumber);
     } else {
-      let index = arrId.findIndex((elem) => elem == id);
+      let index = arrId.findIndex(elem => elem == id);
       arrId.splice(index, 1);
       arrAccount.splice(index, 1);
     }
@@ -163,30 +109,30 @@ export const PostForm = () => {
   };
   const isChoisenStyle = (id): string => {
     if (choisenList.includes(id)) {
-      return "choisenTr";
+      return 'choisenTr';
     } else {
-      return "";
+      return '';
     }
   };
   const makeStingFromList = (list: number[]) => {
-    let text: string = "";
-    list.forEach((elem) => {
+    let text: string = '';
+    list.forEach(elem => {
       text = `${text},  акт № ${elem}`;
     });
     return text.slice(1);
   };
-  const handleGetPostTrack = (e) => {
+  const handleGetPostTrack = e => {
     setPostTrackNumber(e.target.value);
   };
   const handleTrackInputBlur = () => {
     setShowInputTrack(false);
   };
-  const handleDblClickTrackInput = (e) => {
+  const handleDblClickTrackInput = e => {
     e.preventDefault();
     setShowInputTrack(true);
   };
   const handleClickBtnTrackNumber = () => {
-    if (choisenList.length > 0 && postTrackNumber != "") {
+    if (choisenList.length > 0 && postTrackNumber != '') {
       dispatch(
         addPostTrack({
           postTrackNumber: postTrackNumber,
@@ -203,16 +149,9 @@ export const PostForm = () => {
       <header className="postFormHeader">
         <div className="customerChoiseWrapper">
           <span className="customerChoiseLabel">Заказчик</span>
-          <div
-            className="choiseListWrapper"
-            onDoubleClick={handleChoiseDblClick}
-          >
+          <div className="choiseListWrapper" onDoubleClick={handleChoiseDblClick}>
             {showChoiseList ? (
-              <ChoiseList
-                name="client"
-                arrlist={customerList}
-                setValue={setValue}
-              />
+              <ChoiseList name="client" arrlist={customerList} setValue={setValue} />
             ) : (
               <span>{custometShort.value}</span>
             )}
@@ -221,11 +160,7 @@ export const PostForm = () => {
         <div className="customerCheckWrapper">
           <span className="customerCheckLabel">без оплаты</span>
           <div className="inputCheckWrapper">
-            <input
-              type="checkbox"
-              onChange={handleClickChekBox}
-              checked={checkBoxNoPay}
-            />
+            <input type="checkbox" onChange={handleClickChekBox} checked={checkBoxNoPay} />
           </div>
         </div>
         <div className="customerDateWrapper">
@@ -246,20 +181,13 @@ export const PostForm = () => {
         <div className="postCheckWrapper">
           <span className="customerCheckLabel">без трека</span>
           <div className="inputCheckWrapper">
-            <input
-              type="checkbox"
-              onChange={handleClickChekBoxPost}
-              checked={checkBoxPost}
-            />
+            <input type="checkbox" onChange={handleClickChekBoxPost} checked={checkBoxPost} />
           </div>
         </div>
       </header>
       <main className="postFormMain">
         <div className="postFormInputTrackWrapper">
-          <div
-            className="trackNumberWrapper"
-            onDoubleClick={handleDblClickTrackInput}
-          >
+          <div className="trackNumberWrapper" onDoubleClick={handleDblClickTrackInput}>
             <span className="trackNumberSpan">Номер трека</span>
             {showInputTrack ? (
               <input
@@ -272,13 +200,9 @@ export const PostForm = () => {
               <span>{postTrackNumber}</span>
             )}
           </div>
-          <span className="spanAccountList">
-            Список актов: {makeStingFromList(accountList)}
-          </span>
+          <span className="spanAccountList">Список актов: {makeStingFromList(accountList)}</span>
           <div className="trackBtnWrapper">
-            <button onClick={handleClickBtnTrackNumber}>
-              Добавить трек к заказам
-            </button>
+            <button onClick={handleClickBtnTrackNumber}>Добавить трек к заказам</button>
           </div>
         </div>
         <div className="postFormTableWrapper">
@@ -298,7 +222,7 @@ export const PostForm = () => {
                 </tr>
               </thead>
               <tbody className="postFormTbody">
-                {postOrderList.map((order: Order) => {
+                {postOrderList.map((order: OrderType) => {
                   let id: number = order._id;
                   return (
                     <tr
@@ -311,10 +235,7 @@ export const PostForm = () => {
                       <td className="postFormTdBody">
                         {new Date(order.date).toLocaleDateString()}
                       </td>
-                      <TdDriver
-                        idDriver={order.idDriver}
-                        idTrackDriver={order.idTrackDriver}
-                      />
+                      <TdDriver idDriver={order.idDriver} idTrackDriver={order.idTrackDriver} />
                       <td className="postFormTdBody">{custometShort.value}</td>
                       <TdLoadingPoint
                         idLoadingPoint={order.idLoadingPoint}
@@ -325,9 +246,7 @@ export const PostForm = () => {
                         unLoadingInfo={order.unloadingInfo}
                       />
                       <td className="postFormTdBody">{order.customerPrice}</td>
-                      <td className="postFormTdBody">
-                        {order.customerPayment}
-                      </td>
+                      <td className="postFormTdBody">{order.customerPayment}</td>
                       <td className="postFormTdBody">{order.accountNumber}</td>
                       <td className="postFormTdBody">{order.postTracker}</td>
                     </tr>
@@ -338,9 +257,7 @@ export const PostForm = () => {
           )}
         </div>
       </main>
-      {status.status == "REQUEST" && (
-        <div className="requestStatus">REQUEST</div>
-      )}
+      {status.status == 'REQUEST' && <div className="requestStatus">REQUEST</div>}
     </div>
   );
 };

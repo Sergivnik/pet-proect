@@ -1,57 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import {
-  getDataDriverPayments,
-  getDataDriverDebt,
-} from "../../actions/driverActions.js";
-import { Driver } from "../editData/driverAccountTr.js";
-import { DriverPaymentListTr } from "./driverPaymentListTr.tsx";
-import "./driverForms.sass";
-
-export interface DriverPayment {
-  id: number;
-  date: Date;
-  idDriver: number;
-  sumOfPayment: number;
-  listOfOders: number[];
-  sumOfDebts: number;
-  listOfDebts: DriverDebtInfo[];
-}
-export interface DriverDebt {
-  id: number;
-  date: Date;
-  idDriver: number;
-  category: string;
-  sumOfDebt: number;
-  debtClosed: driverDebtStatus;
-  addInfo: string;
-  paidPartOfDebt: number;
-  card: boolean;
-}
-export interface DriverDebtInfo {
-  id: number;
-  sum: number;
-}
-export interface TrackDriver {
-  _id: number;
-  name: string;
-  shortName: string;
-  passportNumber: string;
-  department: string;
-  dateOfIssue: string;
-  driverLicense: string;
-  phoneNumber: string;
-  value: string;
-  idOwner: number;
-  idTrack: number;
-  fired: boolean;
-}
-export interface Point {
-  _id: number;
-  value: string;
-  region: string;
-}
-export type driverDebtStatus = "Ок" | "частично" | "нет";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getDataDriverPayments, getDataDriverDebt } from '../../actions/driverActions.js';
+import { Driver } from '../tsTypes.ts';
+import { DriverPaymentListTr } from './driverPaymentListTr.tsx';
+import { DriverPayment } from '../tsTypes.ts';
+import './driverForms.sass';
 
 export const DriverPaymentsList = () => {
   const [statusRequest, setStatusRequest] = useState<string | null>(null);
@@ -60,12 +13,8 @@ export const DriverPaymentsList = () => {
   const driverPaymentList: DriverPayment[] = useSelector(
     (state: any) => state.driverReducer.driverpayment
   );
-  const status: string = useSelector(
-    (state: any) => state.driverReducer.status
-  );
-  const driverList: Driver[] = useSelector(
-    (state: any) => state.oderReducer.driverlist
-  );
+  const status: string = useSelector((state: any) => state.driverReducer.status);
+  const driverList: Driver[] = useSelector((state: any) => state.oderReducer.driverlist);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getDataDriverPayments());
@@ -78,15 +27,13 @@ export const DriverPaymentsList = () => {
     setPaymentList(driverPaymentList);
   }, [driverPaymentList]);
   useEffect(() => {
-    let div = document.getElementsByClassName("driverPaymentsListMainDiv")[0];
+    let div = document.getElementsByClassName('driverPaymentsListMainDiv')[0];
     div.scrollTop = div.scrollHeight;
   }, [paymentList]);
 
   return (
     <div className="driverPaymentsListMainDiv">
-      {statusRequest != null && (
-        <div className="statusRequestDiv">{statusRequest}</div>
-      )}
+      {statusRequest != null && <div className="statusRequestDiv">{statusRequest}</div>}
       <table className="driverPaymentsListMainTable">
         <thead className="driverPaymentsListMainTableThead">
           <tr>
@@ -100,10 +47,7 @@ export const DriverPaymentsList = () => {
           {paymentList != null &&
             paymentList.map((payment: DriverPayment) => {
               return (
-                <DriverPaymentListTr
-                  key={`keyDriverPayment${payment.id}`}
-                  payment={payment}
-                />
+                <DriverPaymentListTr key={`keyDriverPayment${payment.id}`} payment={payment} />
               );
             })}
         </tbody>

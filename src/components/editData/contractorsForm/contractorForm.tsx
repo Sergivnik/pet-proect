@@ -2,15 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ChoiseList } from "../../choiseList/choiseList.jsx";
 import { addData, editData, delData } from "../../../actions/editDataAction.js";
+import { Contractor } from "../../tsTypes.js";
 
 import "./contractorsForm.sass";
 
-export interface Contractor {
-  _id: number;
-  value: string;
-  fullName: string;
-  TIN: string;
-}
 
 export const ContractorsForm = () => {
   const dispatch = useDispatch();

@@ -1,52 +1,49 @@
-// VirtualizedTbody.tsx
-import React, { forwardRef } from 'react';
-import { FixedSizeList, ListChildComponentProps } from 'react-window';
+import React, { useRef } from 'react';
+import { useVirtualizer } from '@tanstack/react-virtual';
+import { DriverTr } from './driverTr';
+import { OrderType } from '../tsTypes';
 
-interface VirtualizedTbodyProps {
-  items: any[];
-  RowComponent: React.ComponentType<{ elem: any }>;
-  height?: number;
-  rowHeight?: number;
+interface Props {
+  rows: OrderType[];
 }
 
-// Для корректного рендера <tbody> вместо <div>
-const TBodyWrapper = forwardRef<HTMLTableSectionElement, any>((props, ref) => (
-  <tbody {...props} ref={ref} />
-));
+export const VirtualizedTbody: React.FC<Props> = ({ rows }) => {
+  const parentRef = useRef<HTMLTableSectionElement>(null);
 
-export const VirtualizedTbody: React.FC<VirtualizedTbodyProps> = ({
-  items,
-  RowComponent,
-  height = 700,
-  rowHeight = 44,
-}) => {
-  // Функция для рендера строки
-  const Row = ({ index, style }: ListChildComponentProps) => {
-    const elem = items[index];
-    return (
-      <tr
-        key={elem._id || index}
-        style={{
-          ...style,
-          display: 'table',
-          width: '100%',
-          tableLayout: 'fixed',
-        }}
-      >
-        <RowComponent elem={elem} />
-      </tr>
-    );
-  };
+  const rowVirtualizer = useVirtualizer({
+    count: rows.length,
+    getScrollElement: () => parentRef.current?.parentElement || null,
+    estimateSize: () => 40,
+    overscan: 5,
+  });
 
   return (
-    <FixedSizeList
-      height={height}
-      itemCount={items.length}
-      itemSize={rowHeight}
-      width="100%"
-      innerElementType={TBodyWrapper}
-      // ⚠️ передаём Row через функцию, иначе TS ругается
-      children={(props: ListChildComponentProps) => <Row {...props} />}
-    />
+    <tbody
+      ref={parentRef}
+      style={{
+        position: 'relative',
+        height: `${rowVirtualizer.getTotalSize()}px`,
+        width: '100%', // 👈 вот это ключ
+        display: 'block', // 👈 делаем tbody блочным, иначе ширина не применится
+      }}
+    >
+      {rowVirtualizer.getVirtualItems().map(virtualRow => {
+        const row = rows[virtualRow.index];
+        return (
+          <DriverTr
+            key={row._id}
+            ref={rowVirtualizer.measureElement}
+            elem={row}
+            data-index={virtualRow.index} // 👈 вот он!
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              transform: `translateY(${virtualRow.start}px)`,
+            }}
+          />
+        );
+      })}
+    </tbody>
   );
 };

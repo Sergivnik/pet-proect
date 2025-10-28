@@ -9,7 +9,7 @@ import { CustomerPayments } from '../customerPayments/customerPayments.jsx';
 import { DriverPaymentForm } from '../driverComponents/driverPaymentForm.jsx';
 import { DriverDebtForm } from '../driverComponents/driverDebtForm.jsx';
 import { ContractorsPayments } from '../contractors/contractorsPayments.jsx';
-import { getData, filterData, getData5000 } from '../../middlewares/initialState.js';
+import { getData, filterData } from '../../middlewares/initialState.js';
 import { delOder } from '../../actions/oderActions.js';
 import { clearRequestStatus } from '../../actions/oderActions.js';
 import { EditDataForm } from '../editData/editDataForm.jsx';
@@ -28,7 +28,6 @@ import { MenuAccount } from './taskBar/menuAccount/menuAccount.jsx';
 import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
 import { PostForm } from '../postForm/postForm.tsx';
 import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
-import { DriverTr } from './driverTr.tsx';
 import { VirtualizedTbody } from './VirtualizedTbody.tsx';
 import './oders.sass';
 
@@ -480,6 +479,9 @@ export const Oders = () => {
     setEditTable(name);
     setIdEdit(id);
   };
+
+  console.log('VirtualizedTbody:', VirtualizedTbody);
+
   return (
     <React.Fragment>
       <div className="odersDivInfo">
@@ -581,7 +583,7 @@ export const Oders = () => {
             trId={trId}
           />
           {showDriversTrips ? (
-            <VirtualizedTbody items={driverOrderList} RowComponent={DriverTr} />
+            <VirtualizedTbody rows={driverOrderList} />
           ) : (
             <tbody className="odersTbody">
               {oders.map(elem => {
