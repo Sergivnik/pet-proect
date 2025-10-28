@@ -28,7 +28,7 @@ import { MenuAccount } from './taskBar/menuAccount/menuAccount.jsx';
 import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
 import { PostForm } from '../postForm/postForm.tsx';
 import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
-import { VirtualizedTbody } from './VirtualizedTbody.tsx';
+import { VirtualizedDriverTable } from './virtualizedDriverTable.tsx';
 import './oders.sass';
 
 export const Oders = () => {
@@ -480,8 +480,6 @@ export const Oders = () => {
     setIdEdit(id);
   };
 
-  console.log('VirtualizedTbody:', VirtualizedTbody);
-
   return (
     <React.Fragment>
       <div className="odersDivInfo">
@@ -575,16 +573,16 @@ export const Oders = () => {
         </UserWindow>
       )}
       <div className="odersDiv" onScroll={onScroll} onClick={handleClickMainDiv}>
-        <table className="odersTable">
-          <UserThead
-            handleClick={handleClick}
-            filterList={filterList}
-            writeFilterList={writeFilterList}
-            trId={trId}
-          />
-          {showDriversTrips ? (
-            <VirtualizedTbody rows={driverOrderList} />
-          ) : (
+        {showDriversTrips ? (
+          <VirtualizedDriverTable rows={driverOrderList} />
+        ) : (
+          <table className="odersTable">
+            <UserThead
+              handleClick={handleClick}
+              filterList={filterList}
+              writeFilterList={writeFilterList}
+              trId={trId}
+            />
             <tbody className="odersTbody">
               {oders.map(elem => {
                 return (
@@ -603,8 +601,8 @@ export const Oders = () => {
                 );
               })}
             </tbody>
-          )}
-        </table>
+          </table>
+        )}
       </div>
       {showTasks && (
         <UserWindow

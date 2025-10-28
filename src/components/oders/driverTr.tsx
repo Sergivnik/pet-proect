@@ -13,41 +13,65 @@ import { TdDriverPayment } from '../userTd/tdDriverPayment.jsx';
 import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
 
 export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
-  ({ elem, style, ...rest }, ref) => {
+  ({ elem, style, colWidths, ...rest }, ref) => {
+    const getTdStyle = (index: number) => {
+      console.log({
+        width: `${colWidths[index]}%`,
+      });
+
+      return {
+        width: `${colWidths[index]}%`,
+      };
+    };
+
     return (
-      <tr
-        id={elem._id.toString()}
-        ref={ref}
-        style={{
-          ...style,
-          display: 'table',
-          tableLayout: 'fixed',
-          width: '100%',
-        }}
-        {...rest}
-      >
-        <TdDate date={elem.date} />
-        <TdDriver idDriver={elem.idDriver} idTrackDriver={elem.idTrackDriver} />
-        <TdCustomer idCustomer={elem.idCustomer} idManager={elem.idManager} />
-        <TdLoadingPoint idLoadingPoint={elem.idLoadingPoint} loadingInfo={elem.loadingInfo} />
+      <tr ref={ref} style={{ ...style }} {...rest}>
+        <TdDate style={getTdStyle(0)} date={elem.date} />
+        <TdDriver
+          style={getTdStyle(1)}
+          idDriver={elem.idDriver}
+          idTrackDriver={elem.idTrackDriver}
+        />
+        <TdCustomer style={getTdStyle(2)} idCustomer={elem.idCustomer} idManager={elem.idManager} />
+        <TdLoadingPoint
+          style={getTdStyle(3)}
+          idLoadingPoint={elem.idLoadingPoint}
+          loadingInfo={elem.loadingInfo}
+        />
         <TdUnoadingPoint
+          style={getTdStyle(4)}
           idUnloadingPoint={elem.idUnloadingPoint}
           unLoadingInfo={elem.unloadingInfo}
         />
         <TdCustomerPrice
+          style={getTdStyle(5)}
           customerPrice={elem.customerPrice}
           customerPayment={elem.customerPayment}
           partialPaymentAmount={elem.partialPaymentAmount}
         />
-        <TdDriverPrice driverPrice={elem.driverPrice} driverPayment={elem.driverPayment} />
-        <TdCompleted completed={elem.completed} />
-        <TdDocument document={elem.document} dateOfSubmission={elem.dateOfSubmission} />
+        <TdDriverPrice
+          style={getTdStyle(6)}
+          driverPrice={elem.driverPrice}
+          driverPayment={elem.driverPayment}
+        />
+        <TdCompleted style={getTdStyle(7)} completed={elem.completed} />
+        <TdDocument
+          style={getTdStyle(8)}
+          document={elem.document}
+          dateOfSubmission={elem.dateOfSubmission}
+        />
         <TdCustomerPayment
+          style={getTdStyle(9)}
           customerPayment={elem.customerPayment}
           dateOfPromise={elem.dateOfPromise}
         />
-        <TdDriverPayment driverPayment={elem.driverPayment} dateOfPayment={elem.dateOfPayment} />
+        <TdDriverPayment
+          style={getTdStyle(10)}
+          driverPayment={elem.driverPayment}
+          dateOfPayment={elem.dateOfPayment}
+        />
         <TdAccountNumber
+          style={getTdStyle(11)}
           accountNumber={elem.accountNumber}
           customerPayment={elem.customerPayment}
         />
