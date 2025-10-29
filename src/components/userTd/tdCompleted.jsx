@@ -1,39 +1,39 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
-import { editOder } from "../../actions/oderActions.js";
-import "./userTd.sass";
+import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { editOder } from '../../actions/oderActions.js';
+import './userTd.sass';
 
-export const TdCompleted = (props)=>{
-const dispatch = useDispatch();
+export const TdCompleted = props => {
+  const dispatch = useDispatch();
 
   const [showEdit, setShowEdit] = useState(false);
   const [currentId, setCurrentId] = useState(null);
 
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     let element = e.currentTarget;
-    if (props.edit ) {
+    if (props.edit) {
       setShowEdit(true);
-      element.parentElement.style.backgroundColor = "#fff";
+      element.parentElement.style.backgroundColor = '#fff';
       setCurrentId(e.currentTarget.parentElement.id);
     }
   };
-  const handleClickRadio = (e) => {
+  const handleClickRadio = e => {
     setShowEdit(false);
-    dispatch(editOder(currentId, e.target.name, e.target.value == "yes" ? true : false));
+    dispatch(editOder(currentId, e.target.name, e.target.value == 'yes' ? true : false));
   };
 
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (showEdit) {
           setShowEdit(false);
           setCurrentId(null);
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showEdit]);
   useEffect(() => {
@@ -44,31 +44,25 @@ const dispatch = useDispatch();
   }, [props.currentTR]);
 
   return (
-    <td className="userTd tdWidth150 mobileViewOff" onDoubleClick={handleDBLClick}>
+    <td
+      style={props.style}
+      className="userTd tdWidth150 mobileViewOff"
+      onDoubleClick={handleDBLClick}
+    >
       {showEdit ? (
         <div>
           <span>
-            <input
-              type="radio"
-              name="completed"
-              value="yes"
-              onChange={handleClickRadio}
-            />
+            <input type="radio" name="completed" value="yes" onChange={handleClickRadio} />
             Ок
           </span>
           <span>
-            <input
-              type="radio"
-              name="completed"
-              value="no"
-              onChange={handleClickRadio}
-            />
+            <input type="radio" name="completed" value="no" onChange={handleClickRadio} />
             Нет
           </span>
         </div>
       ) : null}
 
-      {!showEdit && (props.completed ? "Ок" : "Нет")}
+      {!showEdit && (props.completed ? 'Ок' : 'Нет')}
     </td>
   );
-}
+};

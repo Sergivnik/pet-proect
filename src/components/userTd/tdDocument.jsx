@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { editOder, delPrintedMark } from "../../actions/oderActions.js";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import { dateLocal } from "../myLib/myLib.js";
-import "./userTd.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { editOder, delPrintedMark } from '../../actions/oderActions.js';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import { dateLocal } from '../myLib/myLib.js';
+import './userTd.sass';
 
-export const TdDocument = (props) => {
-  const user = useSelector((state) => state.oderReducer.currentUser);
+export const TdDocument = props => {
+  const user = useSelector(state => state.oderReducer.currentUser);
 
   const dispatch = useDispatch();
 
@@ -15,11 +15,11 @@ export const TdDocument = (props) => {
   const [currentId, setCurrentId] = useState(null);
   const [currentElement, setCurrentElement] = useState(null);
   const [docList, setDocList] = useState([
-    { _id: 2, value: "Нет" },
-    { _id: 3, value: "Факс" },
-    { _id: 4, value: "Сдал" },
+    { _id: 2, value: 'Нет' },
+    { _id: 3, value: 'Факс' },
+    { _id: 4, value: 'Сдал' },
   ]);
-  const [classTd, setClassTd] = useState("userTd");
+  const [classTd, setClassTd] = useState('userTd');
   const [isMouseOver, setIsMouseOver] = useState(false);
 
   const handleMouseOver = () => {
@@ -29,23 +29,23 @@ export const TdDocument = (props) => {
     setIsMouseOver(false);
     setShowDetails(false);
   };
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     let element = e.currentTarget;
     if (props.edit) {
       setShowEdit(true);
-      e.currentTarget.parentElement.style.backgroundColor = "#fff";
+      e.currentTarget.parentElement.style.backgroundColor = '#fff';
       setCurrentId(e.currentTarget.parentElement.id);
       setCurrentElement(element);
     }
   };
-  const setValue = (data) => {
+  const setValue = data => {
     let check = true;
-    if (props.document == "Ок") {
-      check = confirm("100%?");
+    if (props.document == 'Ок') {
+      check = confirm('100%?');
     }
-    console.log(currentId, "document", data._id);
+    console.log(currentId, 'document', data._id);
     if (check) {
-      dispatch(editOder(currentId, "document", data._id));
+      dispatch(editOder(currentId, 'document', data._id));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);
@@ -55,7 +55,7 @@ export const TdDocument = (props) => {
       setCurrentElement(null);
     }
   };
-  const handleRightClick = (e) => {
+  const handleRightClick = e => {
     e.preventDefault();
     if (props.elem) dispatch(delPrintedMark(props.elem._id));
   };
@@ -70,41 +70,41 @@ export const TdDocument = (props) => {
     }
   }, [props.currentTR]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (showEdit) {
           setShowEdit(false);
           setCurrentId(null);
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showEdit]);
   useEffect(() => {
-    if (user.role == "admin") {
+    if (user.role == 'admin') {
       setDocList([
-        { _id: 1, value: "Ок" },
-        { _id: 2, value: "Нет" },
-        { _id: 3, value: "Факс" },
-        { _id: 4, value: "Сдал" },
+        { _id: 1, value: 'Ок' },
+        { _id: 2, value: 'Нет' },
+        { _id: 3, value: 'Факс' },
+        { _id: 4, value: 'Сдал' },
       ]);
     } else {
       setDocList([
-        { _id: 2, value: "Нет" },
-        { _id: 3, value: "Факс" },
-        { _id: 4, value: "Сдал" },
+        { _id: 2, value: 'Нет' },
+        { _id: 3, value: 'Факс' },
+        { _id: 4, value: 'Сдал' },
       ]);
     }
   }, []);
   useEffect(() => {
     if (props.elem) {
       if (props.elem.wasItPrinted) {
-        setClassTd("userTd wasPrinted mobileViewOff");
+        setClassTd('userTd wasPrinted mobileViewOff');
       } else {
-        setClassTd("userTd mobileViewOff");
+        setClassTd('userTd mobileViewOff');
       }
     }
   }, [props]);
@@ -119,6 +119,7 @@ export const TdDocument = (props) => {
 
   return (
     <td
+      style={props.style}
       className={classTd}
       onMouseOver={handleMouseOver}
       onContextMenu={handleRightClick}
@@ -127,19 +128,12 @@ export const TdDocument = (props) => {
     >
       {showEdit ? (
         <div className="divChoise">
-          <ChoiseList
-            name="document"
-            parent="oders"
-            arrlist={docList}
-            setValue={setValue}
-          />
+          <ChoiseList name="document" parent="oders" arrlist={docList} setValue={setValue} />
         </div>
       ) : (
         props.document
       )}
-      {showDetails && (
-        <div className="oderTdTooltip">{dateLocal(props.dateOfSubmission)}</div>
-      )}
+      {showDetails && <div className="oderTdTooltip">{dateLocal(props.dateOfSubmission)}</div>}
     </td>
   );
 };

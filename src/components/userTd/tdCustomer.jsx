@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { editOder } from "../../actions/oderActions.js";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import "./userTd.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { editOder } from '../../actions/oderActions.js';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import './userTd.sass';
 
-export const TdCustomer = (props) => {
+export const TdCustomer = props => {
   const dispatch = useDispatch();
-  const clientList = useSelector((state) => state.oderReducer.clientList);
-  const clientmanager = useSelector((state) => state.oderReducer.clientmanager);
+  const clientList = useSelector(state => state.oderReducer.clientList);
+  const clientmanager = useSelector(state => state.oderReducer.clientmanager);
 
   const [showDetails, setShowDetails] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -17,7 +17,7 @@ export const TdCustomer = (props) => {
 
   const getValue = (id, arrObj) => {
     if (id) {
-      const value = arrObj.find((elem) => elem._id === id);
+      const value = arrObj.find(elem => elem._id === id);
       return value || null;
     }
     return null;
@@ -44,7 +44,7 @@ export const TdCustomer = (props) => {
     }
   }, [isMouseOver, props.idManager, props.applycation]);
 
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     e.preventDefault();
     if (props.edit) {
       setShowEdit(true);
@@ -53,34 +53,34 @@ export const TdCustomer = (props) => {
     }
   };
 
-  const setValue = (data) => {
-    dispatch(editOder(currentId, "oders", data._id));
+  const setValue = data => {
+    dispatch(editOder(currentId, 'oders', data._id));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);
   };
 
-  const handleESC = (e) => {
-    if (e.code === "Escape") {
+  const handleESC = e => {
+    if (e.code === 'Escape') {
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);
     }
   };
 
-  const preventDefaultDBL = (e) => {
+  const preventDefaultDBL = e => {
     e.preventDefault();
   };
 
-  const handleClickCtrl = (e) => {
+  const handleClickCtrl = e => {
     if (e.ctrlKey) {
-      props.handleClickCtrl(props.idCustomer, "customer");
+      props.handleClickCtrl(props.idCustomer, 'customer');
     }
   };
 
   useEffect(() => {
     if (currentElement) {
-      const input = currentElement.querySelector("input");
+      const input = currentElement.querySelector('input');
       if (input) input.focus();
     }
   }, [currentElement]);
@@ -94,6 +94,7 @@ export const TdCustomer = (props) => {
 
   return (
     <td
+      style={props.style}
       className="userTd"
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
@@ -112,18 +113,12 @@ export const TdCustomer = (props) => {
       {showDetails && (
         <div className="oderTdTooltip">
           <p className="userPTooltip">
-            {props.idManager
-              ? getValue(props.idManager, clientmanager)?.value
-              : null}
+            {props.idManager ? getValue(props.idManager, clientmanager)?.value : null}
           </p>
           <p className="userPTooltip">
-            {props.idManager
-              ? getValue(props.idManager, clientmanager)?.phone
-              : null}
+            {props.idManager ? getValue(props.idManager, clientmanager)?.phone : null}
           </p>
-          <p className="userPTooltip">
-            {props.applycation && `Заявка № ${props.applycation}`}
-          </p>
+          <p className="userPTooltip">{props.applycation && `Заявка № ${props.applycation}`}</p>
         </div>
       )}
     </td>

@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { editOder } from "../../actions/oderActions.js";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import { UserTdCityContext } from "../oders/userTdCityContext/userTdCityContext.jsx";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { editOder } from '../../actions/oderActions.js';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import { UserTdCityContext } from '../oders/userTdCityContext/userTdCityContext.jsx';
 
-export const TdUnoadingPoint = (props) => {
+export const TdUnoadingPoint = props => {
   const dispatch = useDispatch();
-  const citieslist = useSelector((state) => state.oderReducer.citieslist);
+  const citieslist = useSelector(state => state.oderReducer.citieslist);
 
   const [pointUnloadInfo, setPointUnloadingInfo] = useState(null);
   const [showEdit, setShowEdit] = useState(false);
@@ -19,11 +19,11 @@ export const TdUnoadingPoint = (props) => {
 
   const getValue = (id, arrObj) => {
     if (id) {
-      let value = arrObj.find((elem) => elem._id == id);
+      let value = arrObj.find(elem => elem._id == id);
       return value.value;
     }
   };
-  const handleMouseOver = (e) => {
+  const handleMouseOver = e => {
     if (props.unLoadingInfo) {
       if (props.unLoadingInfo.length > 0)
         setPointUnloadingInfo(props.unLoadingInfo[e.currentTarget.id]);
@@ -32,28 +32,28 @@ export const TdUnoadingPoint = (props) => {
   const handleMouseLeave = () => {
     setPointUnloadingInfo(null);
   };
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     setEditCityIndex(Number(e.currentTarget.id));
     let element = e.currentTarget.parentElement.parentElement;
     if (props.edit) {
       setShowEdit(true);
-      element.parentElement.style.backgroundColor = "#fff";
+      element.parentElement.style.backgroundColor = '#fff';
       setCurrentId(element.parentElement.id);
     }
   };
-  const setValue = (data) => {
+  const setValue = data => {
     let [...arr] = props.idUnloadingPoint;
     if (addPoint) {
       arr.push(data._id);
     } else {
       arr[data.index] = data._id;
     }
-    dispatch(editOder(currentId, "unloadingPoint", arr));
+    dispatch(editOder(currentId, 'unloadingPoint', arr));
     setShowEdit(false);
     setCurrentId(null);
     setAddPoint(false);
   };
-  const handleContext = (e) => {
+  const handleContext = e => {
     let TdX = e.currentTarget.offsetParent.getBoundingClientRect().x;
     let X = e.clientX;
     let TdY = e.currentTarget.offsetParent.getBoundingClientRect().y;
@@ -84,8 +84,8 @@ export const TdUnoadingPoint = (props) => {
     }
   }, [props.currentTR]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (showContextMenu) setShowContextMenu(false);
         if (showEdit) {
           setShowEdit(false);
@@ -94,17 +94,15 @@ export const TdUnoadingPoint = (props) => {
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showContextMenu, showEdit]);
 
   return (
-    <td className="userTd mobileViewOff">
-      {pointUnloadInfo && (
-        <div className="oderTdTooltip">{pointUnloadInfo}</div>
-      )}
+    <td style={props.style} className="userTd mobileViewOff">
+      {pointUnloadInfo && <div className="oderTdTooltip">{pointUnloadInfo}</div>}
       {props.idUnloadingPoint.map((idCity, index) =>
         showEdit ? (
           <div className="divChoise" key={`ChoiseList-${index}`}>
@@ -128,19 +126,17 @@ export const TdUnoadingPoint = (props) => {
             >
               {getValue(idCity, citieslist)}
             </p>
-            {showContextMenu &&
-              currentId == props.currentTR &&
-              pIndex == index && (
-                <UserTdCityContext
-                  coord={coord}
-                  loadingPointList={props.idUnloadingPoint}
-                  hideContextMenu={hideContextMenu}
-                  trId={currentId}
-                  pId={pIndex}
-                  colNumber={4}
-                  handleClickAddCity={handleClickAddCity}
-                />
-              )}
+            {showContextMenu && currentId == props.currentTR && pIndex == index && (
+              <UserTdCityContext
+                coord={coord}
+                loadingPointList={props.idUnloadingPoint}
+                hideContextMenu={hideContextMenu}
+                trId={currentId}
+                pId={pIndex}
+                colNumber={4}
+                handleClickAddCity={handleClickAddCity}
+              />
+            )}
           </div>
         )
       )}

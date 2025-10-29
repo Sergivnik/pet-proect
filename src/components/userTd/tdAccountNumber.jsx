@@ -248,7 +248,12 @@ export const TdAccountNumber = props => {
   }, [orderList]);
 
   return (
-    <td className={classTD} onDoubleClick={handleDBLClick} onContextMenu={handleContaxtMenu}>
+    <td
+      style={props.style}
+      className={classTD}
+      onDoubleClick={handleDBLClick}
+      onContextMenu={handleContaxtMenu}
+    >
       {showEdit ? (
         <div className="divChoise">
           <input name="accountNumber" type="text" onKeyDown={handleEnter} />

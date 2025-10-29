@@ -1,14 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { editOder } from "../../actions/oderActions.js";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { editOder } from '../../actions/oderActions.js';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
 
-export const TdDriver = (props) => {
+export const TdDriver = props => {
   const dispatch = useDispatch();
-  const driversList = useSelector((state) => state.oderReducer.driverlist);
-  const trackDriverList = useSelector(
-    (state) => state.oderReducer.trackdrivers
-  );
+  const driversList = useSelector(state => state.oderReducer.driverlist);
+  const trackDriverList = useSelector(state => state.oderReducer.trackdrivers);
 
   const [showDetails, setShowDetails] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -18,7 +16,7 @@ export const TdDriver = (props) => {
 
   const getValue = (id, arrObj) => {
     if (id) {
-      const value = arrObj.find((elem) => elem._id === id);
+      const value = arrObj.find(elem => elem._id === id);
       return value ? value.value : null;
     }
     return null;
@@ -43,7 +41,7 @@ export const TdDriver = (props) => {
     }
   }, [isMouseOver, props.idTrackDriver]);
 
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     if (props.edit) {
       setShowEdit(true);
       setCurrentId(e.currentTarget.parentElement.id);
@@ -51,30 +49,30 @@ export const TdDriver = (props) => {
     }
   };
 
-  const setValue = (data) => {
-    dispatch(editOder(currentId, "driver", data._id));
+  const setValue = data => {
+    dispatch(editOder(currentId, 'driver', data._id));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);
   };
 
-  const handleESC = (e) => {
-    if (e.code === "Escape") {
+  const handleESC = e => {
+    if (e.code === 'Escape') {
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);
     }
   };
 
-  const handleClickCtrl = (e) => {
+  const handleClickCtrl = e => {
     if (e.ctrlKey) {
-      props.handleClickCtrl(props.idDriver, "driver");
+      props.handleClickCtrl(props.idDriver, 'driver');
     }
   };
 
   useEffect(() => {
     if (currentElement) {
-      const input = currentElement.querySelector("input");
+      const input = currentElement.querySelector('input');
       if (input) input.focus();
     }
   }, [currentElement]);
@@ -88,6 +86,7 @@ export const TdDriver = (props) => {
 
   return (
     <td
+      style={props.style}
       className="userTd"
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
@@ -103,9 +102,7 @@ export const TdDriver = (props) => {
         getValue(props.idDriver, driversList)
       )}
       {showDetails && (
-        <div className="oderTdTooltip">
-          {getValue(props.idTrackDriver, trackDriverList)}
-        </div>
+        <div className="oderTdTooltip">{getValue(props.idTrackDriver, trackDriverList)}</div>
       )}
     </td>
   );

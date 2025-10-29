@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { editOder } from "../../actions/oderActions.js";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import { dateLocal, dateTimeLocal } from "../myLib/myLib.js";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { editOder } from '../../actions/oderActions.js';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import { dateLocal, dateTimeLocal } from '../myLib/myLib.js';
 
-export const TdCustomerPayment = (props) => {
+export const TdCustomerPayment = props => {
   const dispatch = useDispatch();
 
-  const statusPayment = useSelector(
-    (state) => state.oderReducer.statusCustomerPay
-  );
+  const statusPayment = useSelector(state => state.oderReducer.statusCustomerPay);
 
   const [showDetails, setShowDetails] = useState(false);
   const [showEdit, setShowEdit] = useState(false);
@@ -26,27 +24,27 @@ export const TdCustomerPayment = (props) => {
     setIsMouseOver(false);
     setShowDetails(false);
   };
-  const handleDBLClick = (e) => {
+  const handleDBLClick = e => {
     let element = e.currentTarget;
     if (props.edit) {
       setShowEdit(true);
-      e.currentTarget.parentElement.style.backgroundColor = "#fff";
+      e.currentTarget.parentElement.style.backgroundColor = '#fff';
       setCurrentId(e.currentTarget.parentElement.id);
       setCurrentElement(element);
     }
   };
-  const setValue = (data) => {
-    if (data.value == "Обещал оплату") setGetDate(true);
-    if (data.value != "Частично оплачен") {
-      if (data.value != "Обещал оплату") setCurrentId(null);
-      dispatch(editOder(currentId, "customerPayment", data._id));
+  const setValue = data => {
+    if (data.value == 'Обещал оплату') setGetDate(true);
+    if (data.value != 'Частично оплачен') {
+      if (data.value != 'Обещал оплату') setCurrentId(null);
+      dispatch(editOder(currentId, 'customerPayment', data._id));
     } else {
       setGetSum(true);
     }
     setShowEdit(false);
     setCurrentElement(null);
   };
-  const handleGetDate = (e) => {
+  const handleGetDate = e => {
     if (e.keyCode == 13) {
       console.log(currentId, e.target.name, e.target.value);
       dispatch(editOder(currentId, e.target.name, e.target.value));
@@ -54,18 +52,18 @@ export const TdCustomerPayment = (props) => {
       setCurrentId(null);
     }
   };
-  const handleGetSum = (e) => {
+  const handleGetSum = e => {
     if (e.keyCode == 13) {
       console.log(currentId, e.target.name, e.target.value);
-      dispatch(editOder(currentId, "customerPayment", 8));
+      dispatch(editOder(currentId, 'customerPayment', 8));
       dispatch(editOder(currentId, e.target.name, e.target.value));
       setGetSum(false);
       setCurrentId(null);
     }
   };
-  const handleChangeDate = (e) => {
+  const handleChangeDate = e => {
     setCurrentId(e.currentTarget.parentElement.parentElement.id);
-    console.log("Change Date:", props.currentTR);
+    console.log('Change Date:', props.currentTR);
     e.stopPropagation();
     setGetDate(true);
   };
@@ -80,8 +78,8 @@ export const TdCustomerPayment = (props) => {
     }
   }, [props.currentTR]);
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (showEdit) {
           setShowEdit(false);
           setCurrentId(null);
@@ -89,9 +87,9 @@ export const TdCustomerPayment = (props) => {
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showEdit]);
   useEffect(() => {
@@ -105,6 +103,7 @@ export const TdCustomerPayment = (props) => {
 
   return (
     <td
+      style={props.style}
       className="userTd"
       onMouseOver={handleMouseOver}
       onMouseLeave={handleMouseLeave}
@@ -125,7 +124,7 @@ export const TdCustomerPayment = (props) => {
       {showDetails && (
         <div className="oderTdTooltip" onDoubleClick={handleChangeDate}>
           <span className="spanTdPaymentToolTip">
-            {props.customerPayment == "Мыло"
+            {props.customerPayment == 'Мыло'
               ? dateTimeLocal(props.dateOfPromise)
               : dateLocal(props.dateOfPromise)}
           </span>

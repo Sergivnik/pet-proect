@@ -99,7 +99,7 @@
     width: 100%
     display: flex
     flex-direction: column
-    overflow-y: scroll
+    overflow-y: auto
     height: calc(98vh - 50px)
 .odersTable
     border: 1px solid #000
@@ -247,3 +247,8 @@ hr
         color: blue
 .orderNewCreateTD
     width: 90%
+.virtualTableVrapper
+    width: calc(100% - 2px)
+.virtualTable
+    width: calc(100% - 2px)
+    table-layout: fixed
