@@ -61,14 +61,20 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     minWidth: 0, // можно оставить auto, если хочешь
   });
 
+  useEffect(() => {
+    if (parentRef.current) {
+      parentRef.current.scrollTop = parentRef.current.scrollHeight;
+    }
+  }, [rows.length]); // обновляем при изменении количества строк
+
   return (
     <div
       ref={parentRef}
-      style={{ height: '100vh', overflowY: 'auto' }}
+      style={{ height: 'calc(100vh - 85px)', overflowY: 'auto' }}
       className="virtualTableVrapper"
     >
       <table style={{ borderCollapse: 'collapse' }} className="virtualTable">
-        <thead style={{ position: 'sticky', top: 0, background: '#fff', zIndex: 2 }}>
+        <thead style={{ position: 'sticky', top: 0, zIndex: 2 }} className="virtualTHead">
           <tr>
             <th style={getColStyle(0)}>Дата</th>
             <th style={getColStyle(1)}>Водитель</th>
@@ -84,7 +90,10 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
             <th style={getColStyle(11)}>Номер счета</th>
           </tr>
         </thead>
-        <tbody style={{ position: 'relative', height: `${rowVirtualizer.getTotalSize()}px` }}>
+        <tbody
+          style={{ position: 'relative', height: `${rowVirtualizer.getTotalSize()}px` }}
+          className="virtualTbody"
+        >
           {items.map(virtualRow => {
             const row = rows[virtualRow.index];
             return (
