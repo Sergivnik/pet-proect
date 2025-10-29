@@ -15,16 +15,16 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   const [colWidths, setColWidths] = useState<number[]>([
     5, // Дата
     10, // Водитель
-    12, // Заказчик
-    12, // Погрузка
-    12, // Выгрузка
-    5, // Цена клиента
-    5, // Цена водителя
-    5, // Выполнен
+    10, // Заказчик
+    10, // Погрузка
+    10, // Выгрузка
+    8, // Цена клиента
+    8, // Цена водителя
+    10, // Выполнен
     5, // Док-ты
-    5, // Клиент Оплата
-    5, // Водитель Оплата
-    5, // Номер счета
+    8, // Клиент Оплата
+    8, // Водитель Оплата
+    8, // Номер счета
   ]);
 
   useEffect(() => {
@@ -32,16 +32,16 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
       setColWidths([
         8, // Дата
         10, // Водитель
-        12, // Заказчик
-        12, // Погрузка
-        12, // Выгрузка
-        5, // Цена клиента
-        5, // Цена водителя
-        5, // Выполнен
+        10, // Заказчик
+        10, // Погрузка
+        10, // Выгрузка
+        8, // Цена клиента
+        8, // Цена водителя
+        10, // Выполнен
         5, // Док-ты
-        5, // Клиент Оплата
-        5, // Водитель Оплата
-        5, // Номер счета
+        8, // Клиент Оплата
+        8, // Водитель Оплата
+        8, // Номер счета
       ]);
     }
   }, [width]);
@@ -76,18 +76,271 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
       <table style={{ borderCollapse: 'collapse' }} className="virtualTable">
         <thead style={{ position: 'sticky', top: 0, zIndex: 2 }} className="virtualTHead">
           <tr>
-            <th style={getColStyle(0)}>Дата</th>
-            <th style={getColStyle(1)}>Водитель</th>
-            <th style={getColStyle(2)}>Заказчик</th>
-            <th style={getColStyle(3)}>Погрузка</th>
-            <th style={getColStyle(4)}>Выгрузка</th>
-            <th style={getColStyle(5)}>Цена клиента</th>
-            <th style={getColStyle(6)}>Цена водителя</th>
-            <th style={getColStyle(7)}>Выполнен</th>
-            <th style={getColStyle(8)}>Док-ты</th>
-            <th style={getColStyle(9)}>Клиент Оплата</th>
-            <th style={getColStyle(10)}>Водитель Оплата</th>
-            <th style={getColStyle(11)}>Номер счета</th>
+            <th style={{ ...getColStyle(0), position: 'relative' }}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Дата</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+
+            <th style={getColStyle(1)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Водитель</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(2)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Заказчик</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(3)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Погрузка</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(4)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Выгрузка</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(5)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Цена клиента</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(6)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Цена водителя</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(7)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Выполнен</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(8)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Док-ты</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(9)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Клиент Оплата</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(10)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Водитель Оплата</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
+            <th style={getColStyle(11)}>
+              <span style={{ marginRight: '20px', display: 'inline-block' }}>Номер счета</span>
+              <svg
+                width="18" // 12 * 1.5
+                height="18" // 12 * 1.5
+                viewBox="0 0 12 12"
+                xmlns="http://www.w3.org/2000/svg"
+                style={{
+                  position: 'absolute',
+                  bottom: '4px', // отступ от низа
+                  right: '4px', // отступ от правого края
+                }}
+              >
+                <path
+                  d="M2 4 L6 8 L10 4 Z"
+                  fill="currentColor"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                  strokeLinejoin="round"
+                />
+              </svg>
+            </th>
           </tr>
         </thead>
         <tbody
