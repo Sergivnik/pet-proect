@@ -262,7 +262,7 @@ module.exports.taskAdd = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-  tasks.add(req.body.body, (data, dataOrder) => {
+  tasks.add(req.body.body, req.body.orderTable, (data, dataOrder) => {
     if (data.error) {
       res.status(500).json({ message: data.error });
     } else {

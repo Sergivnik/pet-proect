@@ -579,8 +579,8 @@ var Tasks = {
       callback({ error: err });
     }
   },
-  add: async function (data, callback) {
-    console.log(data);
+  add: async function (data, orderTable, callback) {
+    console.log(data, orderTable);
     data = JSON.parse(data);
     let oder = {
       date: data.date,
@@ -610,7 +610,7 @@ var Tasks = {
     if (oder.driverPrice === '') oder.driverPrice = null;
 
     try {
-      let [data] = await db.query('INSERT INTO oderslist SET ?', oder);
+      let [data] = await db.query(`INSERT INTO ${orderTable} SET ?`, oder);
       addData.orderId = data.insertId;
       if (oder.colorTR == 'hotpink') {
         await db.query(`INSERT INTO addtable SET ?`, addData);

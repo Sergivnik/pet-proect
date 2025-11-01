@@ -424,7 +424,7 @@ export const CreateOderNew = (props) => {
           dispatch(addOrderApp(odersData, props.appId));
           props.addOder();
         } else {
-          dispatch(addOder(odersData));
+          dispatch(addOder(odersData, props.orderTable));
           props.addOder();
         }
       }

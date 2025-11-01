@@ -247,8 +247,13 @@ hr
         color: blue
 .orderNewCreateTD
     width: 90%
+.divVrapper
+    width: 100%
+    height: calc(100vh - 85px)
 .virtualTableVrapper
     width: calc(100% - 2px)
+    height: calc(100% - 25px)
+    overflow-Y: auto
 .virtualTable
     width: calc(100% - 2px)
     table-layout: fixed
@@ -258,11 +263,14 @@ hr
 .virtualTHead th
     border: 1px solid #000
     position: relative
-.virtualTbody td
-    //background-color: #f6fa2d
 .virtualTbody tr:nth-child(odd)
     background-color: #f6f8b5
 .virtualTbody tr:nth-child(even)
     background-color: #fcfe99
 .virtualTbody tr:hover
     background-color: #e1e48c
+.divVrapperFooter
+    display: flex
+    justify-content: end
+.divVrapperFooterBtn
+    margin: 10px 30px 0 0    

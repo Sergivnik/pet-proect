@@ -20,14 +20,14 @@ export const ADD_ORDER_APP_SUCCESS = 'ADD_ORDER_APP_SUCCESS';
 export const ADD_ORDER_APP_FAILURE = 'ADD_ORDER_APP_FAILURE';
 export const CLEAR_REQUEST_STATUS = 'CLEAR_REQUEST_STATUS';
 
-export const addOder = data => {
+export const addOder = (data, orderTable) => {
   console.log(data);
 
   return dispatch =>
     axios
       .post(URL + '/addOder', {
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data),
+        body: JSON.stringify(data), orderTable: orderTable,
       })
       .then(res => {
         //return dispatch(addOderSuccess(res.data, data));

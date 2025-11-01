@@ -155,7 +155,7 @@ export const UserTr = (props) => {
       ) : (
         <tr>
           <td colSpan="13" className="orderNewCreateTD">
-            <CreateOderNew elem={props.elem} clickSave={handleClickSave} />
+            <CreateOderNew elem={props.elem} clickSave={handleClickSave} orderTable="oderslist" />
           </td>
           {/* <td>
             <button className="odersTdBtn" onClick={handleClickEdit}>

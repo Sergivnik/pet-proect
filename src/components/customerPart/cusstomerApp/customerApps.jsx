@@ -246,6 +246,7 @@ export const CustomerApps = () => {
             isMadeFromApp={true}
             appId={currentId}
             addOder={handleClickSave}
+            orderTable="oderslist"
           />
         </UserWindow>
       )}

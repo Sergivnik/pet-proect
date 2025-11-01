@@ -15,10 +15,6 @@ import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
 export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
   ({ elem, style, colWidths, ...rest }, ref) => {
     const getTdStyle = (index: number) => {
-      console.log({
-        width: `${colWidths[index]}%`,
-      });
-
       return {
         width: `${colWidths[index]}%`,
       };

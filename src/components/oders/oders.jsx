@@ -310,7 +310,7 @@ export const Oders = () => {
     setWindowWidth(1400);
     setShowWindow(true);
     setWindowHeader('Добавить заказ');
-    setChildren(<CreateOderNew addOder={addOder} elem={newElem} />);
+    setChildren(<CreateOderNew addOder={addOder} elem={newElem} orderTable="oderslist" />);
   };
 
   const addOder = () => {
