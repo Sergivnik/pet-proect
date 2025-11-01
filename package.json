@@ -6,6 +6,9 @@
     "build": "webpack --mode production"
   },
   "dependencies": {
+    "express": "^4.18.2",
+    "compression": "^1.7.4",
+    "mysql2": "^3.6.0",
     "@react-three/drei": "^9.53.0",
     "@react-three/fiber": "^8.13.7",
     "@tanstack/react-virtual": "^3.13.12",

@@ -3,7 +3,7 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 module.exports = {
   mode: isDevelopment ? "development" : "production",
@@ -11,19 +11,19 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "API/public"),
     filename: "[name].bundle.js",
-    clean: true, // очищает старые бандлы
+    clean: true,
   },
   devtool: isDevelopment ? "eval-source-map" : "source-map",
-  devServer: {
-    historyApiFallback: true,
-    static: {
-      directory: path.resolve(__dirname, "dist"),
-    },
-    open: true,
-    compress: true,
-    hot: true,
-    port: 8080,
-  },
+  devServer: isDevelopment
+    ? {
+        historyApiFallback: true,
+        static: path.resolve(__dirname, "dist"),
+        open: true,
+        compress: true,
+        hot: true,
+        port: 8080,
+      }
+    : undefined,
   module: {
     rules: [
       {
@@ -34,7 +34,7 @@ module.exports = {
           options: {
             presets: ["@babel/preset-env", "@babel/preset-react"],
             plugins: [
-              isDevelopment && "react-refresh/babel",
+              isDevelopment && require.resolve("react-refresh/babel"),
               ["@babel/plugin-transform-class-properties", { loose: true }],
             ].filter(Boolean),
           },
