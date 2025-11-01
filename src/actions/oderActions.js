@@ -27,7 +27,8 @@ export const addOder = (data, orderTable) => {
     axios
       .post(URL + '/addOder', {
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data), orderTable: orderTable,
+        body: JSON.stringify(data),
+        orderTable: orderTable,
       })
       .then(res => {
         //return dispatch(addOderSuccess(res.data, data));
@@ -36,10 +37,11 @@ export const addOder = (data, orderTable) => {
         console.log(e.message);
       });
 };
-export const addOderSuccess = (dataServer, data) => ({
+export const addOderSuccess = (dataServer, data, orderTable) => ({
   type: ADD_ODER_SUCCESS,
   dataServer,
   data,
+  orderTable,
 });
 export const addOderFailure = () => ({
   type: ADD_ODER_FAILURE,

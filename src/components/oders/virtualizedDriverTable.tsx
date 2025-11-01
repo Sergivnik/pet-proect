@@ -130,6 +130,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
         <button className="divVrapperFooterBtn" onClick={handleCreateOder}>
           Создать заказ
         </button>
+        <button className="divVrapperFooterBtn">Копировать заказ</button>
         <button className="divVrapperFooterBtn">Редактировать заказ</button>
         <button className="divVrapperFooterBtn">Удалить заказ</button>
       </div>

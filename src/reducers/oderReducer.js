@@ -131,36 +131,69 @@ export const oderReducer = (store = initialStore, action) => {
     }
     case ADD_ODER_SUCCESS: {
       console.log(action);
-      return update(store, {
-        odersList: {
-          $merge: {
-            [store.odersList.length]: {
-              _id: action.dataServer.insertId,
-              date: action.data.date,
-              idDriver: action.data.idDriver,
-              idCustomer: action.data.idCustomer,
-              idLoadingPoint: action.data.idLoadingPoint,
-              idUnloadingPoint: action.data.idUnloadingPoint,
-              customerPrice: action.data.customerPrice,
-              driverPrice: action.data.driverPrice,
-              idTrackDriver: action.data.idTrackDriver,
-              idTrack: action.data.idTrack,
-              idManager: action.data.idManager,
-              loadingInfo: action.data.loadingInfo,
-              unloadingInfo: action.data.unloadingInfo,
-              completed: action.data.completed,
-              colorTR: action.data.colorTR,
-              applicationNumber: action.data.applicationNumber,
-              proxy: 1,
-              document: 'нет',
-              dateOfSubmission: null,
-              customerPayment: 'нет',
-              dateOfPromise: null,
-              driverPayment: 'нет',
+      if (action.orderTable == 'oderslist') {
+        return update(store, {
+          odersList: {
+            $merge: {
+              [store.odersList.length]: {
+                _id: action.dataServer.insertId,
+                date: action.data.date,
+                idDriver: action.data.idDriver,
+                idCustomer: action.data.idCustomer,
+                idLoadingPoint: action.data.idLoadingPoint,
+                idUnloadingPoint: action.data.idUnloadingPoint,
+                customerPrice: action.data.customerPrice,
+                driverPrice: action.data.driverPrice,
+                idTrackDriver: action.data.idTrackDriver,
+                idTrack: action.data.idTrack,
+                idManager: action.data.idManager,
+                loadingInfo: action.data.loadingInfo,
+                unloadingInfo: action.data.unloadingInfo,
+                completed: action.data.completed,
+                colorTR: action.data.colorTR,
+                applicationNumber: action.data.applicationNumber,
+                proxy: 1,
+                document: 'нет',
+                dateOfSubmission: null,
+                customerPayment: 'нет',
+                dateOfPromise: null,
+                driverPayment: 'нет',
+              },
             },
           },
-        },
-      });
+        });
+      } else {
+        return update(store, {
+          driverOrderList: {
+            $merge: {
+              [store.driverOrderList.length]: {
+                _id: action.dataServer.insertId,
+                date: action.data.date,
+                idDriver: action.data.idDriver,
+                idCustomer: action.data.idCustomer,
+                idLoadingPoint: action.data.idLoadingPoint,
+                idUnloadingPoint: action.data.idUnloadingPoint,
+                customerPrice: action.data.customerPrice,
+                driverPrice: action.data.driverPrice,
+                idTrackDriver: action.data.idTrackDriver,
+                idTrack: action.data.idTrack,
+                idManager: action.data.idManager,
+                loadingInfo: action.data.loadingInfo,
+                unloadingInfo: action.data.unloadingInfo,
+                completed: action.data.completed,
+                colorTR: action.data.colorTR,
+                applicationNumber: action.data.applicationNumber,
+                proxy: 1,
+                document: 'нет',
+                dateOfSubmission: null,
+                customerPayment: 'нет',
+                dateOfPromise: null,
+                driverPayment: 'нет',
+              },
+            },
+          },
+        });
+      }
     }
     case ADD_ORDER_APP_SUCCESS: {
       return update(store, {

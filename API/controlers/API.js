@@ -266,7 +266,7 @@ module.exports.taskAdd = (req, res) => {
     if (data.error) {
       res.status(500).json({ message: data.error });
     } else {
-      let dataIo = { data: data, dataOrder: dataOrder };
+      let dataIo = { data: data, dataOrder: dataOrder, orderTable: req.body.orderTable };
       req.app.get('io').emit('orderAdded', dataIo);
       res.json(data);
     }

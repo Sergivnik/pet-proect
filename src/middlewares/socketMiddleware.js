@@ -44,7 +44,7 @@ export const socketMiddleware = (store) => (next) => (action) => {
   if (!socket.hasListeners("orderAdded")) {
     socket.on("orderAdded", (data) => {
       console.log("Получен новый заказ через WebSocket:", data);
-      store.dispatch(addOderSuccess(data.data, data.dataOrder));
+      store.dispatch(addOderSuccess(data.data, data.dataOrder, data.orderTable));
     });
   }
   if (!socket.hasListeners("orderDelete")) {
