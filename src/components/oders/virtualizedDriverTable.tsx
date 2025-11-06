@@ -30,6 +30,8 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     8, // Номер счета
   ]);
   const [showCreateOderWindow, setShowCreateOderWindow] = useState(false);
+  const [currentId, setCurrentId] = useState<number>(null);
+  const [editOrder, setEditOrder] = useState<boolean>(false);
 
   useEffect(() => {
     if (width < 1450) {
@@ -77,6 +79,13 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     setShowCreateOderWindow(false);
   };
 
+  const getCurrentId = (id: number) => {
+    setCurrentId(id);
+  };
+  const handleClickEdit = () => {
+    setEditOrder(true);
+  };
+
   useEffect(() => {
     if (parentRef.current) {
       parentRef.current.scrollTop = parentRef.current.scrollHeight;
@@ -97,7 +106,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
       )}
       <div ref={parentRef} className="virtualTableVrapper">
         <table style={{ borderCollapse: 'collapse' }} className="virtualTable">
-          <DriverThead getColStyle={getColStyle}/>
+          <DriverThead getColStyle={getColStyle} />
           <tbody
             style={{ position: 'relative', height: `${rowVirtualizer.getTotalSize()}px` }}
             className="virtualTbody"
@@ -111,6 +120,9 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
                   elem={row}
                   data-index={virtualRow.index}
                   colWidths={colWidths} // прокидываем фиксированные ширины в DriverTr
+                  getCurrentId={getCurrentId}
+                  currentId={currentId}
+                  editOrder={editOrder}
                   style={{
                     position: 'absolute',
                     top: 0,
@@ -131,7 +143,9 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
           Создать заказ
         </button>
         <button className="divVrapperFooterBtn">Копировать заказ</button>
-        <button className="divVrapperFooterBtn">Редактировать заказ</button>
+        <button className="divVrapperFooterBtn" onClick={handleClickEdit}>
+          Редактировать заказ
+        </button>
         <button className="divVrapperFooterBtn">Удалить заказ</button>
       </div>
     </div>

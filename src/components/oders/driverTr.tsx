@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { TdDate } from '../userTd/tdDate.jsx';
 import { TdDriver } from '../userTd/tdDriver.jsx';
 import { TdCustomer } from '../userTd/tdCustomer.jsx';
@@ -11,17 +11,48 @@ import { TdDocument } from '../userTd/tdDocument.jsx';
 import { TdCustomerPayment } from '../userTd/tdCustomerPayment.jsx';
 import { TdDriverPayment } from '../userTd/tdDriverPayment.jsx';
 import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
+import { CreateOderNew } from '../createOder/createOderNew.jsx';
 
 export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
-  ({ elem, style, colWidths, ...rest }, ref) => {
+  ({ elem, style, colWidths, getCurrentId, currentId, editOrder, ...rest }, ref) => {
+    const [showEdit, setShowEdit] = useState<boolean>(false);
     const getTdStyle = (index: number) => {
       return {
         width: `${colWidths[index]}%`,
       };
     };
+    const handleClickTr = () => {
+      getCurrentId(elem._id);
+    };
+    const getClassNameTr = () => {
+      console.log(currentId);
+      if (currentId == elem._id) {
+        return 'virtualDriverTrChoisen';
+      } else {
+        return '';
+      }
+    };
+    const handleClickSave = () => {
+      getCurrentId(null);
+      setShowEdit(false);
+    };
 
-    return (
+    useEffect(() => {
+      if (editOrder && currentId == elem._id) setShowEdit(true);
+    }, [editOrder]);
+
+    return showEdit ? (
       <tr ref={ref} style={{ ...style }} {...rest}>
+        <CreateOderNew elem={elem} clickSave={handleClickSave} orderTable="oderslist" />
+      </tr>
+    ) : (
+      <tr
+        ref={ref}
+        style={{ ...style }}
+        {...rest}
+        className={getClassNameTr()}
+        onClick={handleClickTr}
+      >
         <TdDate style={getTdStyle(0)} date={elem.date} />
         <TdDriver
           style={getTdStyle(1)}
