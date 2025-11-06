@@ -3,40 +3,25 @@ const webpack = require("webpack");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
-const isDevelopment = process.env.NODE_ENV !== "production";
+const isDevelopment = process.env.NODE_ENV === "development";
 
 module.exports = {
   mode: isDevelopment ? "development" : "production",
   entry: "./src/index.js",
   output: {
     path: path.resolve(__dirname, "API/public"),
-    filename: isDevelopment ? "[name].bundle.js" : "[name].[contenthash].js",
-    publicPath: "/", // важно для React Router
+    filename: "[name].bundle.js",
     clean: true,
   },
   devtool: isDevelopment ? "eval-source-map" : "source-map",
   devServer: isDevelopment
     ? {
-        port: 8080,
-        hot: true,
+        historyApiFallback: true,
+        static: path.resolve(__dirname, "dist"),
         open: true,
         compress: true,
-        historyApiFallback: {
-          index: '/index.html',
-          disableDotRule: true, // важно для URL с точками
-        },
-        static: {
-          directory: path.resolve(__dirname, "API/public"),
-        },
-        devMiddleware: {
-          publicPath: '/',
-        },
-        proxy: {
-          '/API': 'http://localhost:80', // проксируем API на Node
-        },
-        headers: {
-          "Content-Security-Policy": "default-src 'self' blob: data:; worker-src 'self' blob:; connect-src 'self' ws://localhost:8080 http://localhost:80",
-        },
+        hot: true,
+        port: 8080,
       }
     : undefined,
   module: {
@@ -56,8 +41,12 @@ module.exports = {
         },
       },
       {
-        test: /\.s?css$/i,
+        test: /\.s[ac]ss$/i,
         use: ["style-loader", "css-loader", "sass-loader"],
+      },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
       },
     ],
   },

@@ -14,7 +14,20 @@ import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
 import { CreateOderNew } from '../createOder/createOderNew.jsx';
 
 export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
-  ({ elem, style, colWidths, getCurrentId, currentId, editOrder, ...rest }, ref) => {
+  (
+    {
+      elem,
+      style,
+      colWidths,
+      getCurrentId,
+      currentId,
+      editOrder,
+      handleClickSaveEdit,
+      handleClickCancelEdit,
+      ...rest
+    },
+    ref
+  ) => {
     const [showEdit, setShowEdit] = useState<boolean>(false);
     const getTdStyle = (index: number) => {
       return {
@@ -35,6 +48,7 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
     const handleClickSave = () => {
       getCurrentId(null);
       setShowEdit(false);
+      handleClickSaveEdit();
     };
 
     useEffect(() => {

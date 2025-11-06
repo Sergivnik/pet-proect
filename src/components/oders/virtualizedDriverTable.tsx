@@ -85,6 +85,12 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   const handleClickEdit = () => {
     setEditOrder(true);
   };
+  const handleClickSaveEdit = () => {
+    setEditOrder(false);
+  };
+  const handleClickCancelEdit = () => {
+    setEditOrder(false);
+  };
 
   useEffect(() => {
     if (parentRef.current) {
@@ -123,6 +129,8 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
                   getCurrentId={getCurrentId}
                   currentId={currentId}
                   editOrder={editOrder}
+                  handleClickSaveEdit={handleClickSaveEdit}
+                  handleClickCancelEdit={handleClickCancelEdit}
                   style={{
                     position: 'absolute',
                     top: 0,
