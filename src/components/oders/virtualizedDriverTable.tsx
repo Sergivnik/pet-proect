@@ -51,6 +51,18 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
       ]);
     }
   }, [width]);
+  useEffect(() => {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
+        setEditOrder(false);
+        setCurrentId(null);
+      }
+    };
+    document.addEventListener('keydown', onKeypress);
+    return () => {
+      document.removeEventListener('keydown', onKeypress);
+    };
+  }, [editOrder, currentId]);
 
   // виртуализатор
   const rowVirtualizer = useVirtualizer({
@@ -64,8 +76,15 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
 
   const getColStyle = (index: number) => ({
     width: `${colWidths[index]}%`,
-    minWidth: 0, // можно оставить auto, если хочешь
+    minWidth: 0,
   });
+  const getEditBtnStyle = () => {
+    if (currentId == null) {
+      return 'virtualDriverTableFooterBtn grayFont';
+    } else {
+      return 'virtualDriverTableFooterBtn';
+    }
+  };
 
   const handleCreateOder = () => {
     setShowCreateOderWindow(true);
@@ -86,9 +105,6 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     setEditOrder(true);
   };
   const handleClickSaveEdit = () => {
-    setEditOrder(false);
-  };
-  const handleClickCancelEdit = () => {
     setEditOrder(false);
   };
 
@@ -130,7 +146,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
                   currentId={currentId}
                   editOrder={editOrder}
                   handleClickSaveEdit={handleClickSaveEdit}
-                  handleClickCancelEdit={handleClickCancelEdit}
+                  handleClickDoubleClick={handleClickEdit}
                   style={{
                     position: 'absolute',
                     top: 0,
@@ -147,14 +163,14 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
         </table>
       </div>
       <div className="divVrapperFooter">
-        <button className="divVrapperFooterBtn" onClick={handleCreateOder}>
+        <button className="virtualDriverTableFooterBtn" onClick={handleCreateOder}>
           Создать заказ
         </button>
-        <button className="divVrapperFooterBtn">Копировать заказ</button>
-        <button className="divVrapperFooterBtn" onClick={handleClickEdit}>
+        <button className="virtualDriverTableFooterBtn">Копировать заказ</button>
+        <button className={getEditBtnStyle()} onClick={handleClickEdit}>
           Редактировать заказ
         </button>
-        <button className="divVrapperFooterBtn">Удалить заказ</button>
+        <button className="virtualDriverTableFooterBtn">Удалить заказ</button>
       </div>
     </div>
   );

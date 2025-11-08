@@ -620,7 +620,7 @@ var Tasks = {
       callback({ error: err });
     }
   },
-  editNew: async function (data, callback) {
+  editNew: async function (data, orderTable, callback) {
     dateToSqlString(data.dateOfSubmission);
     console.log(data);
     let addData;
@@ -658,8 +658,8 @@ var Tasks = {
       };
     }
     try {
-      await db.query(`UPDATE oderslist SET ? WHERE _id = ?`, [newData, data._id]);
-      if (data.colorTR == 'hotpink') {
+      await db.query(`UPDATE ${orderTable} SET ? WHERE _id = ?`, [newData, data._id]);
+      if (data.colorTR == 'hotpink' && orderTable == 'oderslist') {
         let [q] = await db.query(`SELECT * FROM addtable WHERE orderId = ?`, [data._id]);
         if (q.length) {
           await db.query(`UPDATE addtable SET ? WHERE orderId = ?`, [addData, data._id]);

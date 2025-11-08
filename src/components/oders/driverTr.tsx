@@ -12,6 +12,7 @@ import { TdCustomerPayment } from '../userTd/tdCustomerPayment.jsx';
 import { TdDriverPayment } from '../userTd/tdDriverPayment.jsx';
 import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
 import { CreateOderNew } from '../createOder/createOderNew.jsx';
+import './oders.sass';
 
 export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
   (
@@ -23,7 +24,7 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
       currentId,
       editOrder,
       handleClickSaveEdit,
-      handleClickCancelEdit,
+      handleClickDoubleClick,
       ...rest
     },
     ref
@@ -38,7 +39,6 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
       getCurrentId(elem._id);
     };
     const getClassNameTr = () => {
-      console.log(currentId);
       if (currentId == elem._id) {
         return 'virtualDriverTrChoisen';
       } else {
@@ -50,14 +50,32 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
       setShowEdit(false);
       handleClickSaveEdit();
     };
-
+    const handleDoubleClick = () => {
+      setShowEdit(true);
+      handleClickDoubleClick();
+    };
     useEffect(() => {
-      if (editOrder && currentId == elem._id) setShowEdit(true);
+      if (editOrder && currentId == elem._id) {
+        setShowEdit(true);
+      }
     }, [editOrder]);
+    useEffect(() => {
+      const onKeypress = e => {
+        if (e.code == 'Escape') {
+          setShowEdit(false);
+        }
+      };
+      document.addEventListener('keydown', onKeypress);
+      return () => {
+        document.removeEventListener('keydown', onKeypress);
+      };
+    }, [currentId]);
 
     return showEdit ? (
-      <tr ref={ref} style={{ ...style }} {...rest}>
-        <CreateOderNew elem={elem} clickSave={handleClickSave} orderTable="oderslist" />
+      <tr ref={ref} style={{ ...style }} {...rest} onClick={handleClickTr}>
+        <td colSpan={13} className="orderNewCreateTD">
+          <CreateOderNew elem={elem} clickSave={handleClickSave} orderTable="driverorderlist" />
+        </td>
       </tr>
     ) : (
       <tr
@@ -66,6 +84,7 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
         {...rest}
         className={getClassNameTr()}
         onClick={handleClickTr}
+        onDoubleClick={handleDoubleClick}
       >
         <TdDate style={getTdStyle(0)} date={elem.date} />
         <TdDriver

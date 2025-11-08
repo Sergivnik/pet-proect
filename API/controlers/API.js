@@ -351,13 +351,13 @@ module.exports.taskEditNew = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS, PATCH');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-  tasks.editNew(req.body.body, data => {
+  tasks.editNew(req.body.body, req.body.orderTable, data => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });
     } else {
-      req.app.get('io').emit('orderChangedNew', req.body.body);
-      res.json(data);
+      req.app.get('io').emit('orderChangedNew', { data: data, orderTable: req.body.orderTable });
+      res.json({ data: data, orderTable: req.body.orderTable });
     }
   });
 };

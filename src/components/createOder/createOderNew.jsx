@@ -449,7 +449,7 @@ export const CreateOderNew = (props) => {
         } else {
           isChanged = false;
         }
-        dispatch(editOderNew(odersData));
+        dispatch(editOderNew(odersData, props.orderTable));
         props.clickSave(isChanged);
       }
     }

@@ -100,7 +100,7 @@
     display: flex
     flex-direction: column
     overflow-y: auto
-    height: calc(98vh - 50px)
+    height: calc(100vh - 50px)
 .odersTable
     border: 1px solid #000
     margin: 0 auto 50px auto
@@ -249,10 +249,11 @@ hr
     width: 90%
 .divVrapper
     width: 100%
-    height: calc(100vh - 85px)
+    height: 100%
+    background-color: #e0e07d
 .virtualTableVrapper
     width: calc(100% - 2px)
-    height: calc(100% - 25px)
+    height: calc(100% - 40px)
     overflow-Y: auto
 .virtualTable
     width: calc(100% - 2px)
@@ -260,6 +261,7 @@ hr
     background-color: #f6f8b5
 .virtualTHead
     background-color: #70e2ee
+    height: 40px
 .virtualTHead th
     border: 1px solid #000
     position: relative
@@ -272,7 +274,10 @@ hr
 .divVrapperFooter
     display: flex
     justify-content: end
-.divVrapperFooterBtn
-    margin: 10px 30px 0 0    
+    height: 40px
+.virtualDriverTableFooterBtn
+    margin: 10px 30px 10px 0
 .virtualDriverTrChoisen
     background-color: #e8bdbd !important
+.grayFont
+    color: gray

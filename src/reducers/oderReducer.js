@@ -228,32 +228,41 @@ export const oderReducer = (store = initialStore, action) => {
       });
     }
     case EDIT_ODER_NEW_SUCCESS: {
-      let index = store.odersList.findIndex(item => item._id == action.data._id);
-      if (store.odersList[index].colorTR == 'hotpink') {
-        let addIndex = store.addtable.findIndex(elem => elem.orderId == action.data._id);
-        let { ...addObj } = store.addtable[addIndex];
-        addObj.sum = action.data.price;
-        addObj.interest = action.data.interest;
+      if (action.orderTable == 'oderslist') {
+        let index = store.odersList.findIndex(item => item._id == action.data._id);
+        if (store.odersList[index].colorTR == 'hotpink') {
+          let addIndex = store.addtable.findIndex(elem => elem.orderId == action.data._id);
+          let { ...addObj } = store.addtable[addIndex];
+          addObj.sum = action.data.price;
+          addObj.interest = action.data.interest;
+          return update(store, {
+            odersList: {
+              $merge: { [index]: action.data },
+            },
+            originOdersList: {
+              $merge: { [index]: action.data },
+            },
+            addtable: {
+              $merge: { [addIndex]: addObj },
+            },
+          });
+        } else
+          return update(store, {
+            odersList: {
+              $merge: { [index]: action.data },
+            },
+            originOdersList: {
+              $merge: { [index]: action.data },
+            },
+          });
+      } else {
+        let index = store.driverOrderList.findIndex(item => item._id == action.data._id);
         return update(store, {
-          odersList: {
+          driverOrderList: {
             $merge: { [index]: action.data },
-          },
-          originOdersList: {
-            $merge: { [index]: action.data },
-          },
-          addtable: {
-            $merge: { [addIndex]: addObj },
           },
         });
-      } else
-        return update(store, {
-          odersList: {
-            $merge: { [index]: action.data },
-          },
-          originOdersList: {
-            $merge: { [index]: action.data },
-          },
-        });
+      }
     }
     case EDIT_ODER_SUCCESS: {
       let index = store.odersList.findIndex(item => item._id == action.id);

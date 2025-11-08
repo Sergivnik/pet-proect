@@ -81,7 +81,7 @@ export const editOder = (id, field, newValue) => {
   };
 };
 
-export const editOderNew = data => {
+export const editOderNew = (data, orderTable) => {
   return dispatch =>
     axios
       .patch(URL + '/editOderNew', {
@@ -89,6 +89,7 @@ export const editOderNew = data => {
           'Content-Type': 'application/json',
         },
         body: data,
+        orderTable: orderTable,
       })
       .then(res => {
         console.log(res.data);
@@ -97,9 +98,10 @@ export const editOderNew = data => {
         console.log(e.message);
       });
 };
-export const editOderNewSuccess = data => ({
+export const editOderNewSuccess = (data, orderTable) => ({
   type: EDIT_ODER_NEW_SUCCESS,
   data,
+  orderTable,
 });
 export const editOderNewFailure = () => ({
   type: EDIT_ODER_NEW_FAILURE,
