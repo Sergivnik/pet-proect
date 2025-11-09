@@ -344,7 +344,7 @@ export const Oders = () => {
   const handleClickDelete = () => {
     let check = confirm('100% ?');
     if (check) {
-      dispatch(delOder(trId));
+      dispatch(delOder(trId, 'oderslist'));
       setTrId(null);
     }
   };

@@ -929,10 +929,10 @@ var Tasks = {
     }
   },
 
-  del: async function (id, callback) {
+  del: async function (id, orderTable, callback) {
     try {
-      let [data] = await db.query(`SELECT * FROM oderslist WHERE _id = ?`, [id]);
-      await db.query(`DELETE FROM oderslist WHERE _id = ?`, [id]);
+      let [data] = await db.query(`SELECT * FROM ${orderTable} WHERE _id = ?`, [id]);
+      await db.query(`DELETE FROM ${orderTable} WHERE _id = ?`, [id]);
       if (data[0].colorTR == 'hotpink')
         await db.query(`DELETE FROM addtable WHERE orderId = ?`, [id]);
       callback('Success!');

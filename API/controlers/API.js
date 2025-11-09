@@ -429,13 +429,17 @@ module.exports.taskDel = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS, DELETE');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-  tasks.del(req.params.id, data => {
+  const { id } = req.params;
+  const { orderTable } = req.query;
+
+  tasks.del(id, orderTable, data => {
     if (data.error) {
       res.status(500);
       res.json({ message: data.error });
     } else {
-      console.log('Сервер отправляет событие orderDeleted с ID:', req.params.id);
-      req.app.get('io').emit('orderDeleted', req.params.id);
+      let data = { id: id, orderTable: orderTable };
+      console.log('Сервер отправляет событие orderDeleted с ID:', data);
+      req.app.get('io').emit('orderDeleted', data);
       res.json(data);
     }
   });

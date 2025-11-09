@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { useVirtualizer } from '@tanstack/react-virtual';
 import { useWindowSize } from '../../hooks/useWindowSize';
 import { DriverTr } from './driverTr';
@@ -6,6 +7,7 @@ import { OrderType } from '../tsTypes';
 import { DriverThead } from './driverThead.tsx';
 import { CreateOderNew } from '../createOder/createOderNew.jsx';
 import { UserWindow } from '../userWindow/userWindow.jsx';
+import { delOder } from '../../actions/oderActions.js';
 import './oders.sass';
 
 interface Props {
@@ -13,6 +15,7 @@ interface Props {
 }
 
 export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
+  const dispatch = useDispatch();
   const parentRef = useRef<HTMLDivElement>(null);
   const { width, height } = useWindowSize();
   const [colWidths, setColWidths] = useState<number[]>([
@@ -32,6 +35,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   const [showCreateOderWindow, setShowCreateOderWindow] = useState(false);
   const [currentId, setCurrentId] = useState<number>(null);
   const [editOrder, setEditOrder] = useState<boolean>(false);
+  const [newElem, setNewElem] = useState<OrderType>();
 
   useEffect(() => {
     if (width < 1450) {
@@ -104,6 +108,26 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   const handleClickEdit = () => {
     setEditOrder(true);
   };
+  const handleCopyOrder = () => {
+    setShowCreateOderWindow(true);
+    if (currentId != null) {
+      let currentElem = rows.find(order => order._id == currentId);
+      let newElem = { ...currentElem };
+      newElem.document = 'Нет';
+      newElem.customerPayment = 'Нет';
+      newElem.driverPayment = 'Нет';
+      setNewElem(newElem);
+    }
+  };
+  const handleClickDelOrder = () => {
+    if (currentId != null) {
+      let check = confirm('100% ?');
+      if (check) {
+        dispatch(delOder(currentId, 'driverorderlist'));
+        setCurrentId(null);
+      }
+    }
+  };
   const handleClickSaveEdit = () => {
     setEditOrder(false);
   };
@@ -123,7 +147,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
           handleClickWindowClose={handleCreateOderWindowClose}
           windowId="createDriverOderWindow"
         >
-          <CreateOderNew orderTable="driverorderlist" addOder={addOder} />
+          <CreateOderNew orderTable="driverorderlist" elem={newElem} addOder={addOder} />
         </UserWindow>
       )}
       <div ref={parentRef} className="virtualTableVrapper">
@@ -166,11 +190,15 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
         <button className="virtualDriverTableFooterBtn" onClick={handleCreateOder}>
           Создать заказ
         </button>
-        <button className="virtualDriverTableFooterBtn">Копировать заказ</button>
+        <button className={getEditBtnStyle()} onClick={handleCopyOrder}>
+          Копировать заказ
+        </button>
         <button className={getEditBtnStyle()} onClick={handleClickEdit}>
           Редактировать заказ
         </button>
-        <button className="virtualDriverTableFooterBtn">Удалить заказ</button>
+        <button className={getEditBtnStyle()} onClick={handleClickDelOrder}>
+          Удалить заказ
+        </button>
       </div>
     </div>
   );

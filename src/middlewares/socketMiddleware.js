@@ -46,7 +46,7 @@ export const socketMiddleware = store => next => action => {
   if (!socket.hasListeners('orderDelete')) {
     socket.on('orderDeleted', data => {
       console.log('Удален заказ через WebSocket:', data);
-      store.dispatch(delOderSuccess(data));
+      store.dispatch(delOderSuccess(data.id, data.orderTable));
     });
   }
   if (!socket.hasListeners('orderChanged')) {

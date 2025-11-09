@@ -112,10 +112,13 @@ export const setProxy = id => ({
   id,
 });
 
-export const delOder = id => {
+export const delOder = (id, orderTable) => {
   return dispatch =>
     axios
-      .delete(URL + '/' + id)
+      .delete(`${URL}/${id}?orderTable=${orderTable}`, {
+        withCredentials: true,
+        headers: { 'Content-Type': 'application/json' },
+      })
       .then(res => {
         console.log(res.data);
       })
@@ -123,9 +126,10 @@ export const delOder = id => {
         console.log(e.message);
       });
 };
-export const delOderSuccess = id => ({
+export const delOderSuccess = (id, orderTable) => ({
   type: DEL_ODER_SUCCESS,
   id,
+  orderTable,
 });
 
 export const makePaymentCustomer = (arr, sumCustomerPayment, extraPayments, date) => {
