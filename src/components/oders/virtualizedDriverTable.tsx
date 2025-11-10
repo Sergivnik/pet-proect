@@ -61,6 +61,9 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
         setEditOrder(false);
         setCurrentId(null);
       }
+      if (e.code == 'Delete') {
+        handleClickDelOrder();
+      }
     };
     document.addEventListener('keydown', onKeypress);
     return () => {
