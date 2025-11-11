@@ -7,21 +7,18 @@ export const TdCompleted = props => {
   const dispatch = useDispatch();
 
   const [showEdit, setShowEdit] = useState(false);
-  const [currentId, setCurrentId] = useState(null);
 
   const handleDBLClick = e => {
     e.stopPropagation();
     let element = e.currentTarget;
     if (props.edit) {
       setShowEdit(true);
-      //element.parentElement.style.backgroundColor = '#fff';
-      setCurrentId(e.currentTarget.parentElement.id);
     }
   };
   const handleClickRadio = e => {
     setShowEdit(false);
     dispatch(
-      editOder(currentId, e.target.name, e.target.value == 'yes' ? true : false, props.orderTable)
+      editOder(props.elemId, 'completed', e.target.value == 'yes' ? true : false, props.orderTable)
     );
   };
 
@@ -30,7 +27,6 @@ export const TdCompleted = props => {
       if (e.code == 'Escape') {
         if (showEdit) {
           setShowEdit(false);
-          setCurrentId(null);
         }
       }
     };
@@ -39,12 +35,6 @@ export const TdCompleted = props => {
       document.removeEventListener('keydown', onKeypress);
     };
   }, [showEdit]);
-  useEffect(() => {
-    if (props.currentTR != currentId) {
-      setShowEdit(false);
-      setCurrentId(null);
-    }
-  }, [props.currentTR]);
 
   return (
     <td

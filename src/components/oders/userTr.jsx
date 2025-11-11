@@ -1,27 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { CreateOderNew } from "../createOder/createOderNew.jsx";
-import { TdDate } from "../userTd/tdDate.jsx";
-import { TdDriver } from "../userTd/tdDriver.jsx";
-import { TdCustomer } from "../userTd/tdCustomer.jsx";
-import { TdLoadingPoint } from "../userTd/tdLoadingPoint.jsx";
-import { TdUnoadingPoint } from "../userTd/tdUnloadingPoint.jsx";
-import { TdCustomerPrice } from "../userTd/tdCustomerPrice.jsx";
-import { TdDriverPrice } from "../userTd/tdDriverPrice.jsx";
-import { TdCompleted } from "../userTd/tdCompleted.jsx";
-import { TdDocument } from "../userTd/tdDocument.jsx";
-import { TdCustomerPayment } from "../userTd/tdCustomerPayment.jsx";
-import { TdDriverPayment } from "../userTd/tdDriverPayment.jsx";
-import { TdAccountNumber } from "../userTd/tdAccountNumber.jsx";
-import { DocForm } from "../documents/docForm.jsx";
+import React, { useEffect, useState } from 'react';
+import { CreateOderNew } from '../createOder/createOderNew.jsx';
+import { TdDate } from '../userTd/tdDate.jsx';
+import { TdDriver } from '../userTd/tdDriver.jsx';
+import { TdCustomer } from '../userTd/tdCustomer.jsx';
+import { TdLoadingPoint } from '../userTd/tdLoadingPoint.jsx';
+import { TdUnoadingPoint } from '../userTd/tdUnloadingPoint.jsx';
+import { TdCustomerPrice } from '../userTd/tdCustomerPrice.jsx';
+import { TdDriverPrice } from '../userTd/tdDriverPrice.jsx';
+import { TdCompleted } from '../userTd/tdCompleted.jsx';
+import { TdDocument } from '../userTd/tdDocument.jsx';
+import { TdCustomerPayment } from '../userTd/tdCustomerPayment.jsx';
+import { TdDriverPayment } from '../userTd/tdDriverPayment.jsx';
+import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
+import { DocForm } from '../documents/docForm.jsx';
 
-export const UserTr = (props) => {
+export const UserTr = props => {
   const [showEdit, setShowEdit] = useState(true);
   const [showDocForm, setShowDocForm] = useState(false);
 
   const handleClickEdit = () => {
     setShowEdit(false);
   };
-  const handleClickSave = (isChanged) => {
+  const handleClickSave = isChanged => {
     setShowEdit(true);
     if (isChanged) setShowDocForm(true);
   };
@@ -41,16 +41,16 @@ export const UserTr = (props) => {
     props.handleClickCtrl(id, name);
   };
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         if (!showEdit) {
           setShowEdit(true);
         }
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, [showEdit]);
 
@@ -60,12 +60,12 @@ export const UserTr = (props) => {
         <tr
           id={props.elem._id}
           style={setFontColor()}
-          onClick={(e) => {
+          onClick={e => {
             props.handleClickTR(e, props.elem);
           }}
           onContextMenu={props.handleClickTR}
-          onMouseDown={(e) => {
-            if (e.target.tagName === "TD") e.preventDefault();
+          onMouseDown={e => {
+            if (e.target.tagName === 'TD') e.preventDefault();
           }}
         >
           <TdDate date={props.elem.date} currentTR={props.trId} edit={true} />
@@ -113,7 +113,7 @@ export const UserTr = (props) => {
           />
           <TdCompleted
             completed={props.elem.completed}
-            currentTR={props.trId}
+            elemId={props.elem._id}
             edit={true}
             orderTable={'oderslist'}
           />

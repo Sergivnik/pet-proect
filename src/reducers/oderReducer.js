@@ -413,7 +413,7 @@ export const oderReducer = (store = initialStore, action) => {
       }
       if (action.orderTable == 'driverorderlist') {
         let index = store.driverOrderList.findIndex(item => item._id == action.id);
-        let newOder = store.odersList[index];
+        let newOder = store.driverOrderList[index];
         switch (action.field) {
           case 'completed':
             newOder.completed = action.newValue;

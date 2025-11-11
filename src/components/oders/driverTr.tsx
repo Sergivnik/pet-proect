@@ -118,7 +118,7 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
         <TdCompleted
           style={getTdStyle(7)}
           completed={elem.completed}
-          currentTR={currentId}
+          elemId={elem._id}
           edit={true}
           orderTable="driverorderlist"
         />
