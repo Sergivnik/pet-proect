@@ -115,6 +115,7 @@ export const UserTr = (props) => {
             completed={props.elem.completed}
             currentTR={props.trId}
             edit={true}
+            orderTable={'oderslist'}
           />
           <TdDocument
             document={props.elem.document}

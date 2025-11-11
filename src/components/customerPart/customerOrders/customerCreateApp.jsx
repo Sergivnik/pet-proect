@@ -179,7 +179,7 @@ export const CustomerCreateApp = (props) => {
       let text = `${applicationNumber} от ${day}.${month}.${year}`;
       console.log(text);
 
-      dispatch(editOder(dataApp.orderId, "applicationNumber", text));
+      dispatch(editOder(dataApp.orderId, "applicationNumber", text, 'oderslist'));
     }
   }, [dataApp.applicationNumber, dataApp.dateOfApp]);
 

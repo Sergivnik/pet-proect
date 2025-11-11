@@ -45,7 +45,7 @@ export const TdDocument = props => {
     }
     console.log(currentId, 'document', data._id);
     if (check) {
-      dispatch(editOder(currentId, 'document', data._id));
+      dispatch(editOder(currentId, 'document', data._id, 'oderslist'));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);

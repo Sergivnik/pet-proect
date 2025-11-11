@@ -50,7 +50,7 @@ export const TdDriver = props => {
   };
 
   const setValue = data => {
-    dispatch(editOder(currentId, 'driver', data._id));
+    dispatch(editOder(currentId, 'driver', data._id, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);

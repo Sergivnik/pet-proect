@@ -47,14 +47,14 @@ export const TdAccountNumber = props => {
   };
   const handleEnter = e => {
     if (e.key == 'Enter') {
-      dispatch(editOder(currentId, 'accountNumber', e.currentTarget.value));
+      dispatch(editOder(currentId, 'accountNumber', e.currentTarget.value, 'oderslist'));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);
     }
   };
   const handleDeleteBill = () => {
-    dispatch(editOder(currentId, 'accountNumber', null));
+    dispatch(editOder(currentId, 'accountNumber', null, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);

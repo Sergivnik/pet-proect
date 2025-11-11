@@ -22,7 +22,7 @@ export const TdDriverPrice = props => {
   };
   const handleEnter = e => {
     if (e.key == 'Enter') {
-      dispatch(editOder(currentId, 'driverPrice', e.currentTarget.value));
+      dispatch(editOder(currentId, 'driverPrice', e.currentTarget.value, 'oderslist'));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);

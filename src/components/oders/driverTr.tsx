@@ -80,6 +80,7 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
     ) : (
       <tr
         ref={ref}
+        id={elem._id}
         style={{ ...style }}
         {...rest}
         className={getClassNameTr()}
@@ -114,7 +115,13 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
           driverPrice={elem.driverPrice}
           driverPayment={elem.driverPayment}
         />
-        <TdCompleted style={getTdStyle(7)} completed={elem.completed} />
+        <TdCompleted
+          style={getTdStyle(7)}
+          completed={elem.completed}
+          currentTR={currentId}
+          edit={true}
+          orderTable="driverorderlist"
+        />
         <TdDocument
           style={getTdStyle(8)}
           document={elem.document}

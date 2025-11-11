@@ -54,7 +54,7 @@ export const TdCustomer = props => {
   };
 
   const setValue = data => {
-    dispatch(editOder(currentId, 'oders', data._id));
+    dispatch(editOder(currentId, 'oders', data._id, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);

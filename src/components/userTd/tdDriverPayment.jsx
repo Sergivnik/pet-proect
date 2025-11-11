@@ -29,7 +29,7 @@ export const TdDriverPayment = props => {
     }
   };
   const setValue = data => {
-    dispatch(editOder(currentId, 'driverPayment', data._id));
+    dispatch(editOder(currentId, 'driverPayment', data._id, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
     setCurrentElement(null);

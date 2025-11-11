@@ -48,7 +48,7 @@ export const TdUnoadingPoint = props => {
     } else {
       arr[data.index] = data._id;
     }
-    dispatch(editOder(currentId, 'unloadingPoint', arr));
+    dispatch(editOder(currentId, 'unloadingPoint', arr, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
     setAddPoint(false);

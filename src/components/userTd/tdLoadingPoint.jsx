@@ -47,7 +47,7 @@ export const TdLoadingPoint = props => {
     } else {
       arr[data.index] = data._id;
     }
-    dispatch(editOder(currentId, 'loadingPoint', arr));
+    dispatch(editOder(currentId, 'loadingPoint', arr, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
     setAddPoint(false);

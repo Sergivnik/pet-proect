@@ -37,7 +37,7 @@ export const TdCustomerPayment = props => {
     if (data.value == 'Обещал оплату') setGetDate(true);
     if (data.value != 'Частично оплачен') {
       if (data.value != 'Обещал оплату') setCurrentId(null);
-      dispatch(editOder(currentId, 'customerPayment', data._id));
+      dispatch(editOder(currentId, 'customerPayment', data._id, 'oderslist'));
     } else {
       setGetSum(true);
     }
@@ -47,7 +47,7 @@ export const TdCustomerPayment = props => {
   const handleGetDate = e => {
     if (e.keyCode == 13) {
       console.log(currentId, e.target.name, e.target.value);
-      dispatch(editOder(currentId, e.target.name, e.target.value));
+      dispatch(editOder(currentId, e.target.name, e.target.value, 'oderslist'));
       setGetDate(false);
       setCurrentId(null);
     }
@@ -55,8 +55,8 @@ export const TdCustomerPayment = props => {
   const handleGetSum = e => {
     if (e.keyCode == 13) {
       console.log(currentId, e.target.name, e.target.value);
-      dispatch(editOder(currentId, 'customerPayment', 8));
-      dispatch(editOder(currentId, e.target.name, e.target.value));
+      dispatch(editOder(currentId, 'customerPayment', 8, 'oderslist'));
+      dispatch(editOder(currentId, e.target.name, e.target.value, 'oderslist'));
       setGetSum(false);
       setCurrentId(null);
     }

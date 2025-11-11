@@ -56,7 +56,12 @@ export const socketMiddleware = store => next => action => {
         store.dispatch(editOrderFailure(data.data));
       } else {
         store.dispatch(
-          editOrderSuccess(data.dataOrder.id, data.dataOrder.field, data.dataOrder.newValue)
+          editOrderSuccess(
+            data.dataOrder.id,
+            data.dataOrder.field,
+            data.dataOrder.newValue,
+            data.dataOrder.orderTable
+          )
         );
       }
     });

@@ -30,9 +30,9 @@ export const UserTdCityContext = (props) => {
       arr[pId - 1] = props.loadingPointList[pId];
       arr[pId] = props.loadingPointList[pId - 1];
       if (props.colNumber == 3)
-        dispatch(editOder(props.trId, "loadingPoint", arr));
+        dispatch(editOder(props.trId, "loadingPoint", arr, 'oderslist'));
       if (props.colNumber == 4)
-        dispatch(editOder(props.trId, "unloadingPoint", arr));
+        dispatch(editOder(props.trId, "unloadingPoint", arr, 'oderslist'));
       props.hideContextMenu();
     }
   };
@@ -45,9 +45,9 @@ export const UserTdCityContext = (props) => {
       arr[pId] = props.loadingPointList[pId + 1];
       arr[pId + 1] = props.loadingPointList[pId];
       if (props.colNumber == 3)
-        dispatch(editOder(props.trId, "loadingPoint", arr));
+        dispatch(editOder(props.trId, "loadingPoint", arr, 'oderslist'));
       if (props.colNumber == 4)
-        dispatch(editOder(props.trId, "unloadingPoint", arr));
+        dispatch(editOder(props.trId, "unloadingPoint", arr, 'oderslist'));
       props.hideContextMenu();
     }
   };
@@ -58,9 +58,9 @@ export const UserTdCityContext = (props) => {
       let [...arr] = props.loadingPointList;
       arr.splice(props.pId, 1);
       if (props.colNumber == 3)
-        dispatch(editOder(props.trId, "loadingPoint", arr));
+        dispatch(editOder(props.trId, "loadingPoint", arr, 'oderslist'));
       if (props.colNumber == 4)
-        dispatch(editOder(props.trId, "unloadingPoint", arr));
+        dispatch(editOder(props.trId, "unloadingPoint", arr, 'oderslist'));
       props.hideContextMenu();
     }
   };

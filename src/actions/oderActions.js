@@ -47,18 +47,19 @@ export const addOderFailure = () => ({
   type: ADD_ODER_FAILURE,
 });
 
-export const editOrderSuccess = (id, field, newValue) => ({
+export const editOrderSuccess = (id, field, newValue, orderTable) => ({
   type: EDIT_ODER_SUCCESS,
   id,
   field,
   newValue,
+  orderTable,
 });
 export const editOrderFailure = dataServer => ({
   type: EDIT_ODER_FAILURE,
   dataServer,
 });
 
-export const editOder = (id, field, newValue) => {
+export const editOder = (id, field, newValue, orderTable) => {
   console.log(id);
   return dispatch => {
     dispatch(getDataRequest());
@@ -68,7 +69,7 @@ export const editOder = (id, field, newValue) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: { id: id, field: field, newValue: newValue },
+        body: { id: id, field: field, newValue: newValue, orderTable: orderTable },
       })
       .then(res => {
         if (res.data.error) {

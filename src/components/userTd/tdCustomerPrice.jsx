@@ -29,7 +29,7 @@ export const TdCustomerPrice = props => {
   };
   const handleEnter = e => {
     if (e.key == 'Enter') {
-      dispatch(editOder(currentId, 'oderPrice', e.currentTarget.value));
+      dispatch(editOder(currentId, 'oderPrice', e.currentTarget.value, 'oderslist'));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);

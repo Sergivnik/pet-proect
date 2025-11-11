@@ -265,150 +265,167 @@ export const oderReducer = (store = initialStore, action) => {
       }
     }
     case EDIT_ODER_SUCCESS: {
-      let index = store.odersList.findIndex(item => item._id == action.id);
-      let originIndex = store.originOdersList.findIndex(item => item._id == action.id);
-      let newOder = store.odersList[index];
-      let newIncome = store.income;
-      switch (action.field) {
-        case 'date':
-          newOder.date = action.newValue;
-          break;
-        case 'driver':
-          newOder.idDriver = action.newValue;
-          break;
-        case 'oders':
-          newOder.idCustomer = action.newValue;
-          break;
-        case 'loadingPoint':
-          newOder.idLoadingPoint = action.newValue;
-          break;
-        case 'unloadingPoint':
-          newOder.idUnloadingPoint = action.newValue;
-          break;
-        case 'oderPrice':
-          newOder.customerPrice = action.newValue;
-          break;
-        case 'driverPrice':
-          newOder.driverPrice = action.newValue;
-          break;
-        case 'proxy':
-          newOder.proxy = action.newValue;
-          break;
-        case 'completed':
-          newOder.completed = action.newValue;
-          break;
-        case 'document':
-          let now = new Date();
-          switch (action.newValue) {
-            case 1:
-              newOder.document = 'Ок';
-              newOder.dateOfSubmission = now;
-              break;
-            case 2:
-              newOder.document = 'Нет';
-              newOder.dateOfSubmission = null;
-              break;
-            case 3:
-              newOder.document = 'Факс';
-              newOder.dateOfSubmission = now;
-              break;
-            case 4:
-              newOder.document = 'Сдал';
-              newOder.dateOfSubmission = now;
-              break;
-            default:
-              break;
-          }
-          break;
-        case 'customerPayment':
-          let newValue = store.statusCustomerPay.find(item => item._id == action.newValue);
-
-          if (store.odersList[index].customerPayment == 'Ок' && action.newValue != 1) {
-            newIncome = Number(store.income) - Number(store.odersList[index].customerPrice);
-          }
-          if (store.odersList[index].customerPayment == 'Частично оплачен') {
-            if (action.newValue == 1) {
-              newIncome =
-                Number(store.income) -
-                Number(store.odersList[index].partialPaymentAmount) +
-                Number(store.odersList[index].customerPrice);
-            } else {
-              newIncome =
-                Number(store.income) - Number(store.odersList[index].partialPaymentAmount);
-            }
-            newOder.partialPaymentAmount = null;
-          }
-          if (action.newValue == 1) {
-            if (
-              store.odersList[index].customerPayment != 'Частично оплачен' &&
-              store.odersList[index].customerPayment != 'Ок'
-            ) {
-              newIncome = Number(store.income) + Number(store.odersList[index].customerPrice);
-            }
-          }
-          if (
-            action.newValue == 1 ||
-            action.newValue == 2 ||
-            action.newValue == 6 ||
-            action.newValue == 8
-          ) {
-            newOder.dateOfPromise = null;
-          }
-          if (
-            action.newValue == 3 ||
-            action.newValue == 4 ||
-            action.newValue == 5 ||
-            action.newValue == 7
-          ) {
+      if (action.orderTable == 'oderslist') {
+        let index = store.odersList.findIndex(item => item._id == action.id);
+        let originIndex = store.originOdersList.findIndex(item => item._id == action.id);
+        let newOder = store.odersList[index];
+        let newIncome = store.income;
+        switch (action.field) {
+          case 'date':
+            newOder.date = action.newValue;
+            break;
+          case 'driver':
+            newOder.idDriver = action.newValue;
+            break;
+          case 'oders':
+            newOder.idCustomer = action.newValue;
+            break;
+          case 'loadingPoint':
+            newOder.idLoadingPoint = action.newValue;
+            break;
+          case 'unloadingPoint':
+            newOder.idUnloadingPoint = action.newValue;
+            break;
+          case 'oderPrice':
+            newOder.customerPrice = action.newValue;
+            break;
+          case 'driverPrice':
+            newOder.driverPrice = action.newValue;
+            break;
+          case 'proxy':
+            newOder.proxy = action.newValue;
+            break;
+          case 'completed':
+            newOder.completed = action.newValue;
+            break;
+          case 'document':
             let now = new Date();
-            newOder.dateOfPromise = now;
-          }
-          newOder.customerPayment = newValue.value;
-          break;
-        case 'dateOfPromise':
-          newOder.dateOfPromise = action.newValue;
-          break;
-        case 'driverPayment':
-          if (store.odersList[index].driverPayment == 'Ок' && action.newValue != 1) {
-            newIncome = Number(store.income) + Number(store.odersList[index].driverPrice);
-          }
-          if (store.odersList[index].driverPayment != 'Ок' && action.newValue == 1) {
-            newIncome = Number(store.income) - Number(store.odersList[index].driverPrice);
-          }
-          switch (action.newValue) {
-            case 1:
-              newOder.driverPayment = 'Ок';
-              break;
-            case 2:
-              newOder.driverPayment = 'нет';
-              break;
-            default:
-              break;
-          }
-          break;
-        case 'accountNumber':
-          newOder.accountNumber = action.newValue;
-          break;
-        case 'applicationNumber':
-          newOder.applicationNumber = action.newValue;
-          break;
-        case 'sumPartPay':
-          newOder.partialPaymentAmount = action.newValue;
-          newIncome = Number(store.income) + Number(store.odersList[index].partialPaymentAmount);
-          break;
-        default:
-          break;
+            switch (action.newValue) {
+              case 1:
+                newOder.document = 'Ок';
+                newOder.dateOfSubmission = now;
+                break;
+              case 2:
+                newOder.document = 'Нет';
+                newOder.dateOfSubmission = null;
+                break;
+              case 3:
+                newOder.document = 'Факс';
+                newOder.dateOfSubmission = now;
+                break;
+              case 4:
+                newOder.document = 'Сдал';
+                newOder.dateOfSubmission = now;
+                break;
+              default:
+                break;
+            }
+            break;
+          case 'customerPayment':
+            let newValue = store.statusCustomerPay.find(item => item._id == action.newValue);
+
+            if (store.odersList[index].customerPayment == 'Ок' && action.newValue != 1) {
+              newIncome = Number(store.income) - Number(store.odersList[index].customerPrice);
+            }
+            if (store.odersList[index].customerPayment == 'Частично оплачен') {
+              if (action.newValue == 1) {
+                newIncome =
+                  Number(store.income) -
+                  Number(store.odersList[index].partialPaymentAmount) +
+                  Number(store.odersList[index].customerPrice);
+              } else {
+                newIncome =
+                  Number(store.income) - Number(store.odersList[index].partialPaymentAmount);
+              }
+              newOder.partialPaymentAmount = null;
+            }
+            if (action.newValue == 1) {
+              if (
+                store.odersList[index].customerPayment != 'Частично оплачен' &&
+                store.odersList[index].customerPayment != 'Ок'
+              ) {
+                newIncome = Number(store.income) + Number(store.odersList[index].customerPrice);
+              }
+            }
+            if (
+              action.newValue == 1 ||
+              action.newValue == 2 ||
+              action.newValue == 6 ||
+              action.newValue == 8
+            ) {
+              newOder.dateOfPromise = null;
+            }
+            if (
+              action.newValue == 3 ||
+              action.newValue == 4 ||
+              action.newValue == 5 ||
+              action.newValue == 7
+            ) {
+              let now = new Date();
+              newOder.dateOfPromise = now;
+            }
+            newOder.customerPayment = newValue.value;
+            break;
+          case 'dateOfPromise':
+            newOder.dateOfPromise = action.newValue;
+            break;
+          case 'driverPayment':
+            if (store.odersList[index].driverPayment == 'Ок' && action.newValue != 1) {
+              newIncome = Number(store.income) + Number(store.odersList[index].driverPrice);
+            }
+            if (store.odersList[index].driverPayment != 'Ок' && action.newValue == 1) {
+              newIncome = Number(store.income) - Number(store.odersList[index].driverPrice);
+            }
+            switch (action.newValue) {
+              case 1:
+                newOder.driverPayment = 'Ок';
+                break;
+              case 2:
+                newOder.driverPayment = 'нет';
+                break;
+              default:
+                break;
+            }
+            break;
+          case 'accountNumber':
+            newOder.accountNumber = action.newValue;
+            break;
+          case 'applicationNumber':
+            newOder.applicationNumber = action.newValue;
+            break;
+          case 'sumPartPay':
+            newOder.partialPaymentAmount = action.newValue;
+            newIncome = Number(store.income) + Number(store.odersList[index].partialPaymentAmount);
+            break;
+          default:
+            break;
+        }
+        return update(store, {
+          odersList: {
+            $merge: { [index]: newOder },
+          },
+          originOdersList: {
+            $merge: { [originIndex]: newOder },
+          },
+          income: { $set: newIncome },
+          request: { $set: { status: 'SUCCESS', error: null } },
+        });
       }
-      return update(store, {
-        odersList: {
-          $merge: { [index]: newOder },
-        },
-        originOdersList: {
-          $merge: { [originIndex]: newOder },
-        },
-        income: { $set: newIncome },
-        request: { $set: { status: 'SUCCESS', error: null } },
-      });
+      if (action.orderTable == 'driverorderlist') {
+        let index = store.driverOrderList.findIndex(item => item._id == action.id);
+        let newOder = store.odersList[index];
+        switch (action.field) {
+          case 'completed':
+            newOder.completed = action.newValue;
+            break;
+          default:
+            break;
+        }
+        return update(store, {
+          request: { $set: { status: 'SUCCESS', error: null } },
+          driverOrderList: { $merge: { [index]: newOder } },
+        });
+      }
     }
     case EDIT_ODER_FAILURE: {
       alert(action.dataServer.error);

@@ -763,7 +763,7 @@ var Tasks = {
       let [userRole] = await db.query(`SELECT * FROM users WHERE _id = ?`, [userId]);
       console.log(userRole[0]);
       if (userRole[0].role == 'admin' || allowedField == true) {
-        let [data] = await db.query(`UPDATE oderslist SET ? WHERE _id = ?`, [change, newdata.id]);
+        let [data] = await db.query(`UPDATE ${newdata.orderTable} SET ? WHERE _id = ?`, [change, newdata.id]);
         callback(data);
       } else {
         callback({ error: 'Недостаточно прав для редактирования этого поля' });

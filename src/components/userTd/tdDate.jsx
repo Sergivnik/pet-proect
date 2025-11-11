@@ -19,7 +19,7 @@ export const TdDate = props => {
   };
   const handleEnter = e => {
     if (e.key == 'Enter') {
-      dispatch(editOder(currentId, 'date', e.currentTarget.value));
+      dispatch(editOder(currentId, 'date', e.currentTarget.value, 'oderslist'));
       setShowEdit(false);
       setCurrentId(null);
     }
@@ -29,7 +29,7 @@ export const TdDate = props => {
     }
   };
   const handleBlur = e => {
-    dispatch(editOder(currentId, 'date', e.currentTarget.value));
+    dispatch(editOder(currentId, 'date', e.currentTarget.value, 'oderslist'));
     setShowEdit(false);
     setCurrentId(null);
   };

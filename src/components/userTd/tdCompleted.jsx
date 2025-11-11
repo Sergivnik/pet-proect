@@ -10,16 +10,19 @@ export const TdCompleted = props => {
   const [currentId, setCurrentId] = useState(null);
 
   const handleDBLClick = e => {
+    e.stopPropagation();
     let element = e.currentTarget;
     if (props.edit) {
       setShowEdit(true);
-      element.parentElement.style.backgroundColor = '#fff';
+      //element.parentElement.style.backgroundColor = '#fff';
       setCurrentId(e.currentTarget.parentElement.id);
     }
   };
   const handleClickRadio = e => {
     setShowEdit(false);
-    dispatch(editOder(currentId, e.target.name, e.target.value == 'yes' ? true : false));
+    dispatch(
+      editOder(currentId, e.target.name, e.target.value == 'yes' ? true : false, props.orderTable)
+    );
   };
 
   useEffect(() => {
