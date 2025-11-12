@@ -123,6 +123,7 @@ export const UserTr = props => {
             currentTR={props.trId}
             edit={true}
             elem={props.elem}
+            orderTable={'oderslist'}
           />
           <TdCustomerPayment
             customerPayment={props.elem.customerPayment}
