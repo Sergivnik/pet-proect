@@ -418,6 +418,29 @@ export const oderReducer = (store = initialStore, action) => {
           case 'completed':
             newOder.completed = action.newValue;
             break;
+          case 'document':
+            let now = new Date();
+            switch (action.newValue) {
+              case 1:
+                newOder.document = 'Ок';
+                newOder.dateOfSubmission = now;
+                break;
+              case 2:
+                newOder.document = 'Нет';
+                newOder.dateOfSubmission = null;
+                break;
+              case 3:
+                newOder.document = 'Факс';
+                newOder.dateOfSubmission = now;
+                break;
+              case 4:
+                newOder.document = 'Сдал';
+                newOder.dateOfSubmission = now;
+                break;
+              default:
+                break;
+            }
+            break;
           default:
             break;
         }

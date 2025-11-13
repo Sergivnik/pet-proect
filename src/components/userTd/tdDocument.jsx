@@ -97,6 +97,33 @@ export const TdDocument = props => {
     return () => document.removeEventListener('mousedown', onDocClick);
   }, [showEdit]);
 
+  useEffect(() => {
+    if (!showEdit || !currentElement) return;
+  
+    const updatePosition = () => {
+      const rect = currentElement.getBoundingClientRect();
+      setPortalPos({
+        top: rect.top + window.scrollY,
+        left: rect.left + window.scrollX,
+        width: rect.width - 1,
+      });
+    };
+  
+    // подписка на любые скроллы (true — чтобы слушать и вложенные контейнеры)
+    window.addEventListener('scroll', updatePosition, true);
+    window.addEventListener('resize', updatePosition);
+  
+    // сразу обновим позицию
+    updatePosition();
+  
+    // отписка при закрытии
+    return () => {
+      window.removeEventListener('scroll', updatePosition, true);
+      window.removeEventListener('resize', updatePosition);
+    };
+  }, [showEdit, currentElement]);
+  
+
   const handleMouseOver = e => {
     setIsMouseOver(true);
   };
@@ -171,7 +198,7 @@ export const TdDocument = props => {
             top: portalPos.top + 1,
             left: portalPos.left + 1,
             width: portalPos.width,
-            zIndex: 99999,
+            zIndex: 10,
             boxShadow: '0 6px 18px rgba(0,0,0,0.2)',
             background: '#fff',
             borderRadius: 6,
