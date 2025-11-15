@@ -19,7 +19,9 @@ export const TdCustomerPayment = props => {
   const [isMouseOver, setIsMouseOver] = useState(false);
 
   const tdRef = useRef(null);
-  const portalRef = useRef(null);
+  const choisePortalRef = useRef(null);
+  const datePortalRef = useRef(null);
+  const sumPortalRef = useRef(null);
   const [portalPos, setPortalPos] = useState({ top: 0, left: 0 });
 
   const handleMouseOver = () => {
@@ -47,6 +49,7 @@ export const TdCustomerPayment = props => {
   const setValue = data => {
     if (data.value == 'Обещал оплату') {
       setShowEdit(false);
+      dispatch(editOder(currentId, 'customerPayment', data._id, props.orderTable));
       if (currentElement) {
         const rect = currentElement.getBoundingClientRect();
         setPortalPos({
@@ -57,7 +60,7 @@ export const TdCustomerPayment = props => {
       }
       setGetDate(true);
     } else if (data.value != 'Частично оплачен') {
-      dispatch(editOder(currentId, 'customerPayment', data._id, 'oderslist'));
+      dispatch(editOder(currentId, 'customerPayment', data._id, props.orderTable));
       setShowEdit(false);
       setCurrentId(null);
       setCurrentElement(null);
@@ -68,7 +71,7 @@ export const TdCustomerPayment = props => {
         setPortalPos({
           top: rect.top + window.scrollY,
           left: rect.left + window.scrollX,
-          width: rect.width - 1,
+          width: rect.width - 2,
         });
       }
       setGetSum(true);
@@ -76,18 +79,20 @@ export const TdCustomerPayment = props => {
   };
   const handleGetDate = e => {
     if (e.keyCode == 13) {
-      console.log(currentId, e.target.name, e.target.value);
-      dispatch(editOder(currentId, e.target.name, e.target.value, 'oderslist'));
-      setGetDate(false);
-      setCurrentId(null);
-      setCurrentElement(null);
+      if (e.target.value) {
+        console.log(currentId, e.target.name, e.target.value);
+        dispatch(editOder(currentId, e.target.name, e.target.value, props.orderTable));
+        setGetDate(false);
+        setCurrentId(null);
+        setCurrentElement(null);
+      }
     }
   };
   const handleGetSum = e => {
     if (e.keyCode == 13) {
       console.log(currentId, e.target.name, e.target.value);
-      dispatch(editOder(currentId, 'customerPayment', 8, 'oderslist'));
-      dispatch(editOder(currentId, e.target.name, e.target.value, 'oderslist'));
+      dispatch(editOder(currentId, 'customerPayment', 8, props.orderTable));
+      dispatch(editOder(currentId, e.target.name, e.target.value, props.orderTable));
       setGetSum(false);
       setCurrentId(null);
       setCurrentElement(null);
@@ -101,7 +106,7 @@ export const TdCustomerPayment = props => {
       setPortalPos({
         top: rect.top + window.scrollY,
         left: rect.left + window.scrollX,
-        width: rect.width - 1,
+        width: rect.width - 2,
       });
       setCurrentId(element.id);
       setCurrentElement(element);
@@ -111,13 +116,13 @@ export const TdCustomerPayment = props => {
 
   useEffect(() => {
     if (currentElement) {
-      const el = portalRef.current;
+      const el = choisePortalRef.current || datePortalRef.current || sumPortalRef.current;
       if (el) {
         const input = el.querySelector('input, select, button, [tabindex]');
         if (input) input.focus();
       }
     }
-  }, [currentElement]);
+  }, [currentElement, showEdit, getDate, getSum]);
 
   useEffect(() => {
     if (props.currentTR != currentId) {
@@ -148,9 +153,10 @@ export const TdCustomerPayment = props => {
   useEffect(() => {
     const onDocClick = e => {
       if (!showEdit && !getDate && !getSum) return;
+      const activePortal = choisePortalRef.current || datePortalRef.current || sumPortalRef.current;
       if (
-        portalRef.current &&
-        !portalRef.current.contains(e.target) &&
+        activePortal &&
+        !activePortal.contains(e.target) &&
         tdRef.current &&
         !tdRef.current.contains(e.target)
       ) {
@@ -173,7 +179,7 @@ export const TdCustomerPayment = props => {
       setPortalPos({
         top: rect.top + window.scrollY,
         left: rect.left + window.scrollX,
-        width: rect.width - 1,
+        width: rect.width - 2,
       });
     };
 
@@ -200,7 +206,7 @@ export const TdCustomerPayment = props => {
   const ChoisePortal = showEdit
     ? createPortal(
         <div
-          ref={portalRef}
+          ref={choisePortalRef}
           className="divChoisePortal"
           style={{
             position: 'absolute',
@@ -230,7 +236,7 @@ export const TdCustomerPayment = props => {
   const DatePortal = getDate
     ? createPortal(
         <div
-          ref={portalRef}
+          ref={datePortalRef}
           className="divChoisePortal"
           style={{
             position: 'absolute',
@@ -245,7 +251,7 @@ export const TdCustomerPayment = props => {
           onMouseDown={e => e.stopPropagation()}
         >
           <div className="oderTdTooltip">
-            <input name="dateOfPromise" type="date" onKeyDown={handleGetDate} />
+            <input name="dateOfPromise" type="date" onKeyDown={handleGetDate} autoFocus />
           </div>
         </div>,
         document.body
@@ -255,7 +261,7 @@ export const TdCustomerPayment = props => {
   const SumPortal = getSum
     ? createPortal(
         <div
-          ref={portalRef}
+          ref={sumPortalRef}
           className="divChoisePortal"
           style={{
             position: 'absolute',

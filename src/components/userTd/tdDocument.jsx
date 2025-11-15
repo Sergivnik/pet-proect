@@ -99,30 +99,29 @@ export const TdDocument = props => {
 
   useEffect(() => {
     if (!showEdit || !currentElement) return;
-  
+
     const updatePosition = () => {
       const rect = currentElement.getBoundingClientRect();
       setPortalPos({
         top: rect.top + window.scrollY,
         left: rect.left + window.scrollX,
-        width: rect.width - 1,
+        width: rect.width - 2,
       });
     };
-  
+
     // подписка на любые скроллы (true — чтобы слушать и вложенные контейнеры)
     window.addEventListener('scroll', updatePosition, true);
     window.addEventListener('resize', updatePosition);
-  
+
     // сразу обновим позицию
     updatePosition();
-  
+
     // отписка при закрытии
     return () => {
       window.removeEventListener('scroll', updatePosition, true);
       window.removeEventListener('resize', updatePosition);
     };
   }, [showEdit, currentElement]);
-  
 
   const handleMouseOver = e => {
     setIsMouseOver(true);
@@ -141,7 +140,7 @@ export const TdDocument = props => {
       setPortalPos({
         top: rect.top + window.scrollY, // чуть ниже ячейки
         left: rect.left + window.scrollX,
-        width: rect.width - 1,
+        width: rect.width - 2,
       });
       setShowEdit(true);
       setCurrentId(element.parentElement ? element.parentElement.id : null);

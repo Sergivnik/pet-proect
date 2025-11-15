@@ -441,6 +441,16 @@ export const oderReducer = (store = initialStore, action) => {
                 break;
             }
             break;
+          case 'customerPayment':
+            let newValue = store.statusCustomerPay.find(item => item._id == action.newValue);
+            newOder.customerPayment = newValue.value;
+            break;
+          case 'dateOfPromise':
+            newOder.dateOfPromise = action.newValue;
+            break;
+          case 'sumPartPay':
+            newOder.partialPaymentAmount = action.newValue;
+            break;
           default:
             break;
         }

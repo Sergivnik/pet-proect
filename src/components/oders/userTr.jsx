@@ -131,6 +131,7 @@ export const UserTr = props => {
             currentTR={props.trId}
             postTrack={props.elem.postTracker}
             edit={true}
+            orderTable={'oderslist'}
           />
           <TdDriverPayment
             driverPayment={props.elem.driverPayment}
