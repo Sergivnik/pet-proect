@@ -451,6 +451,18 @@ export const oderReducer = (store = initialStore, action) => {
           case 'sumPartPay':
             newOder.partialPaymentAmount = action.newValue;
             break;
+          case 'driverPayment':
+            switch (action.newValue) {
+              case 1:
+                newOder.driverPayment = 'Ок';
+                break;
+              case 2:
+                newOder.driverPayment = 'нет';
+                break;
+              default:
+                break;
+            }
+            break;
           default:
             break;
         }

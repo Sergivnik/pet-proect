@@ -144,6 +144,9 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
           style={getTdStyle(10)}
           driverPayment={elem.driverPayment}
           dateOfPayment={elem.dateOfPayment}
+          currentTR={currentId}
+          edit={true}
+          orderTable={'driverorderlist'}
         />
         <TdAccountNumber
           style={getTdStyle(11)}

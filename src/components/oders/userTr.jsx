@@ -138,6 +138,7 @@ export const UserTr = props => {
             dateOfPayment={props.elem.dateOfPayment}
             currentTR={props.trId}
             edit={true}
+            orderTable={'oderslist'}
           />
           <TdAccountNumber
             accountNumber={props.elem.accountNumber}
