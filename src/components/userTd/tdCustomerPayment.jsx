@@ -7,7 +7,6 @@ import { dateLocal, dateTimeLocal } from '../myLib/myLib.js';
 
 export const TdCustomerPayment = props => {
   const dispatch = useDispatch();
-
   const statusPayment = useSelector(state => state.oderReducer.statusCustomerPay);
 
   const [showDetails, setShowDetails] = useState(false);
@@ -23,13 +22,41 @@ export const TdCustomerPayment = props => {
   const datePortalRef = useRef(null);
   const sumPortalRef = useRef(null);
   const [portalPos, setPortalPos] = useState({ top: 0, left: 0 });
+  const mouseOverTimerRef = useRef(null);
+  const mouseLeaveTimerRef = useRef(null);
 
   const handleMouseOver = () => {
-    setIsMouseOver(true);
+    // Очищаем таймер покидания мыши, если мышь вернулась над ячейку
+    if (mouseLeaveTimerRef.current) {
+      clearTimeout(mouseLeaveTimerRef.current);
+      mouseLeaveTimerRef.current = null;
+    }
+    // Очищаем предыдущий таймер наведения, если есть
+    if (mouseOverTimerRef.current) {
+      clearTimeout(mouseOverTimerRef.current);
+    }
+    // Устанавливаем таймер на 500мс перед установкой isMouseOver в true
+    mouseOverTimerRef.current = setTimeout(() => {
+      setIsMouseOver(true);
+      mouseOverTimerRef.current = null;
+    }, 500);
   };
   const handleMouseLeave = () => {
-    setIsMouseOver(false);
-    setShowDetails(false);
+    // Очищаем таймер наведения, если мышь покинула ячейку
+    if (mouseOverTimerRef.current) {
+      clearTimeout(mouseOverTimerRef.current);
+      mouseOverTimerRef.current = null;
+    }
+    // Очищаем предыдущий таймер покидания, если есть
+    if (mouseLeaveTimerRef.current) {
+      clearTimeout(mouseLeaveTimerRef.current);
+    }
+    // Устанавливаем таймер на 1000мс перед выполнением handleMouseLeave
+    mouseLeaveTimerRef.current = setTimeout(() => {
+      setIsMouseOver(false);
+      setShowDetails(false);
+      mouseLeaveTimerRef.current = null;
+    }, 1000);
   };
   const handleDBLClick = e => {
     e.stopPropagation();
@@ -108,7 +135,8 @@ export const TdCustomerPayment = props => {
         left: rect.left + window.scrollX,
         width: rect.width - 2,
       });
-      setCurrentId(element.id);
+      setShowDetails(false);
+      setCurrentId(element.parentElement ? element.parentElement.id : null);
       setCurrentElement(element);
       setGetDate(true);
     }
@@ -202,6 +230,18 @@ export const TdCustomerPayment = props => {
       return () => clearTimeout(timer);
     }
   }, [isMouseOver, props.dateOfPromise]);
+
+  // Очистка таймеров при размонтировании компонента
+  useEffect(() => {
+    return () => {
+      if (mouseOverTimerRef.current) {
+        clearTimeout(mouseOverTimerRef.current);
+      }
+      if (mouseLeaveTimerRef.current) {
+        clearTimeout(mouseLeaveTimerRef.current);
+      }
+    };
+  }, []);
 
   const ChoisePortal = showEdit
     ? createPortal(
@@ -305,7 +345,7 @@ export const TdCustomerPayment = props => {
             {props.postTrack && (
               <a
                 className="aToolTip"
-                target="blank"
+                target="_blank"
                 href={`https://www.pochta.ru/tracking?barcode=${props.postTrack}`}
               >
                 {props.postTrack}
