@@ -1185,30 +1185,28 @@ export const oderReducer = (store = initialStore, action) => {
     case GET_PDF_WITHOUT_STAMP_SUCCESS: {
       let index = store.odersList.findIndex(order => order._id == action.id);
       let originIndex = store.originOdersList.findIndex(order => order._id == action.id);
-      let newOrder = store.odersList[index];
-      newOrder.wasItPrinted = 1;
+      let newOrder = { ...store.odersList[index], wasItPrinted: 1 };
       console.log(newOrder);
       return update(store, {
         odersList: {
-          $merge: { [index]: newOrder },
+          [index]: { $set: newOrder },
         },
         originOdersList: {
-          $merge: { [originIndex]: newOrder },
+          [originIndex]: { $set: newOrder },
         },
       });
     }
     case DEL_PRINTED_MARK_SUCCESS: {
       let index = store.odersList.findIndex(order => order._id == action.id);
       let originIndex = store.originOdersList.findIndex(order => order._id == action.id);
-      let newOrder = store.odersList[index];
-      newOrder.wasItPrinted = 0;
+      let newOrder = { ...store.odersList[index], wasItPrinted: 0 };
       console.log(newOrder);
       return update(store, {
         odersList: {
-          $merge: { [index]: newOrder },
+          [index]: { $set: newOrder },
         },
         originOdersList: {
-          $merge: { [originIndex]: newOrder },
+          [originIndex]: { $set: newOrder },
         },
       });
     }
