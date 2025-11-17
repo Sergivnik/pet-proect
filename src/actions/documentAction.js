@@ -280,7 +280,7 @@ export const addSomeDocNew = (id, typeDoc, file) => {
                 },
               })
               .then(res => {
-                if (typeDoc == 'ttn') dispatch(editOder(id, 'document', 1));
+                if (typeDoc == 'ttn') dispatch(editOder(id, 'document', 1, 'oderslist'));
                 return dispatch(addSomePdfDocSuccess());
               })
               .catch(e => {
