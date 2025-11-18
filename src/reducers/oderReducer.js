@@ -268,7 +268,7 @@ export const oderReducer = (store = initialStore, action) => {
       if (action.orderTable == 'oderslist') {
         let index = store.odersList.findIndex(item => item._id == action.id);
         let originIndex = store.originOdersList.findIndex(item => item._id == action.id);
-        let newOder = store.odersList[index];
+        let newOder = {...store.odersList[index]};
         let newIncome = store.income;
         switch (action.field) {
           case 'date':
@@ -413,7 +413,7 @@ export const oderReducer = (store = initialStore, action) => {
       }
       if (action.orderTable == 'driverorderlist') {
         let index = store.driverOrderList.findIndex(item => item._id == action.id);
-        let newOder = store.driverOrderList[index];
+        let newOder = {...store.driverOrderList[index]};
         switch (action.field) {
           case 'completed':
             newOder.completed = action.newValue;
@@ -1099,7 +1099,7 @@ export const oderReducer = (store = initialStore, action) => {
     case SEND_EMAIL_SUCCESS: {
       let index = store.odersList.findIndex(item => item._id == Number(action.id));
       let originIndex = store.originOdersList.findIndex(item => item._id == action.id);
-      let newOder = store.odersList[index];
+      let newOder = { ...store.odersList[index] };
       if (newOder.customerPayment == 'Нет' || newOder.customerPayment == 'Печать') {
         newOder.customerPayment = 'Мыло';
         newOder.dateOfPromise = new Date();

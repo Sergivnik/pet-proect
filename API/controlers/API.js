@@ -1089,6 +1089,7 @@ module.exports.taskSendEmail = (req, res) => {
                 field: 'customerPayment',
                 newValue: 3,
                 id: Number(req.body.id),
+                orderTable: 'oderslist',
               },
               req.session.userId,
               true,
