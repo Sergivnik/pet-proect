@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { CustomerAppTr } from "./customerAppTr.jsx";
-import { UserWindow } from "../../userWindow/userWindow.jsx";
-import { CustomerCreateApp } from "../customerOrders/customerCreateApp.jsx";
-import { AppCustomerDriverPart } from "./appCustomerDriverPart.jsx";
-import { delCustomerApp } from "../../../actions/customerOrderAction.js";
-import { AppFormExtra } from "../../documents/appFormExtra.jsx";
-import { CreateOderNew } from "../../createOder/createOderNew.jsx";
-import { dateLocal } from "../../myLib/myLib.js";
-import "./customerApps.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { CustomerAppTr } from './customerAppTr.jsx';
+import { UserWindow } from '../../userWindow/userWindow.jsx';
+import { CustomerCreateApp } from '../customerOrders/customerCreateApp.jsx';
+import { AppCustomerDriverPart } from './appCustomerDriverPart.jsx';
+import { delCustomerApp } from '../../../actions/customerOrderAction.js';
+import { AppFormExtra } from '../../documents/appFormExtra.jsx';
+import { CreateOderNew } from '../../createOder/createOderNew.jsx';
+import { dateLocal } from '../../myLib/myLib.js';
+import './customerApps.sass';
 
 export const CustomerApps = () => {
   const dispatch = useDispatch();
 
-  const appList = useSelector((state) => state.customerReducer.customerOrders);
+  const appList = useSelector(state => state.customerReducer.customerOrders);
 
-  const user = useSelector((state) => state.oderReducer.currentUser);
+  const user = useSelector(state => state.oderReducer.currentUser);
   const [currentId, setCurrentId] = useState(null);
   const [showCreateApp, setShowCreateApp] = useState(false);
   const [dataDriver, setDataDriver] = useState(null);
@@ -28,27 +28,26 @@ export const CustomerApps = () => {
   const [isOrderLinked, setIsOrderLinked] = useState(true);
 
   useEffect(() => {
-    const onKeypress = (e) => {
-      if (e.code == "Escape") {
+    const onKeypress = e => {
+      if (e.code == 'Escape') {
         setCurrentId(null);
         setShowCreateApp(false);
       }
     };
-    document.addEventListener("keydown", onKeypress);
+    document.addEventListener('keydown', onKeypress);
     return () => {
-      document.removeEventListener("keydown", onKeypress);
+      document.removeEventListener('keydown', onKeypress);
     };
   }, []);
   useEffect(() => {
-    let arr = appList.filter((elem) => elem.orderId == null);
+    let arr = appList.filter(elem => elem.orderId == null);
     setAppListFiltred(arr);
   }, [appList]);
 
-  const getId = (id) => {
+  const getId = id => {
     setCurrentId(id);
-    let currentApp = appList.find((app) => app._id == id);
-    let offLoadingDate =
-      currentApp.dateOfUnloading[currentApp.dateOfUnloading.length - 1];
+    let currentApp = appList.find(app => app._id == id);
+    let offLoadingDate = currentApp.dateOfUnloading[currentApp.dateOfUnloading.length - 1];
     let order = {
       date: offLoadingDate,
       idDriver: currentApp.idDriver,
@@ -61,9 +60,7 @@ export const CustomerApps = () => {
       idManager: currentApp.idManager,
       loadingInfo: currentApp.loadingText,
       unloadingInfo: currentApp.unloadingText,
-      applicationNumber: `${currentApp._id} от ${dateLocal(
-        currentApp.dateOfApp
-      )}`,
+      applicationNumber: `${currentApp._id} от ${dateLocal(currentApp.dateOfApp)}`,
       completed: false,
       colorTR: null,
     };
@@ -78,10 +75,10 @@ export const CustomerApps = () => {
   const handleClickEditWindowClose = () => {
     setShowCreateApp(false);
   };
-  const getDriverData = (data) => {
+  const getDriverData = data => {
     setDataDriver(data);
   };
-  const getCustomerData = (data) => {
+  const getCustomerData = data => {
     setDataCustoner(data);
   };
   const handleDubleClick = () => {
@@ -111,7 +108,7 @@ export const CustomerApps = () => {
     if (isOrderLinked) {
       setAppListFiltred(appList);
     } else {
-      let arr = appList.filter((elem) => elem.orderId == null);
+      let arr = appList.filter(elem => elem.orderId == null);
       setAppListFiltred(arr);
     }
   };
@@ -121,10 +118,7 @@ export const CustomerApps = () => {
       <menu className="customerAppMenu">
         <div className="customerAppMenuBtnContainer">
           {currentId == null ? (
-            <button
-              className="customerAppMenuBtn"
-              onClick={handleClickCreateApp}
-            >
+            <button className="customerAppMenuBtn" onClick={handleClickCreateApp}>
               Создать заявку
             </button>
           ) : (
@@ -148,21 +142,14 @@ export const CustomerApps = () => {
             </button>
           )}
           {currentId != null && (
-            <button
-              className="customerAppMenuBtn"
-              onClick={handlecleckCreateOrder}
-            >
+            <button className="customerAppMenuBtn" onClick={handlecleckCreateOrder}>
               Создать заказ
             </button>
           )}
         </div>
         <div className="customerAppMenuFilterContainer">
           <label>
-            <input
-              type="checkbox"
-              checked={isOrderLinked}
-              onChange={handleChangeOrderLink}
-            />
+            <input type="checkbox" checked={isOrderLinked} onChange={handleChangeOrderLink} />
             Без заказов
           </label>
         </div>
@@ -177,10 +164,12 @@ export const CustomerApps = () => {
               <td className="customerAppTd">Пункты выгрузки</td>
               <td className="customerAppTd">Цена</td>
               <td className="customerAppTd">Заказ</td>
+              <td className="customerAppTd">Номер заявки</td>
             </tr>
           </thead>
           <tbody>
-            {appListFiltred.map((elem) => {
+            {appListFiltred.map(elem => {
+              console.log(elem);
               return (
                 <CustomerAppTr
                   key={`customerAppTr${elem._id}`}
@@ -199,7 +188,7 @@ export const CustomerApps = () => {
           header="Создание заявки"
           width={1200}
           height={700}
-          top={"10px"}
+          top={'10px'}
           handleClickWindowClose={handleClickEditWindowClose}
           windowId="createAppWindow"
         >
@@ -237,7 +226,7 @@ export const CustomerApps = () => {
           header="Создание заказа"
           width={1200}
           height={400}
-          top={"10px"}
+          top={'10px'}
           handleClickWindowClose={handleClickSave}
           windowId="createOrderWindow"
         >
