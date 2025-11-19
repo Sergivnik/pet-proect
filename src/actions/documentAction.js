@@ -289,7 +289,7 @@ export const addSomeDocNew = (id, typeDoc, file) => {
               });
           }
         } else {
-          if (typeDoc == 'ttn') dispatch(editOder(id, 'document', 1));
+          if (typeDoc == 'ttn') dispatch(editOder(id, 'document', 1, 'oderslist'));
           return dispatch(addSomePdfDocSuccess());
         }
       })
