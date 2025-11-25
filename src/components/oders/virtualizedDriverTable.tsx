@@ -124,10 +124,15 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   };
   const handleClickDelOrder = () => {
     if (currentId != null) {
-      let check = confirm('100% ?');
-      if (check) {
-        dispatch(delOder(currentId, 'driverorderlist'));
-        setCurrentId(null);
+      const currentOrder = rows.find(order => order._id == currentId);
+      if (currentOrder.completed) {
+        alert('Выполненный заказ удалять нельзя!!');
+      } else {
+        let check = confirm('100% ?');
+        if (check) {
+          dispatch(delOder(currentId, 'driverorderlist'));
+          setCurrentId(null);
+        }
       }
     }
   };
@@ -135,9 +140,14 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     setEditOrder(false);
   };
 
+  const didAutoScroll = useRef(false);
+
   useEffect(() => {
-    rowVirtualizer.scrollToIndex(rows.length - 1);
-  }, [rows.length]);
+    if (!didAutoScroll.current && parentRef.current && items.length > 0) {
+      rowVirtualizer.scrollToIndex(rows.length - 1, { align: 'end' });
+      didAutoScroll.current = true; // чтобы больше никогда не скроллило
+    }
+  }, [items]);
 
   return (
     <div className="divVrapper">
