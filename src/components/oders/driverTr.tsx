@@ -10,7 +10,7 @@ import { TdCompleted } from '../userTd/tdCompleted.jsx';
 import { TdDocument } from '../userTd/tdDocument.jsx';
 import { TdCustomerPayment } from '../userTd/tdCustomerPayment.jsx';
 import { TdDriverPayment } from '../userTd/tdDriverPayment.jsx';
-import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
+import { TdAccountVirtual } from '../userTd/tdAccountVirtual/tdAccuuntVirtual.tsx';
 import { CreateOderNew } from '../createOder/createOderNew.jsx';
 import './oders.sass';
 
@@ -148,10 +148,9 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
           edit={true}
           orderTable={'driverorderlist'}
         />
-        <TdAccountNumber
+        <TdAccountVirtual
           style={getTdStyle(11)}
-          accountNumber={elem.accountNumber}
-          customerPayment={elem.customerPayment}
+          elem={elem}
         />
       </tr>
     );

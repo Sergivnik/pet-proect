@@ -136,10 +136,8 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   };
 
   useEffect(() => {
-    if (parentRef.current) {
-      parentRef.current.scrollTop = parentRef.current.scrollHeight;
-    }
-  }, [rows.length]); // обновляем при изменении количества строк
+    rowVirtualizer.scrollToIndex(rows.length - 1);
+  }, [rows.length]);
 
   return (
     <div className="divVrapper">
@@ -153,7 +151,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
           <CreateOderNew orderTable="driverorderlist" elem={newElem} addOder={addOder} />
         </UserWindow>
       )}
-      <div ref={parentRef} className="virtualTableVrapper">
+      <div ref={parentRef} className="virtualTableWrapper">
         <table style={{ borderCollapse: 'collapse' }} className="virtualTable">
           <DriverThead getColStyle={getColStyle} />
           <tbody
