@@ -174,3 +174,8 @@ export interface Contractor {
   fullName: string;
   TIN: string;
 }
+
+export interface Coords {
+  top: number;
+  left: number;
+}
