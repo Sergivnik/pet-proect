@@ -148,7 +148,12 @@ export const DriverTr = React.forwardRef<HTMLTableRowElement, any>(
           edit={true}
           orderTable={'driverorderlist'}
         />
-        <TdAccountVirtual style={getTdStyle(11)} elem={elem} currentId={currentId} />
+        <TdAccountVirtual
+          style={getTdStyle(11)}
+          elem={elem}
+          currentId={currentId}
+          getCurrentId={getCurrentId}
+        />
       </tr>
     );
   }

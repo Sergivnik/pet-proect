@@ -26,7 +26,7 @@ export const ContextMenu = ({ order, coords }: ContextMenuProps) => {
     <div
       className="virtualDivContext"
       style={{
-        top: coords.top,
+        top: coords.top - 20,
         left: coords.left,
       }}
     >

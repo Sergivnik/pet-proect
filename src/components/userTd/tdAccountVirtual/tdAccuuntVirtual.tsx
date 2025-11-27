@@ -8,9 +8,15 @@ interface TdAccountVirtualProps {
   style: React.CSSProperties;
   elem: OrderType;
   currentId: Number;
+  getCurrentId: (id: number) => boolean;
 }
 
-export const TdAccountVirtual = ({ style, elem, currentId }: TdAccountVirtualProps) => {
+export const TdAccountVirtual = ({
+  style,
+  elem,
+  currentId,
+  getCurrentId,
+}: TdAccountVirtualProps) => {
   const tdRef = useRef(null);
   const portalRoot = document.querySelector('.virtualTableWrapper');
 
@@ -22,16 +28,47 @@ export const TdAccountVirtual = ({ style, elem, currentId }: TdAccountVirtualPro
   }, [currentId]);
 
   const handleContextMenu = (e: React.MouseEvent<HTMLTableCellElement>) => {
+    getCurrentId(elem._id);
     e.preventDefault();
     if (!portalRoot || !tdRef.current) {
       return;
     }
     const rect = tdRef.current.getBoundingClientRect();
     const containerRect = portalRoot.getBoundingClientRect();
-    setCoords({
-      top: rect.top - containerRect.top + portalRoot.scrollTop,
-      left: rect.left - containerRect.left + portalRoot.scrollLeft,
-    });
+    const distanceRight = window.innerWidth - rect.right; // до правого краюхи
+    const distanceBottom = window.innerHeight - rect.bottom; // до нижнего
+    const width = rect.width;
+    const height = rect.height;
+    console.log(distanceRight, distanceBottom, width, height);
+
+    if (distanceBottom < 200 && distanceRight + width > 145) {
+      const diff = 200 - distanceBottom;
+      setCoords({
+        top: rect.top - containerRect.top + portalRoot.scrollTop - diff,
+        left: rect.left - containerRect.left + portalRoot.scrollLeft,
+      });
+    }
+    if (distanceBottom > 200 && distanceRight + width < 145) {
+      const diff = 145 - distanceRight - width;
+      setCoords({
+        top: rect.top - containerRect.top + portalRoot.scrollTop,
+        left: rect.left - containerRect.left + portalRoot.scrollLeft - diff - 35,
+      });
+    }
+    if (distanceBottom < 200 && distanceRight + width < 145) {
+      const diffB = 200 - distanceBottom;
+      const diffR = 145 - distanceRight - width;
+      setCoords({
+        top: rect.top - containerRect.top + portalRoot.scrollTop - diffB,
+        left: rect.left - containerRect.left + portalRoot.scrollLeft - diffR - 35,
+      });
+    }
+    if (distanceBottom > 200 && distanceRight + width > 145) {
+      setCoords({
+        top: rect.top - containerRect.top + portalRoot.scrollTop,
+        left: rect.left - containerRect.left + portalRoot.scrollLeft,
+      });
+    }
     setShowContextMenu(true);
   };
   const contextMenuPortal = showContextMenu
