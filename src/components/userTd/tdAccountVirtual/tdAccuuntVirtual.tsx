@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { OrderType, Coords } from '../../tsTypes';
 import { ContextMenu } from './contextMenu.tsx';
+import { UserWindow } from '../../userWindow/userWindow.jsx';
+import { DocFormNew } from '../../documentNew/docFormNew.tsx';
 import './tdAccountVirtual.sass';
 
 interface TdAccountVirtualProps {
@@ -21,6 +23,9 @@ export const TdAccountVirtual = ({
   const portalRoot = document.querySelector('.virtualTableWrapper');
 
   const [showContextMenu, setShowContextMenu] = useState<boolean>(false);
+  const [showUserWindow, setShowUserWindow] = useState<boolean>(false);
+  const [windowHeader, setWindowHeader] = useState<string>('');
+  const [windowChild, setWindowChild] = useState<React.ReactNode>(null);
   const [coords, setCoords] = useState<Coords>({ top: 0, left: 0 });
 
   useEffect(() => {
@@ -39,7 +44,6 @@ export const TdAccountVirtual = ({
     const distanceBottom = window.innerHeight - rect.bottom; // до нижнего
     const width = rect.width;
     const height = rect.height;
-    console.log(distanceRight, distanceBottom, width, height);
 
     if (distanceBottom < 200 && distanceRight + width > 145) {
       const diff = 200 - distanceBottom;
@@ -71,8 +75,82 @@ export const TdAccountVirtual = ({
     }
     setShowContextMenu(true);
   };
+  const handleClickContextMenu = (pointOfContextMenu: string) => {
+    console.log(pointOfContextMenu);
+    switch (pointOfContextMenu) {
+      case 'createBill': {
+        setWindowHeader('Создать счет');
+        setWindowChild(<DocFormNew />);
+        break;
+      }
+      case 'editBill':
+        setWindowHeader('Редактировать счет');
+        break;
+      case 'printBill':
+        setWindowHeader('Печать счета');
+        break;
+      case 'printBillwhithoutStamp':
+        setWindowHeader('Печать счета без печати');
+        break;
+      case 'deleteBill':
+        setWindowHeader('Удалить счет');
+        break;
+      case 'createApp':
+        setWindowHeader('Создать заявку');
+        break;
+      case 'editApp':
+        setWindowHeader('Редактировать заявку');
+        break;
+      case 'printApp':
+        setWindowHeader('Печать заявки');
+        break;
+      case 'addAppPdf':
+        setWindowHeader('Добавить заявку pdf');
+        break;
+      case 'addTtn':
+        setWindowHeader('Добавить ТТН pdf');
+        break;
+      case 'printTtn':
+        setWindowHeader('Печать ТТН');
+        break;
+      case 'sendEmail':
+        setWindowHeader('Отправить email');
+        break;
+      default:
+        break;
+    }
+    setShowUserWindow(true);
+    setShowContextMenu(false);
+  };
+  const handleClickUserWindowClose = () => {
+    setShowUserWindow(false);
+  };
   const contextMenuPortal = showContextMenu
-    ? createPortal(<ContextMenu order={elem} coords={coords} />, portalRoot)
+    ? createPortal(
+        <ContextMenu
+          order={elem}
+          coords={coords}
+          handleClickContextMenu={handleClickContextMenu}
+        />,
+        portalRoot
+      )
+    : null;
+
+  const userWindow = showUserWindow
+    ? createPortal(
+        <UserWindow
+          header={windowHeader}
+          width={800}
+          height={600}
+          left={'calc( 50% - 400px)'}
+          top={'calc( 50% - 300px)'}
+          handleClickWindowClose={handleClickUserWindowClose}
+          windowId="createApplication"
+        >
+          {windowChild}
+        </UserWindow>,
+        document.body
+      )
     : null;
 
   return (
@@ -81,6 +159,7 @@ export const TdAccountVirtual = ({
         {elem.accountNumber}
       </td>
       {contextMenuPortal}
+      {userWindow}
     </React.Fragment>
   );
 };

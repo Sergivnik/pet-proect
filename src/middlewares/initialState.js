@@ -4,7 +4,7 @@ import axios from 'axios';
 export const DOMENNAME = 'http://localhost:80'; //develop
 //export const DOMENNAME = "http://192.168.0.101:80";//work
 //export const DOMENNAME = "http://192.168.0.114:80";//home
-//export const DOMENNAME = "http://5.44.41.196:80"; //vps
+//export const DOMENNAME = 'http://82.114.226.75'; //vps
 //export const DOMENNAME = "http://atpivanova.ru:80"; //vps
 
 export const URL = DOMENNAME + '/API';

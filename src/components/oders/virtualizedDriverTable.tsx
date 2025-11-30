@@ -76,7 +76,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     count: rows.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 40,
-    overscan: 10,
+    overscan: 50,
   });
 
   const items = rowVirtualizer.getVirtualItems();

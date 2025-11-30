@@ -35,7 +35,7 @@ const io = socketIo(server, {
       'http://localhost:80',
       'http://localhost:8080',
       'http://atpivanova.ru',
-      'http://5.44.41.196',
+      'http://82.114.226.75',
       'http://97356.zetalink.ru',
     ],
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -50,7 +50,7 @@ const allowedOrigins = [
   'http://localhost:80',
   'http://localhost:8080',
   'http://atpivanova.ru',
-  'http://5.44.41.196',
+  'http://82.114.226.75',
   'http://97356.zetalink.ru',
 ];
 const allowedReferers = [
@@ -58,7 +58,7 @@ const allowedReferers = [
   'http://localhost:80',
   'http://localhost:8080',
   'http://atpivanova.ru',
-  'http://5.44.41.196',
+  'http://82.114.226.75',
   'http://97356.zetalink.ru',
 ];
 
@@ -132,7 +132,10 @@ app.use(session(sessionOption));
 app.use(router);
 
 // Запуск сервера
-server.listen(80, () => console.log('Сервер запущен на порту 80'));
+server.listen(80, '0.0.0.0', () => {
+  console.log('Сервер запущен на порту 80');
+});
+
 
 setInterval(() => {
   const totalMem = os.totalmem() / 1024 / 1024;
