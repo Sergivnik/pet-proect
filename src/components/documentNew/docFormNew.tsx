@@ -113,7 +113,10 @@ export const DocFormNew = () => {
             Счет-фактура
           </div>
         </div>
-        <div className="wrapperBtnBlock"></div>
+        <div className="wrapperBtnBlock">
+          <button>Добавить строку</button>
+          <button>Сохранить</button>
+        </div>
       </div>
     </React.Fragment>
   );
