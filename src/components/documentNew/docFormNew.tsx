@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import './docFormNew.sass';
+import { Bill } from './bill';
+import { Act } from './Act';
 
 interface checkBoxType {
   ttn: boolean;
@@ -118,6 +120,7 @@ export const DocFormNew = () => {
           <button>Сохранить</button>
         </div>
       </div>
+      <div className="wrapperTable"><Bill/><Act/></div>
     </React.Fragment>
   );
 };
