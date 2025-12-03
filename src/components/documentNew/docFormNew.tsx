@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import './docFormNew.sass';
 import { Bill } from './bill';
-import { Act } from './Act';
+import { Act } from './Act.tsx';
+import { OrderType } from '../tsTypes.ts';
+import './docFormNew.sass';
 
 interface checkBoxType {
   ttn: boolean;
@@ -11,8 +12,12 @@ interface checkBoxType {
   dateFromApp: boolean;
   reason: boolean;
 }
+interface DocFormNewProps {
+  order: OrderType;
+  currentTable: string;
+}
 
-export const DocFormNew = () => {
+export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const [checkBoxesValue, setCheckBoxesValue] = useState<checkBoxType>({
     ttn: false,
     contract: false,
@@ -22,6 +27,7 @@ export const DocFormNew = () => {
     reason: false,
   });
   const [choisenTypeDoc, setChosenTypeDoc] = useState<string | null>(null);
+  const [addData, SetAddData] = useState(null);
 
   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.currentTarget.name as keyof checkBoxType;
@@ -120,7 +126,10 @@ export const DocFormNew = () => {
           <button>Сохранить</button>
         </div>
       </div>
-      <div className="wrapperTable"><Bill/><Act/></div>
+      <div className="wrapperTable">
+        <Bill order={order} addData={addData} currentTable={currentTable}/>
+        <Act />
+      </div>
     </React.Fragment>
   );
 };

@@ -80,7 +80,7 @@ export const TdAccountVirtual = ({
     switch (pointOfContextMenu) {
       case 'createBill': {
         setWindowHeader('Создать счет');
-        setWindowChild(<DocFormNew />);
+        setWindowChild(<DocFormNew order={elem} currentTable="driverorderlist" />);
         break;
       }
       case 'editBill':

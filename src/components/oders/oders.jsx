@@ -115,7 +115,6 @@ export const Oders = () => {
     setAddData(0);
   }, []);
   useEffect(() => {
-    console.log(income, expenses, addSum);
     let addSum = clientList.reduce((s, item) => s + Number(item.extraPayments), 0);
     let income100 = Math.round(Number(income) * 100);
     let expenses100 = Math.round(Number(expenses) * 100);
@@ -124,7 +123,6 @@ export const Oders = () => {
     setSumAccount(sum);
   }, [income, expenses]);
   useEffect(() => {
-    console.log('test');
     if (numberApps != null) {
       setShowNewApps(true);
     } else {
@@ -185,7 +183,6 @@ export const Oders = () => {
       }
     }
     //if (condotion && length > 0 && length != 5000) dispatch(getData5000());
-    console.log(length);
     if (length > 100) {
       setOders(odersList.slice(length - 100 - addData, length - addData));
     } else {
@@ -261,11 +258,9 @@ export const Oders = () => {
         break;
       case 'AccountList':
         let tempArr = [];
-        console.log(filteredAccountList, chosenList);
         chosenList.forEach(element => {
           tempArr.push(filteredAccountList.find(item => item._id == element));
         });
-        console.log(tempArr);
         arr.accountList = tempArr;
         setFilterList(arr);
         break;
@@ -441,7 +436,6 @@ export const Oders = () => {
   };
   const handleClickGenerate = elem => {
     setCurrentElem(elem);
-    console.log(elem);
     setShowPrintForm(true);
   };
   const handleClosePrintForm = () => {
@@ -454,7 +448,6 @@ export const Oders = () => {
     dispatch(authSignOut());
   };
   const handleClickDriversTrips = () => {
-    console.log('driversTrips', showDriversTrips);
     if (showDriversTrips) {
       setShowDriversTrips(false);
     } else {
@@ -474,7 +467,6 @@ export const Oders = () => {
     setShowTasks(false);
   };
   const handleClickCtrl = (id, name) => {
-    console.log(id, name);
     setShowEditDataWindow(true);
     setEditTable(name);
     setIdEdit(id);

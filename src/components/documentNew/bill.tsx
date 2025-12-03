@@ -1,14 +1,22 @@
 import React from 'react';
+import { useSelector } from 'react-redux';
+import { OrderType } from '../tsTypes';
+
+interface BillProps {
+  order: OrderType;
+  addData: any;
+  currentTable: string;
+}
 
 const styles = {
   container: {
     pageBreakAfter: 'always',
   } as React.CSSProperties,
   mainContent: {
-    width: '88%',
+    width: 'calc(100% - 40px)',
     display: 'block',
     minHeight: '500px',
-    padding: '4% 4% 0% 8%',
+    padding: '20px',
     marginTop: '19px',
     fontFamily: 'arial',
   } as React.CSSProperties,
@@ -45,7 +53,10 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Bill: React.FC = () => {
+export const Bill = ({ order, addData, currentTable }: BillProps) => {
+  console.log(order, addData, currentTable);
+  const customerList = useSelector((state: any) => state.oderReducer.clientList);
+
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
@@ -167,8 +178,8 @@ export const Bill: React.FC = () => {
                 width: '86%',
               }}
             >
-              ООО "ИМПЭКС-СТАЛЬ" ИНН 6166127010, 344096, РОСТОВСКАЯ ОБЛАСТЬ, Г.О. ГОРОД РОСТОВ-НА-ДОНУ,
-              Г РОСТОВ-НА-ДОНУ, ПР-КТ КОРОЛЕВА, ЗД. 5/3, ОФИС 202
+              ООО "ИМПЭКС-СТАЛЬ" ИНН 6166127010, 344096, РОСТОВСКАЯ ОБЛАСТЬ, Г.О. ГОРОД
+              РОСТОВ-НА-ДОНУ, Г РОСТОВ-НА-ДОНУ, ПР-КТ КОРОЛЕВА, ЗД. 5/3, ОФИС 202
             </div>
           </div>
         </div>
@@ -203,8 +214,8 @@ export const Bill: React.FC = () => {
             <tr>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
               <td style={{ border: '1px solid black', padding: '4px' }}>
-                Перевозка по маршруту Батайск - Ростов-на-Дону - Таганрог водитель Селиверстов Сергей
-                Николаевич а/м КамАЗ с 559 АА 61
+                Перевозка по маршруту Батайск - Ростов-на-Дону - Таганрог водитель Селиверстов
+                Сергей Николаевич а/м КамАЗ с 559 АА 61
               </td>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
@@ -251,9 +262,7 @@ export const Bill: React.FC = () => {
               </td>
             </tr>
             <tr>
-              <td style={{ width: '80%' }}>
-                Всего наименований 1, на сумму 22000.00 руб без НДС
-              </td>
+              <td style={{ width: '80%' }}>Всего наименований 1, на сумму 22000.00 руб без НДС</td>
             </tr>
             <tr style={{ borderBottom: '2px solid black' }}>
               <td style={{ width: '80%', fontWeight: 700 }}>
@@ -271,5 +280,3 @@ export const Bill: React.FC = () => {
     </div>
   );
 };
-
-
