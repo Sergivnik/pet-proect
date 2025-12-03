@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Bill } from './bill';
-import { Act } from './Act.tsx';
+import { Act } from './act.tsx';
 import { OrderType } from '../tsTypes.ts';
 import './docFormNew.sass';
 

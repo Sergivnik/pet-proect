@@ -56,6 +56,16 @@ const styles = {
 export const Bill = ({ order, addData, currentTable }: BillProps) => {
   console.log(order, addData, currentTable);
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
+  const driverList = useSelector((state: any) => state.oderReducer.driverlist);
+  const citiesList = useSelector((state: any) => state.oderReducer.citieslist);
+  const trackDriverList = useSelector((state: any) => state.oderReducer.trackdrivers);
+  const trackList = useSelector((state: any) => state.oderReducer.tracklist);
+  const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
+    
+  const customer = customerList.find((item: any) => item.id === order.idCustomer);
+  const driver = driverList.find((item: any) => item.id === order.idDriver);
+  const trackDriver = trackDriverList.find((item: any) => item.id === order.idTrackDriver);
+  const track = trackList.find((item: any) => item.id === order.idTrack);
 
   return (
     <div className="invoicePrintForm" style={styles.container}>
