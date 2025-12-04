@@ -5,10 +5,10 @@ const styles = {
     pageBreakAfter: 'always',
   } as React.CSSProperties,
   mainContent: {
-    width: '88%',
+    width: 'calc(100% - 40px)',
     display: 'block',
     minHeight: '500px',
-    padding: '4% 4% 0% 8%',
+    padding: '20px',
     marginTop: '19px',
     fontFamily: 'arial',
   } as React.CSSProperties,

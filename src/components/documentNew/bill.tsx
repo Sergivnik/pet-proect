@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType } from '../tsTypes';
 
@@ -6,6 +6,20 @@ interface BillProps {
   order: OrderType;
   addData: any;
   currentTable: string;
+}
+interface ClientData {
+  name: string;
+  address: string;
+  inn: string;
+  kpp: string;
+  account: string;
+  corAccount: string;
+  bic: string;
+  bankName: string;
+  bankAddress: string;
+  bossName: string;
+  ogrn: string;
+  dateOfReg: string;
 }
 
 const styles = {
@@ -61,12 +75,48 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
   const trackDriverList = useSelector((state: any) => state.oderReducer.trackdrivers);
   const trackList = useSelector((state: any) => state.oderReducer.tracklist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
-    
+
   const customer = customerList.find((item: any) => item.id === order.idCustomer);
-  const driver = driverList.find((item: any) => item.id === order.idDriver);
+  const driver = driverList.find((item: any) => item._id === order.idDriver);
   const trackDriver = trackDriverList.find((item: any) => item.id === order.idTrackDriver);
   const track = trackList.find((item: any) => item.id === order.idTrack);
 
+  const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
+
+  useEffect(() => {
+    if (currentTable === 'oderslist' && currentOwner) {
+      setAccountOwner({
+        name: currentOwner.fullNameOwner,
+        address: currentOwner.address,
+        inn: currentOwner.TIN,
+        kpp: currentOwner.KPP,
+        account: currentOwner.Acc,
+        corAccount: currentOwner.CorAcc,
+        bic: currentOwner.RCBIC,
+        bankName: currentOwner.bankName,
+        bankAddress: currentOwner.bankAddress,
+        bossName: currentOwner.shortFio,
+        ogrn: currentOwner.OGRN,
+        dateOfReg: currentOwner.dateOfReg,
+      });
+    }
+    if (currentTable === 'driverorderlist' && driver) {
+      setAccountOwner({
+        name: driver.companyName,
+        address: driver.address,
+        inn: driver.TIN,
+        kpp: driver.KPP,
+        account: driver.Acc,
+        corAccount: driver.CorAcc,
+        bic: driver.RCBIC,
+        bankName: driver.bankName,
+        bankAddress: driver.bankAddress,
+        bossName: driver.bossName,
+        ogrn: driver.OGRN,
+        dateOfReg: driver.dateOfReg,
+      });
+    }
+  }, [currentTable, currentOwner, driver]);
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
@@ -83,8 +133,8 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
         <table style={styles.table}>
           <tbody>
             <tr style={{ lineHeight: '1' }}>
-              <td style={{ ...styles.tableCell, width: '34.3%' }}>ИНН 615408271552</td>
-              <td style={{ ...styles.tableCell, width: '31.3%' }}>КПП</td>
+              <td style={{ ...styles.tableCell, width: '34.3%' }}>ИНН {accountOwner?.inn}</td>
+              <td style={{ ...styles.tableCell, width: '31.3%' }}>КПП {accountOwner?.kpp}</td>
               <td
                 style={{
                   ...styles.tableCell,
@@ -94,11 +144,11 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
               >
                 Сч.№
               </td>
-              <td style={{ ...styles.tableCell, width: '25.7%' }}>40802810400000367485</td>
+              <td style={{ ...styles.tableCell, width: '25.7%' }}>{accountOwner?.account}</td>
             </tr>
             <tr style={{ lineHeight: '1' }}>
               <td style={styles.tableCell} colSpan={2}>
-                ИП Иванов Сергей Николаевич
+                {accountOwner?.name}
                 <br />
                 <span
                   style={{
@@ -115,7 +165,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
             </tr>
             <tr style={{ lineHeight: '1' }}>
               <td style={styles.tableCell} rowSpan={2} colSpan={2}>
-                АО «ТБанк» г Москва, ул Хуторская 2-я, д 38А стр 26
+                {accountOwner?.bankName} {accountOwner?.bankAddress}
                 <br />
                 <span
                   style={{
@@ -128,11 +178,11 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                 </span>
               </td>
               <td style={styles.tableCell}>БИК</td>
-              <td style={{ ...styles.tableCell, borderBottom: 'none' }}>044525974</td>
+              <td style={{ ...styles.tableCell, borderBottom: 'none' }}>{accountOwner?.bic}</td>
             </tr>
             <tr>
               <td style={styles.tableCell}>Сч.№</td>
-              <td style={{ ...styles.tableCell, borderTop: 'none' }}>30101810145250000974</td>
+              <td style={{ ...styles.tableCell, borderTop: 'none' }}>{accountOwner?.corAccount}</td>
             </tr>
           </tbody>
         </table>
@@ -163,8 +213,8 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                 width: '86%',
               }}
             >
-              ИП Иванов Сергей Николаевич, ИНН 615408271552, свидетельство № 308615401700030 от
-              17.01.08г. Ростовская область, 347923, Таганрог, Ломакина, д. 108, кв. 2
+              {accountOwner?.name}, ИНН {accountOwner?.inn}, свидетельство № {accountOwner?.ogrn} от
+              {accountOwner?.dateOfReg} {accountOwner?.address}
             </div>
           </div>
           <div>
