@@ -376,3 +376,18 @@ export const formatDateToRu = date => {
   const year = d.getFullYear();
   return `${day}.${month}.${year}`;
 };
+export const shortName = fullName => {
+  if (!fullName || typeof fullName !== 'string') {
+    return '';
+  }
+
+  const parts = fullName.trim().split(/\s+/);
+
+  if (parts.length < 3) {
+    return fullName; // или можешь вернуть "" — как тебе по понятиям
+  }
+
+  const [last, first, middle] = parts;
+
+  return `${last} ${first[0]}. ${middle[0]}.`;
+};

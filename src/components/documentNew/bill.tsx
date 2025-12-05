@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, TrackDriver, Driver } from '../tsTypes';
+import { findValueBy_Id, sumInWords, shortName } from '../myLib/myLib';
 
 interface BillProps {
   order: OrderType;
@@ -85,6 +86,8 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [actNumber, setActNumber] = useState<string | number>('');
+  const [routeStrings, setRouteStrings] = useState<string[]>([]);
+  const [numberOfShipments, setNumberOfShipments] = useState<number>(1);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -139,6 +142,25 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
       }, 0);
       setActNumber(lastActNumber + 1);
     }
+    let string = 'Перевозка по маршруту загрузка ';
+    const loadingString = order.idLoadingPoint.map((item: number) => {
+      return findValueBy_Id(item, citiesList).value + ' ';
+    });
+    const unloadingString = order.idUnloadingPoint.map((item: number) => {
+      return findValueBy_Id(item, citiesList).value + ' ';
+    });
+    const trackDriverString = trackDriver.name + ' ';
+    const trackString = track.model + ' ' + track.value + ' ';
+    string =
+      string +
+      loadingString.join('') +
+      'выгрузка ' +
+      unloadingString.join('') +
+      ' водитель ' +
+      'A/M ' +
+      trackDriverString +
+      trackString;
+    setRouteStrings([string]);
   }, [order]);
   return (
     <div className="invoicePrintForm" style={styles.container}>
@@ -263,7 +285,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                 width: '86%',
               }}
             >
-              {customer?.name}, ИНН {customer?.inn}, {customer?.address}
+              {customer?.companyName}, ИНН {customer?.inn}, {customer?.address}
             </div>
           </div>
         </div>
@@ -297,17 +319,22 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
           <tbody>
             <tr>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
-              <td style={{ border: '1px solid black', padding: '4px' }}>
-                Перевозка по маршруту Батайск - Ростов-на-Дону - Таганрог водитель Селиверстов
-                Сергей Николаевич а/м КамАЗ с 559 АА 61
+              <td style={{ border: '1px solid black', padding: '4px' }}>{routeStrings[0]}</td>
+              <td style={{ border: '1px solid black', textAlign: 'center' }}>
+                {numberOfShipments}
               </td>
-              <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
               <td style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}>
-                22000
+                {order.customerPrice.toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </td>
               <td style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}>
-                22000.00
+                {(order.customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </td>
             </tr>
           </tbody>
@@ -342,22 +369,33 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                   fontWeight: 700,
                 }}
               >
-                22000.00
+                {(order.customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </td>
             </tr>
             <tr>
-              <td style={{ width: '80%' }}>Всего наименований 1, на сумму 22000.00 руб без НДС</td>
+              <td style={{ width: '80%' }}>
+                Всего наименований {numberOfShipments}, на сумму{' '}
+                {(order.customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{' '}
+                руб без НДС
+              </td>
             </tr>
             <tr style={{ borderBottom: '2px solid black' }}>
               <td style={{ width: '80%', fontWeight: 700 }}>
-                ( двадцать две тысячи рублей 00 коп. )
+                {sumInWords(order.customerPrice * numberOfShipments)}
               </td>
             </tr>
           </tbody>
         </table>
         <div style={{ position: 'relative', height: '100px' }}>
           <p style={{ marginTop: '50px' }}>
-            Индивидуальный предприниматель _____________________________ Иванов С.Н.
+            Индивидуальный предприниматель _____________________________{' '}
+            {shortName(accountOwner?.bossName)}
           </p>
         </div>
       </div>
