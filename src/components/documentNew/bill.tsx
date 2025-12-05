@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { OrderType } from '../tsTypes';
+import { OrderType, TrackDriver, Driver } from '../tsTypes';
 
 interface BillProps {
   order: OrderType;
@@ -75,13 +75,16 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
   const trackDriverList = useSelector((state: any) => state.oderReducer.trackdrivers);
   const trackList = useSelector((state: any) => state.oderReducer.tracklist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
+  const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
+  const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
 
-  const customer = customerList.find((item: any) => item.id === order.idCustomer);
-  const driver = driverList.find((item: any) => item._id === order.idDriver);
-  const trackDriver = trackDriverList.find((item: any) => item.id === order.idTrackDriver);
-  const track = trackList.find((item: any) => item.id === order.idTrack);
+  const customer = customerList.find((item: any) => item._id === order.idCustomer);
+  const driver = driverList.find((item: Driver) => item._id === order.idDriver);
+  const trackDriver = trackDriverList.find((item: TrackDriver) => item._id === order.idTrackDriver);
+  const track = trackList.find((item: any) => item._id === order.idTrack);
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
+  const [actNumber, setActNumber] = useState<string | number>('');
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -117,6 +120,26 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
       });
     }
   }, [currentTable, currentOwner, driver]);
+  useEffect(() => {
+    if (order.accountNumber != null && order.accountNumber != '') {
+      setActNumber(order.accountNumber);
+    } else {
+      const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
+      let actList;
+      if (currentTable === 'oderslist') {
+        actList = orderList.filter((order: OrderType) => new Date(order.date) >= firstDateOfYear);
+      } else {
+        actList = driverOrderList.filter(
+          (order: OrderType) => new Date(order.date) >= firstDateOfYear
+        );
+      }
+      const lastActNumber = actList.reduce((maxNumber: number, order: OrderType) => {
+        const num = Number(order.accountNumber) || 0;
+        return Math.max(maxNumber, num);
+      }, 0);
+      setActNumber(lastActNumber + 1);
+    }
+  }, [order]);
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
@@ -188,7 +211,9 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
         </table>
         <div>
           <div style={styles.invoiceNumber}>
-            <h4 style={styles.invoiceTitle}>Счет № 1085 от 01.12.2025</h4>
+            <h4 style={styles.invoiceTitle}>
+              Счет № {actNumber} от {new Date(order.date).toLocaleDateString()}
+            </h4>
           </div>
         </div>
         <div style={{ fontSize: '14px' }}>
@@ -238,8 +263,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                 width: '86%',
               }}
             >
-              ООО "ИМПЭКС-СТАЛЬ" ИНН 6166127010, 344096, РОСТОВСКАЯ ОБЛАСТЬ, Г.О. ГОРОД
-              РОСТОВ-НА-ДОНУ, Г РОСТОВ-НА-ДОНУ, ПР-КТ КОРОЛЕВА, ЗД. 5/3, ОФИС 202
+              {customer?.name}, ИНН {customer?.inn}, {customer?.address}
             </div>
           </div>
         </div>

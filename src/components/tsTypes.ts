@@ -34,7 +34,7 @@ export interface OrderType {
   dateOfPromise: Date;
   driverPayment: driverPaymentStatus;
   dateOfPayment: Date;
-  accountNumber: number;
+  accountNumber: number|string;
   partialPaymentAmount: number;
   idTrackDriver: number;
   idTrack: number;
@@ -146,7 +146,7 @@ export interface Driver {
 }
 
 export interface Customer {
-  id: number;
+  _id: number;
   value: string;
   extraPayments: number;
   companyName: string;
