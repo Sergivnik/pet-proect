@@ -108,7 +108,7 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
   const getCurrentId = (id: number) => {
     setCurrentId(id);
   };
-  const handleClickEdit = () => {
+  const handleClickEdit = e => {
     setEditOrder(true);
   };
   const handleCopyOrder = () => {

@@ -27,7 +27,9 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     reason: false,
   });
   const [choisenTypeDoc, setChosenTypeDoc] = useState<string | null>(null);
-  const [addData, SetAddData] = useState(null);
+  const [ttnData, setTtnData] = useState<string>('');
+  const [editTtn, setEditTtn] = useState<boolean>(true);
+  const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
 
   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.currentTarget.name as keyof checkBoxType;
@@ -39,6 +41,21 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const handleClickTypeDoc = (e: React.MouseEvent<HTMLDivElement>) => {
     setChosenTypeDoc(e.currentTarget.id);
   };
+  const getTtnData = e => {
+    setTtnData(e.currentTarget.value);
+  };
+  const handleEnterTtn = e => {
+    if (e.code == 'Enter') {
+      setEditTtn(false);
+    }
+  };
+  const handleDblClkTtn = e => {
+    e.stopPropagation();
+    setEditTtn(true);
+  };
+  const blockDblClk = e => {
+    e.stopPropagation();
+  };
   const getClassTypeDoc = (id: string) => {
     if (id === choisenTypeDoc) {
       return 'typeOfDoc typeOfDocActive';
@@ -46,6 +63,9 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
       return 'typeOfDoc';
     }
   };
+  useEffect(() => {
+    setAddData({ checkBoxesValue, ttnData });
+  }, [checkBoxesValue, ttnData]);
   return (
     <React.Fragment>
       <header className="divHeader">
@@ -57,7 +77,18 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
             onChange={handleCheckBox}
             name="ttn"
           />
-          {checkBoxesValue.ttn && <input type="text" />}
+          {checkBoxesValue.ttn &&
+            (editTtn ? (
+              <input
+                type="text"
+                value={ttnData}
+                onChange={getTtnData}
+                onKeyDown={handleEnterTtn}
+                onDoubleClick={blockDblClk}
+              />
+            ) : (
+              <span onDoubleClick={handleDblClkTtn}>{ttnData}</span>
+            ))}
         </div>
         <div className="wrapperCheckBox">
           <span>Договор</span>
@@ -127,7 +158,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
         </div>
       </div>
       <div className="wrapperTable">
-        <Bill order={order} addData={addData} currentTable={currentTable}/>
+        <Bill order={order} addData={addData} currentTable={currentTable} />
         <Act />
       </div>
     </React.Fragment>

@@ -69,7 +69,7 @@ const styles = {
 };
 
 export const Bill = ({ order, addData, currentTable }: BillProps) => {
-  console.log(order, addData, currentTable);
+  const { ttn, contract, app, trackTrailer, dateFromApp, reason } = addData?.checkBoxesValue;
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const citiesList = useSelector((state: any) => state.oderReducer.citieslist);
@@ -87,7 +87,11 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [actNumber, setActNumber] = useState<string | number>('');
   const [routeStrings, setRouteStrings] = useState<string[]>([]);
+  const [mainPartOfString, setMainPartOfString] = useState<string>('');
+  const [editNum, setEditNum] = useState<boolean>(false);
   const [numberOfShipments, setNumberOfShipments] = useState<number>(1);
+  const [editPrice, setEditPrice] = useState<boolean>(false);
+  const [customerPrice, setCustomerPrice] = useState<number>(order.customerPrice);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -160,8 +164,39 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
       'A/M ' +
       trackDriverString +
       trackString;
-    setRouteStrings([string]);
+    setMainPartOfString(string);
   }, [order]);
+  useEffect(() => {
+    if (addData) {
+      const strings = [...routeStrings];
+      strings[0] = mainPartOfString + `${ttn ? ` ТТН № ${addData.ttnData}` : ``}`;
+      setRouteStrings(strings);
+    }
+  }, [addData]);
+
+  const handleDblClkNum = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setEditNum(true);
+  };
+  const handleChangeNum = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    setNumberOfShipments(Number(e.currentTarget.value));
+  };
+  const handleEnterNum = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditNum(false);
+  };
+
+  const handleDblClkPrice = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setEditPrice(true);
+  };
+  const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+    setCustomerPrice(Number(e.currentTarget.value));
+  };
+  const handleEnterPrice = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditPrice(false);
+  };
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
@@ -285,7 +320,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                 width: '86%',
               }}
             >
-              {customer?.companyName}, ИНН {customer?.inn}, {customer?.address}
+              {customer?.companyName}, ИНН {customer?.TIN}, {customer?.address}
             </div>
           </div>
         </div>
@@ -320,18 +355,44 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
             <tr>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
               <td style={{ border: '1px solid black', padding: '4px' }}>{routeStrings[0]}</td>
-              <td style={{ border: '1px solid black', textAlign: 'center' }}>
-                {numberOfShipments}
+              <td
+                style={{ border: '1px solid black', textAlign: 'center' }}
+                onDoubleClick={handleDblClkNum}
+              >
+                {editNum ? (
+                  <input
+                    type="number"
+                    className="inputInTd"
+                    value={numberOfShipments}
+                    onChange={handleChangeNum}
+                    onKeyDown={handleEnterNum}
+                  />
+                ) : (
+                  numberOfShipments
+                )}
               </td>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
-              <td style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}>
-                {order.customerPrice.toLocaleString('ru-RU', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+              <td
+                style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
+                onDoubleClick={handleDblClkPrice}
+              >
+                {editPrice ? (
+                  <input
+                    type="number"
+                    className="inputInTd"
+                    value={customerPrice}
+                    onChange={handleChangePrice}
+                    onKeyDown={handleEnterPrice}
+                  />
+                ) : (
+                  customerPrice.toLocaleString('ru-RU', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })
+                )}
               </td>
               <td style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}>
-                {(order.customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                {(customerPrice * numberOfShipments).toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -369,7 +430,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                   fontWeight: 700,
                 }}
               >
-                {(order.customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                {(customerPrice * numberOfShipments).toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -378,7 +439,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
             <tr>
               <td style={{ width: '80%' }}>
                 Всего наименований {numberOfShipments}, на сумму{' '}
-                {(order.customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                {(customerPrice * numberOfShipments).toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}{' '}
