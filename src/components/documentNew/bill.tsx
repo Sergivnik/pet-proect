@@ -78,11 +78,13 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
   const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
   const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
+  const appList = useSelector((state: any) => state.customerReducer.customerOrders);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const driver = driverList.find((item: Driver) => item._id === order.idDriver);
   const trackDriver = trackDriverList.find((item: TrackDriver) => item._id === order.idTrackDriver);
   const track = trackList.find((item: any) => item._id === order.idTrack);
+  const application = appList.find((item: any) => item.orderId == order._id);
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [actNumber, setActNumber] = useState<string | number>('');
@@ -147,11 +149,39 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
       setActNumber(lastActNumber + 1);
     }
     let string = 'Перевозка по маршруту загрузка ';
-    const loadingString = order.idLoadingPoint.map((item: number) => {
-      return findValueBy_Id(item, citiesList).value + ' ';
+    const loadingString = order.idLoadingPoint.map((item, index: number) => {
+      if (currentTable == 'oderslist') {
+        if (dateFromApp) {
+          const dateOfLoading = application.dateOfLoading;
+          return dateOfLoading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
+      if (currentTable == 'driverorderlist') {
+        if (dateFromApp) {
+          return 'dateOfLoading' + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
     });
-    const unloadingString = order.idUnloadingPoint.map((item: number) => {
-      return findValueBy_Id(item, citiesList).value + ' ';
+    const unloadingString = order.idUnloadingPoint.map((item, index: number) => {
+      if (currentTable == 'oderslist') {
+        if (dateFromApp) {
+          const dateOfUploading = application.dateOfLoading;
+          return dateOfUploading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
+      if (currentTable == 'driverorderlist') {
+        if (dateFromApp) {
+          return 'dateOfUploading' + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
     });
     const trackDriverString = trackDriver.name + ' ';
     const trackString = track.model + ' ' + track.value + ' ';
@@ -165,14 +195,25 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
       trackDriverString +
       trackString;
     setMainPartOfString(string);
-  }, [order]);
+  }, [order, addData]);
   useEffect(() => {
     if (addData) {
       const strings = [...routeStrings];
-      strings[0] = mainPartOfString + `${ttn ? ` ТТН № ${addData.ttnData}` : ``}`;
+      let ttnString: string = '';
+      if (ttn) ttnString = ` ТТН № ${addData.ttnData}`;
+      let contractString: string = '';
+      if (contract) {
+        if (currentTable == 'oderslist') contractString = ` по договору № ${customer.contract}`;
+        if (currentTable == 'driverorderlist') contractString = ` по договору № `;
+      }
+      let appString: string = '';
+      if (app) appString = ` по заявке № ${order.applicationNumber}`;
+      let trackTrailerString: string = '';
+      if (trackTrailer) trackTrailerString = ` прецеп ${track.trackTrailerLicensePlate}`;
+      strings[0] = mainPartOfString + trackTrailerString + ttnString + contractString + appString;
       setRouteStrings(strings);
     }
-  }, [addData]);
+  }, [addData, mainPartOfString]);
 
   const handleDblClkNum = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
