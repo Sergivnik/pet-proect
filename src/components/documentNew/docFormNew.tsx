@@ -53,9 +53,6 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     e.stopPropagation();
     setEditTtn(true);
   };
-  const blockDblClk = e => {
-    e.stopPropagation();
-  };
   const getClassTypeDoc = (id: string) => {
     if (id === choisenTypeDoc) {
       return 'typeOfDoc typeOfDocActive';
@@ -84,7 +81,6 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
                 value={ttnData}
                 onChange={getTtnData}
                 onKeyDown={handleEnterTtn}
-                onDoubleClick={blockDblClk}
               />
             ) : (
               <span onDoubleClick={handleDblClkTtn}>{ttnData}</span>
