@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './act.tsx';
-import { OrderType } from '../tsTypes.ts';
+import { Act } from './Act.tsx';
+import { OrderType, TrackDriver, Driver } from '../tsTypes';
+import { findValueBy_Id } from '../myLib/myLib';
 import './docFormNew.sass';
 
 interface checkBoxType {
@@ -15,6 +17,11 @@ interface checkBoxType {
 interface DocFormNewProps {
   order: OrderType;
   currentTable: string;
+}
+interface DocString {
+  mainPart: string;
+  numberOfShipments: number;
+  customerPrice: number;
 }
 
 export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
@@ -30,6 +37,20 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const [ttnData, setTtnData] = useState<string>('');
   const [editTtn, setEditTtn] = useState<boolean>(true);
   const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
+  const [strings, setStrings] = useState<DocString[]>([
+    { mainPart: '', numberOfShipments: 1, customerPrice: 0 },
+  ]);
+
+  const customerList = useSelector((state: any) => state.oderReducer.clientList);
+  const citiesList = useSelector((state: any) => state.oderReducer.citieslist);
+  const trackDriverList = useSelector((state: any) => state.oderReducer.trackdrivers);
+  const trackList = useSelector((state: any) => state.oderReducer.tracklist);
+  const appList = useSelector((state: any) => state.customerReducer.customerOrders);
+
+  const customer = customerList.find((item: any) => item._id === order.idCustomer);
+  const trackDriver = trackDriverList.find((item: TrackDriver) => item._id === order.idTrackDriver);
+  const track = trackList.find((item: any) => item._id === order.idTrack);
+  const application = appList.find((item: any) => item.orderId == order._id);
 
   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.currentTarget.name as keyof checkBoxType;
@@ -61,6 +82,71 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     }
   };
   useEffect(() => {
+    let string = 'Перевозка по маршруту загрузка ';
+    const { ttn, contract, app, trackTrailer, dateFromApp, reason } = addData?.checkBoxesValue;
+    const loadingString = order.idLoadingPoint.map((item, index: number) => {
+      if (currentTable == 'oderslist') {
+        if (dateFromApp) {
+          const dateOfLoading = application.dateOfLoading;
+          return dateOfLoading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
+      if (currentTable == 'driverorderlist') {
+        if (dateFromApp) {
+          return 'dateOfLoading' + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
+    });
+    const unloadingString = order.idUnloadingPoint.map((item, index: number) => {
+      if (currentTable == 'oderslist') {
+        if (dateFromApp) {
+          const dateOfUploading = application.dateOfLoading;
+          return dateOfUploading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
+      if (currentTable == 'driverorderlist') {
+        if (dateFromApp) {
+          return 'dateOfUploading' + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+        } else {
+          return findValueBy_Id(item, citiesList).value + ' ';
+        }
+      }
+    });
+    const trackDriverString = trackDriver.name + ' ';
+    const trackString = track.model + ' ' + track.value + ' ';
+    let ttnString: string = '';
+    if (ttn) ttnString = ` ТТН № ${addData.ttnData}`;
+    let contractString: string = '';
+    if (contract) {
+      if (currentTable == 'oderslist') contractString = ` по договору № ${customer.contract}`;
+      if (currentTable == 'driverorderlist') contractString = ` по договору № `;
+    }
+    let appString: string = '';
+    if (app) appString = ` по заявке № ${order.applicationNumber}`;
+    let trackTrailerString: string = '';
+    if (trackTrailer) trackTrailerString = ` прецеп ${track.trackTrailerLicensePlate}`;
+    string =
+      string +
+      loadingString.join('') +
+      'выгрузка ' +
+      unloadingString.join('') +
+      ' водитель ' +
+      'A/M ' +
+      trackDriverString +
+      trackString +
+      trackTrailerString +
+      ttnString +
+      contractString +
+      appString;
+    setStrings([{ mainPart: string, numberOfShipments: 1, customerPrice: order.customerPrice }]);
+  }, [addData]);
+  useEffect(() => {
     setAddData({ checkBoxesValue, ttnData });
   }, [checkBoxesValue, ttnData]);
   return (
@@ -76,12 +162,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
           />
           {checkBoxesValue.ttn &&
             (editTtn ? (
-              <input
-                type="text"
-                value={ttnData}
-                onChange={getTtnData}
-                onKeyDown={handleEnterTtn}
-              />
+              <input type="text" value={ttnData} onChange={getTtnData} onKeyDown={handleEnterTtn} />
             ) : (
               <span onDoubleClick={handleDblClkTtn}>{ttnData}</span>
             ))}
@@ -154,7 +235,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
         </div>
       </div>
       <div className="wrapperTable">
-        <Bill order={order} addData={addData} currentTable={currentTable} />
+        <Bill order={order} strings={strings} currentTable={currentTable} />
         <Act />
       </div>
     </React.Fragment>

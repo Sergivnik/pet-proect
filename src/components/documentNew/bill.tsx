@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { OrderType, TrackDriver, Driver } from '../tsTypes';
-import { findValueBy_Id, sumInWords, shortName } from '../myLib/myLib';
+import { OrderType, Driver } from '../tsTypes';
+import { sumInWords, shortName } from '../myLib/myLib';
 
 interface BillProps {
   order: OrderType;
-  addData: any;
+  strings: DocString[];
   currentTable: string;
 }
 interface ClientData {
@@ -21,6 +21,11 @@ interface ClientData {
   bossName: string;
   ogrn: string;
   dateOfReg: string;
+}
+interface DocString {
+  mainPart: string;
+  numberOfShipments: number;
+  customerPrice: number;
 }
 
 const styles = {
@@ -68,32 +73,21 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Bill = ({ order, addData, currentTable }: BillProps) => {
-  const { ttn, contract, app, trackTrailer, dateFromApp, reason } = addData?.checkBoxesValue;
+export const Bill = ({ order, strings, currentTable }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
-  const citiesList = useSelector((state: any) => state.oderReducer.citieslist);
-  const trackDriverList = useSelector((state: any) => state.oderReducer.trackdrivers);
-  const trackList = useSelector((state: any) => state.oderReducer.tracklist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
   const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
   const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
-  const appList = useSelector((state: any) => state.customerReducer.customerOrders);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const driver = driverList.find((item: Driver) => item._id === order.idDriver);
-  const trackDriver = trackDriverList.find((item: TrackDriver) => item._id === order.idTrackDriver);
-  const track = trackList.find((item: any) => item._id === order.idTrack);
-  const application = appList.find((item: any) => item.orderId == order._id);
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [actNumber, setActNumber] = useState<string | number>('');
-  const [routeStrings, setRouteStrings] = useState<string[]>([]);
-  const [mainPartOfString, setMainPartOfString] = useState<string>('');
+  const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
   const [editNum, setEditNum] = useState<boolean>(false);
-  const [numberOfShipments, setNumberOfShipments] = useState<number>(1);
   const [editPrice, setEditPrice] = useState<boolean>(false);
-  const [customerPrice, setCustomerPrice] = useState<number>(order.customerPrice);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -148,72 +142,10 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
       }, 0);
       setActNumber(lastActNumber + 1);
     }
-    let string = 'Перевозка по маршруту загрузка ';
-    const loadingString = order.idLoadingPoint.map((item, index: number) => {
-      if (currentTable == 'oderslist') {
-        if (dateFromApp) {
-          const dateOfLoading = application.dateOfLoading;
-          return dateOfLoading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
-        } else {
-          return findValueBy_Id(item, citiesList).value + ' ';
-        }
-      }
-      if (currentTable == 'driverorderlist') {
-        if (dateFromApp) {
-          return 'dateOfLoading' + ' ' + findValueBy_Id(item, citiesList).value + ' ';
-        } else {
-          return findValueBy_Id(item, citiesList).value + ' ';
-        }
-      }
-    });
-    const unloadingString = order.idUnloadingPoint.map((item, index: number) => {
-      if (currentTable == 'oderslist') {
-        if (dateFromApp) {
-          const dateOfUploading = application.dateOfLoading;
-          return dateOfUploading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
-        } else {
-          return findValueBy_Id(item, citiesList).value + ' ';
-        }
-      }
-      if (currentTable == 'driverorderlist') {
-        if (dateFromApp) {
-          return 'dateOfUploading' + ' ' + findValueBy_Id(item, citiesList).value + ' ';
-        } else {
-          return findValueBy_Id(item, citiesList).value + ' ';
-        }
-      }
-    });
-    const trackDriverString = trackDriver.name + ' ';
-    const trackString = track.model + ' ' + track.value + ' ';
-    string =
-      string +
-      loadingString.join('') +
-      'выгрузка ' +
-      unloadingString.join('') +
-      ' водитель ' +
-      'A/M ' +
-      trackDriverString +
-      trackString;
-    setMainPartOfString(string);
-  }, [order, addData]);
+  }, [order]);
   useEffect(() => {
-    if (addData) {
-      const strings = [...routeStrings];
-      let ttnString: string = '';
-      if (ttn) ttnString = ` ТТН № ${addData.ttnData}`;
-      let contractString: string = '';
-      if (contract) {
-        if (currentTable == 'oderslist') contractString = ` по договору № ${customer.contract}`;
-        if (currentTable == 'driverorderlist') contractString = ` по договору № `;
-      }
-      let appString: string = '';
-      if (app) appString = ` по заявке № ${order.applicationNumber}`;
-      let trackTrailerString: string = '';
-      if (trackTrailer) trackTrailerString = ` прецеп ${track.trackTrailerLicensePlate}`;
-      strings[0] = mainPartOfString + trackTrailerString + ttnString + contractString + appString;
-      setRouteStrings(strings);
-    }
-  }, [addData, mainPartOfString]);
+    setRouteStrings(strings);
+  }, [strings]);
 
   const handleDblClkNum = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -221,7 +153,9 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
   };
   const handleChangeNum = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    setNumberOfShipments(Number(e.currentTarget.value));
+    let editStrings = [...routeStrings];
+    editStrings[0].numberOfShipments = Number(e.currentTarget.value);
+    setRouteStrings(editStrings);
   };
   const handleEnterNum = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditNum(false);
@@ -233,7 +167,9 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
   };
   const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     e.stopPropagation();
-    setCustomerPrice(Number(e.currentTarget.value));
+    let editStrings = [...routeStrings];
+    editStrings[0].customerPrice = Number(e.currentTarget.value);
+    setRouteStrings(editStrings);
   };
   const handleEnterPrice = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditPrice(false);
@@ -395,7 +331,9 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
           <tbody>
             <tr>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
-              <td style={{ border: '1px solid black', padding: '4px' }}>{routeStrings[0]}</td>
+              <td style={{ border: '1px solid black', padding: '4px' }}>
+                {routeStrings[0]?.mainPart}
+              </td>
               <td
                 style={{ border: '1px solid black', textAlign: 'center' }}
                 onDoubleClick={handleDblClkNum}
@@ -404,12 +342,12 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                   <input
                     type="number"
                     className="inputInTd"
-                    value={numberOfShipments}
+                    value={routeStrings[0].mainPart}
                     onChange={handleChangeNum}
                     onKeyDown={handleEnterNum}
                   />
                 ) : (
-                  numberOfShipments
+                  routeStrings[0]?.numberOfShipments
                 )}
               </td>
               <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
@@ -421,19 +359,19 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                   <input
                     type="number"
                     className="inputInTd"
-                    value={customerPrice}
+                    value={routeStrings[0].customerPrice}
                     onChange={handleChangePrice}
                     onKeyDown={handleEnterPrice}
                   />
                 ) : (
-                  customerPrice.toLocaleString('ru-RU', {
+                  routeStrings[0].customerPrice.toLocaleString('ru-RU', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })
                 )}
               </td>
               <td style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}>
-                {(customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -471,7 +409,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
                   fontWeight: 700,
                 }}
               >
-                {(customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -479,8 +417,8 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
             </tr>
             <tr>
               <td style={{ width: '80%' }}>
-                Всего наименований {numberOfShipments}, на сумму{' '}
-                {(customerPrice * numberOfShipments).toLocaleString('ru-RU', {
+                Всего наименований {routeStrings[0].numberOfShipments}, на сумму{' '}
+                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}{' '}
@@ -489,7 +427,7 @@ export const Bill = ({ order, addData, currentTable }: BillProps) => {
             </tr>
             <tr style={{ borderBottom: '2px solid black' }}>
               <td style={{ width: '80%', fontWeight: 700 }}>
-                {sumInWords(order.customerPrice * numberOfShipments)}
+                {sumInWords(order.customerPrice * routeStrings[0].numberOfShipments)}
               </td>
             </tr>
           </tbody>
