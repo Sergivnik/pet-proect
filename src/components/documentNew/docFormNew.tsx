@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Bill } from './bill';
 import { Act } from './Act.tsx';
-import { OrderType, TrackDriver, Driver } from '../tsTypes';
+import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
 import './docFormNew.sass';
 
@@ -235,7 +235,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
         </div>
       </div>
       <div className="wrapperTable">
-        <Bill order={order} strings={strings} currentTable={currentTable} />
+        <Bill order={order} strings={strings} currentTable={currentTable} reason={checkBoxesValue.reason}/>
         <Act />
       </div>
     </React.Fragment>

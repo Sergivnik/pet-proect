@@ -1,15 +1,13 @@
-CREATE DATABASE  IF NOT EXISTS `pet_proect` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `pet_proect`;
--- MySQL dump 10.13  Distrib 8.0.31, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.4.7, for Linux (x86_64)
 --
 -- Host: localhost    Database: pet_proect
 -- ------------------------------------------------------
--- Server version	8.0.31
+-- Server version	8.4.7
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -832,7 +830,6 @@ CREATE TABLE `yearconst` (
   `taxadvance` decimal(10,2) DEFAULT NULL,
   `fixedincometax` decimal(10,2) DEFAULT NULL,
   `deposit` decimal(10,2) DEFAULT NULL,
-  `IGC` varchar(45) DEFAULT NULL,
   `ownerId` int NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`),
   UNIQUE KEY `id_UNIQUE` (`id`)
@@ -845,7 +842,7 @@ CREATE TABLE `yearconst` (
 
 LOCK TABLES `yearconst` WRITE;
 /*!40000 ALTER TABLE `yearconst` DISABLE KEYS */;
-INSERT INTO `yearconst` VALUES (1,0.00,173043.11,53568.00,900000.00,'00000000727736243553',1),(2,0.00,0.00,0.00,0.00,NULL,2),(3,0.00,0.00,0.00,0.00,NULL,3);
+INSERT INTO `yearconst` VALUES (1,0.00,173043.11,53568.00,900000.00,1),(2,0.00,0.00,0.00,0.00,2),(3,0.00,0.00,0.00,0.00,3);
 /*!40000 ALTER TABLE `yearconst` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
@@ -858,4 +855,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-12-11 13:35:53
+-- Dump completed on 2025-12-11 10:21:55

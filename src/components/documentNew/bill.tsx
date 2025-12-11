@@ -7,6 +7,7 @@ interface BillProps {
   order: OrderType;
   strings: DocString[];
   currentTable: string;
+  reason: boolean;
 }
 interface ClientData {
   name: string;
@@ -73,21 +74,25 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Bill = ({ order, strings, currentTable }: BillProps) => {
+export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
   const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
   const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
+  const yearConst = useSelector((state: any) => state.oderReducer.yearconst);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const driver = driverList.find((item: Driver) => item._id === order.idDriver);
+  const IGC = yearConst.IGC;
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [actNumber, setActNumber] = useState<string | number>('');
   const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
   const [editNum, setEditNum] = useState<boolean>(false);
   const [editPrice, setEditPrice] = useState<boolean>(false);
+  const [editReason, setEditReason] = useState<boolean>(false);
+  const [textReason, setTextReason] = useState<string>(`  ИГК ${IGC}`);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -166,13 +171,21 @@ export const Bill = ({ order, strings, currentTable }: BillProps) => {
     setEditPrice(true);
   };
   const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
     let editStrings = [...routeStrings];
     editStrings[0].customerPrice = Number(e.currentTarget.value);
     setRouteStrings(editStrings);
   };
   const handleEnterPrice = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditPrice(false);
+  };
+  const handleDblClkReason = () => {
+    setEditReason(true);
+  };
+  const handleChangeReason = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTextReason(e.currentTarget.value);
+  };
+  const handleEnterReason = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditReason(false);
   };
   return (
     <div className="invoicePrintForm" style={styles.container}>
@@ -276,7 +289,7 @@ export const Bill = ({ order, strings, currentTable }: BillProps) => {
               {accountOwner?.dateOfReg} {accountOwner?.address}
             </div>
           </div>
-          <div>
+          <div style={{ height: '60px' }}>
             <div
               style={{
                 padding: '5px',
@@ -300,8 +313,43 @@ export const Bill = ({ order, strings, currentTable }: BillProps) => {
               {customer?.companyName}, ИНН {customer?.TIN}, {customer?.address}
             </div>
           </div>
+          {reason && (
+            <div style={{ height: '20px' }}>
+              <div
+                style={{
+                  padding: '5px',
+                  verticalAlign: 'top',
+                  float: 'left',
+                  display: 'inline-block',
+                  width: '10%',
+                }}
+              >
+                Основание:
+              </div>
+              {editReason ? (
+                <input
+                  type="text"
+                  value={textReason}
+                  onChange={handleChangeReason}
+                  onKeyDown={handleEnterReason}
+                />
+              ) : (
+                <div
+                  style={{
+                    padding: '5px',
+                    fontWeight: 700,
+                    float: 'right',
+                    display: 'inline-block',
+                    width: '86%',
+                  }}
+                  onDoubleClick={handleDblClkReason}
+                >
+                  {textReason}
+                </div>
+              )}
+            </div>
+          )}
         </div>
-
         <table
           style={{
             borderCollapse: 'collapse',
@@ -329,54 +377,58 @@ export const Bill = ({ order, strings, currentTable }: BillProps) => {
             </tr>
           </thead>
           <tbody>
-            <tr>
-              <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
-              <td style={{ border: '1px solid black', padding: '4px' }}>
-                {routeStrings[0]?.mainPart}
-              </td>
-              <td
-                style={{ border: '1px solid black', textAlign: 'center' }}
-                onDoubleClick={handleDblClkNum}
-              >
-                {editNum ? (
-                  <input
-                    type="number"
-                    className="inputInTd"
-                    value={routeStrings[0].mainPart}
-                    onChange={handleChangeNum}
-                    onKeyDown={handleEnterNum}
-                  />
-                ) : (
-                  routeStrings[0]?.numberOfShipments
-                )}
-              </td>
-              <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
-              <td
-                style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
-                onDoubleClick={handleDblClkPrice}
-              >
-                {editPrice ? (
-                  <input
-                    type="number"
-                    className="inputInTd"
-                    value={routeStrings[0].customerPrice}
-                    onChange={handleChangePrice}
-                    onKeyDown={handleEnterPrice}
-                  />
-                ) : (
-                  routeStrings[0].customerPrice.toLocaleString('ru-RU', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })
-                )}
-              </td>
-              <td style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}>
-                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString('ru-RU', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </td>
-            </tr>
+            {routeStrings.map((string, index) => {
+              return (
+                <tr key={`billString${index}`}>
+                  <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
+                  <td style={{ border: '1px solid black', padding: '4px' }}>{string?.mainPart}</td>
+                  <td
+                    style={{ border: '1px solid black', textAlign: 'center' }}
+                    onDoubleClick={handleDblClkNum}
+                  >
+                    {editNum ? (
+                      <input
+                        type="number"
+                        className="inputInTd"
+                        value={string.numberOfShipments}
+                        onChange={handleChangeNum}
+                        onKeyDown={handleEnterNum}
+                      />
+                    ) : (
+                      string?.numberOfShipments
+                    )}
+                  </td>
+                  <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
+                  <td
+                    style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
+                    onDoubleClick={handleDblClkPrice}
+                  >
+                    {editPrice ? (
+                      <input
+                        type="number"
+                        className="inputInTd"
+                        value={string.customerPrice}
+                        onChange={handleChangePrice}
+                        onKeyDown={handleEnterPrice}
+                      />
+                    ) : (
+                      string.customerPrice.toLocaleString('ru-RU', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      })
+                    )}
+                  </td>
+                  <td
+                    style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
+                  >
+                    {(string.customerPrice * string.numberOfShipments).toLocaleString('ru-RU', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })}
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
@@ -409,19 +461,25 @@ export const Bill = ({ order, strings, currentTable }: BillProps) => {
                   fontWeight: 700,
                 }}
               >
-                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString('ru-RU', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
+                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString(
+                  'ru-RU',
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}
               </td>
             </tr>
             <tr>
               <td style={{ width: '80%' }}>
                 Всего наименований {routeStrings[0].numberOfShipments}, на сумму{' '}
-                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString('ru-RU', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}{' '}
+                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString(
+                  'ru-RU',
+                  {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }
+                )}{' '}
                 руб без НДС
               </td>
             </tr>
