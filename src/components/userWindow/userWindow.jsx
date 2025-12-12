@@ -57,6 +57,11 @@ export const UserWindow = props => {
   const stopDblClk = e => {
     e.stopPropagation();
   };
+  const stopDelete = e => {
+    if (e.key === 'Delete') {
+      e.stopPropagation(); 
+    }
+  };
   useEffect(() => {
     let divRoot = document.querySelector('#root');
     let div = document.querySelector(`#${props.windowId}`);
@@ -83,6 +88,7 @@ export const UserWindow = props => {
       id={props.windowId}
       onClick={handleDivClick}
       onDoubleClick={stopDblClk}
+      onKeyDown={stopDelete}
     >
       <header
         className="userWindowHeader"

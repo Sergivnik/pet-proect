@@ -8,6 +8,7 @@ interface BillProps {
   strings: DocString[];
   currentTable: string;
   reason: boolean;
+  getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
   name: string;
@@ -74,7 +75,7 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
+export const Bill = ({ order, strings, currentTable, reason, getStringData }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
@@ -89,10 +90,13 @@ export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [actNumber, setActNumber] = useState<string | number>('');
   const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
+  const [editString, setEditString] = useState<boolean>(false);
   const [editNum, setEditNum] = useState<boolean>(false);
   const [editPrice, setEditPrice] = useState<boolean>(false);
   const [editReason, setEditReason] = useState<boolean>(false);
   const [textReason, setTextReason] = useState<string>(`  ИГК ${IGC}`);
+  const [heighrEditInput, setHeightEditInput] = useState<number>(0);
+  const [indexEditString, setIndexEditString] = useState<number>();
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -152,31 +156,57 @@ export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
     setRouteStrings(strings);
   }, [strings]);
 
-  const handleDblClkNum = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
+  const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
+    const height = e.currentTarget.clientHeight;
+    setIndexEditString(index);
+    setHeightEditInput(height);
+    setEditString(true);
+  };
+  const handleChangeMainPart = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    let editStrings = [...routeStrings];
+    editStrings[indexEditString].mainPart = e.currentTarget.value;
+    setRouteStrings(editStrings);
+  };
+  const handleEnterMainPart = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+      setEditString(false);
+      getStringData(routeStrings);
+    }
+  };
+  const handleDblClkNum = (e: React.MouseEvent<HTMLElement>, index: number) => {
+    const height = e.currentTarget.clientHeight;
+    setIndexEditString(index);
+    setHeightEditInput(height);
     setEditNum(true);
   };
   const handleChangeNum = (e: React.ChangeEvent<HTMLInputElement>) => {
-    e.stopPropagation();
     let editStrings = [...routeStrings];
-    editStrings[0].numberOfShipments = Number(e.currentTarget.value);
+    editStrings[indexEditString].numberOfShipments = Number(e.currentTarget.value);
     setRouteStrings(editStrings);
   };
   const handleEnterNum = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditNum(false);
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+      setEditNum(false);
+      getStringData(routeStrings);
+    }
   };
 
-  const handleDblClkPrice = (e: React.MouseEvent<HTMLElement>) => {
-    e.stopPropagation();
+  const handleDblClkPrice = (e: React.MouseEvent<HTMLElement>, index: number) => {
+    const height = e.currentTarget.clientHeight;
+    setIndexEditString(index);
+    setHeightEditInput(height);
     setEditPrice(true);
   };
   const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     let editStrings = [...routeStrings];
-    editStrings[0].customerPrice = Number(e.currentTarget.value);
+    editStrings[indexEditString].customerPrice = Number(e.currentTarget.value);
     setRouteStrings(editStrings);
   };
   const handleEnterPrice = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditPrice(false);
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+      setEditPrice(false);
+      getStringData(routeStrings);
+    }
   };
   const handleDblClkReason = () => {
     setEditReason(true);
@@ -187,6 +217,12 @@ export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
   const handleEnterReason = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditReason(false);
   };
+
+  const totalSum = routeStrings.reduce(
+    (sum, item) => sum + item.customerPrice * item.numberOfShipments,
+    0
+  );
+  const totalCount = routeStrings.reduce((sum, item) => sum + item.numberOfShipments, 0);
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
@@ -380,15 +416,31 @@ export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
             {routeStrings.map((string, index) => {
               return (
                 <tr key={`billString${index}`}>
-                  <td style={{ border: '1px solid black', textAlign: 'center' }}>1</td>
-                  <td style={{ border: '1px solid black', padding: '4px' }}>{string?.mainPart}</td>
+                  <td style={{ border: '1px solid black', textAlign: 'center' }}>{index + 1}</td>
+                  <td
+                    style={{ border: '1px solid black', padding: '4px' }}
+                    onDoubleClick={e => handleDblClkMainPart(e, index)}
+                  >
+                    {editString && indexEditString == index ? (
+                      <textarea
+                        style={{ height: `${heighrEditInput}px` }}
+                        className="inputInTd"
+                        value={string.mainPart}
+                        onChange={handleChangeMainPart}
+                        onKeyDown={handleEnterMainPart}
+                      />
+                    ) : (
+                      string?.mainPart
+                    )}
+                  </td>
                   <td
                     style={{ border: '1px solid black', textAlign: 'center' }}
-                    onDoubleClick={handleDblClkNum}
+                    onDoubleClick={e => handleDblClkNum(e, index)}
                   >
-                    {editNum ? (
+                    {editNum && indexEditString == index ? (
                       <input
                         type="number"
+                        style={{ height: `${heighrEditInput}px` }}
                         className="inputInTd"
                         value={string.numberOfShipments}
                         onChange={handleChangeNum}
@@ -401,11 +453,12 @@ export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
                   <td style={{ border: '1px solid black', textAlign: 'center' }}>шт</td>
                   <td
                     style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
-                    onDoubleClick={handleDblClkPrice}
+                    onDoubleClick={e => handleDblClkPrice(e, index)}
                   >
-                    {editPrice ? (
+                    {editPrice && indexEditString == index ? (
                       <input
                         type="number"
+                        style={{ height: `${heighrEditInput}px` }}
                         className="inputInTd"
                         value={string.customerPrice}
                         onChange={handleChangePrice}
@@ -461,32 +514,24 @@ export const Bill = ({ order, strings, currentTable, reason }: BillProps) => {
                   fontWeight: 700,
                 }}
               >
-                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString(
-                  'ru-RU',
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }
-                )}
+                {totalSum.toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
               </td>
             </tr>
             <tr>
               <td style={{ width: '80%' }}>
-                Всего наименований {routeStrings[0].numberOfShipments}, на сумму{' '}
-                {(routeStrings[0].customerPrice * routeStrings[0].numberOfShipments).toLocaleString(
-                  'ru-RU',
-                  {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  }
-                )}{' '}
+                Всего наименований {totalCount}, на сумму{' '}
+                {totalSum.toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{' '}
                 руб без НДС
               </td>
             </tr>
             <tr style={{ borderBottom: '2px solid black' }}>
-              <td style={{ width: '80%', fontWeight: 700 }}>
-                {sumInWords(order.customerPrice * routeStrings[0].numberOfShipments)}
-              </td>
+              <td style={{ width: '80%', fontWeight: 700 }}>{sumInWords(totalSum)}</td>
             </tr>
           </tbody>
         </table>
