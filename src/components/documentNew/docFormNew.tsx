@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './act';
+import { Act } from './act.tsx';
+import { Invoice } from './invoice';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
 import './docFormNew.sass';
@@ -152,11 +153,11 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
       ttnString +
       contractString +
       appString;
-      setStrings(prev => {
-        const copy = [...prev];
-        copy[0] = { mainPart: string, numberOfShipments: 1, customerPrice: order.customerPrice };
-        return copy;
-      });
+    setStrings(prev => {
+      const copy = [...prev];
+      copy[0] = { mainPart: string, numberOfShipments: 1, customerPrice: order.customerPrice };
+      return copy;
+    });
   }, [addData]);
   useEffect(() => {
     setAddData({ checkBoxesValue, ttnData });
@@ -247,20 +248,32 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
         </div>
       </div>
       <div className="wrapperTable">
-        <Bill
-          order={order}
-          strings={strings}
-          currentTable={currentTable}
-          reason={checkBoxesValue.reason}
-          getStringData={getStringData}
-        />
-        <Act
-          order={order}
-          strings={strings}
-          currentTable={currentTable}
-          reason={checkBoxesValue.reason}
-          getStringData={getStringData}
-        />
+        {choisenTypeDoc === 'Invoice' ? (
+          <Invoice
+            order={order}
+            strings={strings}
+            currentTable={currentTable}
+            reason={checkBoxesValue.reason}
+            getStringData={getStringData}
+          />
+        ) : (
+          <>
+            <Bill
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              getStringData={getStringData}
+            />
+            <Act
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              getStringData={getStringData}
+            />
+          </>
+        )}
       </div>
     </React.Fragment>
   );
