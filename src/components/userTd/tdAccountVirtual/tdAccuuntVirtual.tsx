@@ -85,6 +85,7 @@ export const TdAccountVirtual = ({
       }
       case 'editBill':
         setWindowHeader('Редактировать счет');
+        setWindowChild(<DocFormNew order={elem} currentTable="driverorderlist" />);
         break;
       case 'printBill':
         setWindowHeader('Печать счета');

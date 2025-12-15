@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes';
 import { sumInWords, shortName } from '../myLib/myLib';
+import { DOMENNAME } from '../../middlewares/initialState.js';
 
 interface ActProps {
   order: OrderType;
   strings: DocString[];
   currentTable: string;
   reason: boolean;
+  stamp: boolean;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -65,7 +67,7 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Act = ({ order, strings, currentTable, reason, getStringData }: ActProps) => {
+export const Act = ({ order, strings, currentTable, reason, stamp, getStringData }: ActProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
@@ -400,6 +402,34 @@ export const Act = ({ order, strings, currentTable, reason, getStringData }: Act
             Исполнитель _____________________ {shortName(accountOwner?.bossName)}
                 Заказчик ________________________ {shortName(customer?.bossName)}
           </p>
+          {stamp && (
+            <img
+              style={{
+                position: 'absolute',
+                left: '60px',
+                top: '-70px',
+                opacity: '0.7',
+                zIndex: '-2',
+              }}
+              height="170"
+              width="170"
+              src={`${DOMENNAME}/img/stamp.png`}
+            />
+          )}
+          {stamp && (
+            <img
+              style={{
+                position: 'absolute',
+                left: '60px',
+                top: '-70px',
+                opacity: '0.7',
+                zIndex: '-2',
+              }}
+              height="120"
+              width="120"
+              src={`${DOMENNAME}/img/sign.png`}
+            />
+          )}
         </div>
       </div>
     </div>

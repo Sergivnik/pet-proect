@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes';
 import { sumInWords, shortName } from '../myLib/myLib';
+import { DOMENNAME } from '../../middlewares/initialState.js';
 
 interface BillProps {
   order: OrderType;
   strings: DocString[];
   currentTable: string;
   reason: boolean;
+  stamp: boolean;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -75,7 +77,7 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Bill = ({ order, strings, currentTable, reason, getStringData }: BillProps) => {
+export const Bill = ({ order, strings, currentTable, reason, stamp, getStringData }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
@@ -540,6 +542,34 @@ export const Bill = ({ order, strings, currentTable, reason, getStringData }: Bi
             Индивидуальный предприниматель _____________________________{' '}
             {shortName(accountOwner?.bossName)}
           </p>
+          {stamp && (
+            <img
+              style={{
+                position: 'absolute',
+                left: '300px',
+                top: '-65px',
+                opacity: '0.7',
+                zIndex: '-2',
+              }}
+              height="170"
+              width="170"
+              src={`${DOMENNAME}/img/stamp.png`}
+            />
+          )}
+          {stamp && (
+            <img
+              style={{
+                position: 'absolute',
+                left: '330px',
+                top: '-75px',
+                zIndex: '-1',
+                transform: 'rotate(15deg)',
+              }}
+              height="120"
+              width="120"
+              src={`${DOMENNAME}/img/sign.png`}
+            />
+          )}
         </div>
       </div>
     </div>
