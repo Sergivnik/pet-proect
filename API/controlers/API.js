@@ -663,7 +663,7 @@ module.exports.taskCreateDoc = async (req, res) => {
       console.log('PDF создан');
     });
 
-    tacksDocs.add(arrOrderId, invoiceNumber, data => {
+    tacksDocs.add(arrOrderId, invoiceNumber, 'oderslist', data => {
       if (data.error) {
         return res.status(500).json({ message: data.error });
       }

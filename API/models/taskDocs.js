@@ -7,16 +7,18 @@ const writeFileAsync = util.promisify(fs.writeFile);
 const unlinkAsync = util.promisify(fs.unlink);
 
 var TaskDocs = {
-  add: async function (listId, docNumber, callback) {
+  add: async function (listId, docNumber, currentTable, callback) {
     if (!isNaN(docNumber)) {
       if (docNumber < 10 && docNumber > 0) docNumber = '000' + docNumber;
       if (docNumber < 100 && docNumber > 9) docNumber = '00' + docNumber;
       if (docNumber < 1000 && docNumber > 99) docNumber = '0' + docNumber;
       if (docNumber < 10000 && docNumber > 999) docNumber = '' + docNumber;
     }
+    console.log(`UPDATE ${currentTable} SET accountNumber=? WHERE _id=?`);
+
     try {
       for (const id of listId) {
-        await db.query(`UPDATE oderslist SET accountNumber=? WHERE _id=?`, [docNumber, id]);
+        await db.query(`UPDATE ${currentTable} SET accountNumber=? WHERE _id=?`, [docNumber, id]);
       }
       callback('success');
     } catch (err) {

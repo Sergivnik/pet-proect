@@ -1,7 +1,9 @@
 var tasksDoc = require('../models/taskDocs.js');
+const puppeteer = require('puppeteer');
 var fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
+const { log } = require('console');
 const writeFileAsync = promisify(fs.writeFile);
 const existsAsync = promisify(fs.exists);
 const writeLogToFile = logData => {
@@ -25,6 +27,39 @@ const callBack = (data, res) => {
     res.json(data);
   }
 };
+
+// ---------Очередь создания pdf-файлов---------//
+const MAX_CONCURRENT = 10; // ← Меняй это число для лимита
+let activeCount = 0;
+const queue = [];
+
+async function enqueueTask(taskFn) {
+  return new Promise((resolve, reject) => {
+    queue.push({ taskFn, resolve, reject });
+    processQueue();
+  });
+}
+
+async function processQueue() {
+  if (activeCount >= MAX_CONCURRENT || queue.length === 0) return;
+
+  const { taskFn, resolve, reject } = queue.shift();
+  activeCount++;
+
+  taskFn()
+    .then(result => resolve(result))
+    .catch(err => reject(err))
+    .finally(() => {
+      console.log(
+        `Активных задач: ${activeCount}, Память:`,
+        process.memoryUsage().rss / 1024 / 1024,
+        'MB'
+      );
+      activeCount--;
+      processQueue(); // запускаем следующую задачу
+    });
+}
+// ---------Очередь создания pdf-файлов---------//
 
 module.exports.taskCreateContract = (req, res) => {
   res.set('Access-Control-Allow-Credentials', 'true');
@@ -60,7 +95,60 @@ module.exports.taskGetPdfContract = (req, res) => {
 module.exports.createAccountingDoc = async (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
-  console.log(req.body);
+  const { html, billNumber, year, customer, currentTable, orderId, stamp, typeDoc } = req.body;
+  let dirPath, filePath;
+  if (currentTable === 'oderslist') {
+    dirPath = `./API/Bills/${year}/${customer}`;
+    if (typeDoc === 'Bill') filePath = `${dirPath}/doc${billNumber}.pdf`;
+    if (typeDoc === 'BillNoStamp') filePath = `${dirPath}/docWithoutStamp${billNumber}.pdf`;
+    if (typeDoc === 'Invoice') filePath = `${dirPath}/invoice${billNumber}.pdf`;
+  }
+  if (currentTable === 'driverorderlist') {
+    dirPath = `./API/DriverBills/${year}/${customer}`;
+    if (typeDoc === 'Bill') filePath = `${dirPath}/doc${billNumber}.pdf`;
+    if (typeDoc === 'BillNoStamp') filePath = `${dirPath}/docWithoutStamp${billNumber}.pdf`;
+    if (typeDoc === 'Invoice') filePath = `${dirPath}/invoice${billNumber}.pdf`;
+  }
+  const orient = typeDoc === 'Invoice' ? true : false;
+
+  try {
+    await enqueueTask(async () => {
+      if (!fs.existsSync(dirPath)) {
+        fs.mkdirSync(dirPath, { recursive: true });
+      }
+
+      const browser = await puppeteer.launch({
+        headless: 'new',
+        args: ['--no-sandbox', '--disable-dev-shm-usage'],
+      });
+      const page = await browser.newPage();
+      await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
+      await page.pdf({
+        path: filePath,
+        format: 'a4',
+        landscape: orient,
+        timeout: 0,
+        printBackground: true,
+      });
+      await browser.close();
+      console.log('PDF создан');
+    });
+    if (typeDoc === 'Bill') {
+      tasksDoc.add([orderId], billNumber, currentTable, data => {
+        if (data.error) {
+          return res.status(500).json({ message: data.error });
+        }
+
+        req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber });
+        return res.json(data);
+      });
+    } else {
+      res.json('success!');
+    }
+  } catch (error) {
+    console.error('Ошибка при создании PDF:', error);
+    return res.status(500).json({ message: 'Ошибка создания PDF' });
+  }
 };
 module.exports.taskCreatePdfDocNew = async (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './act';
+import { Act } from './Act.tsx';
 import { Invoice } from './invoice';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
@@ -103,20 +103,18 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const handleSaveDoc = () => {
     let htmlDoc = document.querySelector('.wrapperTable');
     let year = new Date(order.date).getFullYear();
-    if (choisenTypeDoc === 'Bill') {
-      dispatch(
-        createBill(
-          htmlDoc.innerHTML,
-          actNumber,
-          year,
-          customer.value,
-          currentTable,
-          order._id,
-          true,
-          'Bill'
-        )
-      );
-    }
+    dispatch(
+      createBill(
+        htmlDoc.innerHTML,
+        actNumber,
+        year,
+        customer.value,
+        currentTable,
+        order._id,
+        true,
+        choisenTypeDoc
+      )
+    );
   };
   useEffect(() => {
     if (order.accountNumber != null && order.accountNumber != '') {
