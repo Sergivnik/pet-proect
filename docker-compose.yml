@@ -19,6 +19,7 @@ services:
     volumes:
       - ./API/Bills:/app/API/Bills
       - ./API/contracts:/app/API/contracts
+      - ./API/DriverBills:/app/API/DriverBills
 
   db:
     image: mysql:8
