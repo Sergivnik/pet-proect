@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { OrderType, Driver } from '../tsTypes';
-import { sumInWords, shortName } from '../myLib/myLib';
+import { OrderType, Driver } from '../tsTypes.js';
+import { sumInWords, shortName } from '../myLib/myLib.js';
 import { DOMENNAME } from '../../middlewares/initialState.js';
 
 interface ActProps {
@@ -10,6 +10,7 @@ interface ActProps {
   currentTable: string;
   reason: boolean;
   stamp: boolean;
+  actNumber: string | number;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -67,7 +68,15 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Act = ({ order, strings, currentTable, reason, stamp, getStringData }: ActProps) => {
+export const Act = ({
+  order,
+  strings,
+  currentTable,
+  reason,
+  stamp,
+  actNumber,
+  getStringData,
+}: ActProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
@@ -80,7 +89,6 @@ export const Act = ({ order, strings, currentTable, reason, stamp, getStringData
   const IGC = yearConst.IGC;
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
-  const [actNumber, setActNumber] = useState<string | number>('');
   const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
   const [editString, setEditString] = useState<boolean>(false);
   const [editNum, setEditNum] = useState<boolean>(false);
@@ -124,26 +132,6 @@ export const Act = ({ order, strings, currentTable, reason, stamp, getStringData
     }
   }, [currentTable, currentOwner, driver]);
 
-  useEffect(() => {
-    if (order.accountNumber != null && order.accountNumber != '') {
-      setActNumber(order.accountNumber);
-    } else {
-      const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
-      let actList;
-      if (currentTable === 'oderslist') {
-        actList = orderList.filter((item: OrderType) => new Date(item.date) >= firstDateOfYear);
-      } else {
-        actList = driverOrderList.filter(
-          (item: OrderType) => new Date(item.date) >= firstDateOfYear
-        );
-      }
-      const lastActNumber = actList.reduce((maxNumber: number, item: OrderType) => {
-        const num = Number(item.accountNumber) || 0;
-        return Math.max(maxNumber, num);
-      }, 0);
-      setActNumber(lastActNumber + 1);
-    }
-  }, [order, currentTable, orderList, driverOrderList]);
 
   useEffect(() => {
     setRouteStrings(strings);

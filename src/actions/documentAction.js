@@ -24,6 +24,9 @@ export const CREATE_APP_REQUEST = 'CREATE_APP_REQUEST';
 export const CREATE_SOMEDOC_NEW_SUCCESS = 'CREATE_SOMEDOC_NEW_SUCCESS';
 export const CREATE_SOMEDOC_NEW_FAILURE = 'CREATE_SOMEDOC_NEW_FAILURE';
 export const CREATE_SOMEDOC_NEW_REQUEST = 'CREATE_SOMEDOC_NEW_REQUEST';
+export const CREATE_BILL_REQUEST = 'CREATE_BILL_REQUEST';
+export const CREATE_BILL_SUCCESS = 'CREATE_BILL_SUCCESS';
+export const CREATE_BILL_FAILURE = 'CREATE_BILL_FAILURE';
 
 export const getPdfSuccess = dataServer => ({
   type: GET_PDF_SUCCESS,
@@ -134,7 +137,50 @@ export const createNewInvoice = (docHtml, invoiceNumber, year, customer, arrOrde
       });
   };
 };
-
+export const createBillRequest = () => ({
+  type: CREATE_BILL_REQUEST,
+});
+export const createBillFailure = () => ({
+  type: CREATE_BILL_FAILURE,
+});
+export const createBillSucces = (orderId, currentTable, billNumber) => ({
+  type: CREATE_BILL_SUCCESS,
+  orderId,
+  currentTable,
+  billNumber,
+});
+export const createBill = (
+  docHtml,
+  billNumber,
+  year,
+  customer,
+  currentTable,
+  orderId,
+  stamp,
+  typeDoc
+) => {
+  return dispatch => {
+    dispatch(createBillRequest());
+    axios
+      .post(DOMENNAME + '/API/createAccountingDoc', {
+        html: docHtml,
+        year: year,
+        billNumber: billNumber,
+        customer: customer,
+        currentTable: currentTable,
+        orderId: orderId,
+        stamp: stamp,
+        typeDoc: typeDoc,
+      })
+      .then(res => {
+        console.log(res);
+      })
+      .catch(e => {
+        console.log(e);
+        dispatch(createBillFailure());
+      });
+  };
+};
 export const addSomePdfDocSuccess = () => ({
   type: ADD_CONSIGNMENT_NOTE_SUCCESS,
 });

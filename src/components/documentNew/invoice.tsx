@@ -8,6 +8,7 @@ interface InvoiceProps {
   strings: DocString[];
   currentTable: string;
   reason: boolean;
+  actNumber: string | number;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -82,18 +83,22 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Invoice = ({ order, strings, currentTable, reason, getStringData }: InvoiceProps) => {
+export const Invoice = ({
+  order,
+  strings,
+  currentTable,
+  reason,
+  actNumber,
+  getStringData,
+}: InvoiceProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
-  const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
-  const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const driver = driverList.find((item: Driver) => item._id === order.idDriver);
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
-  const [invoiceNumber, setInvoiceNumber] = useState<string | number>('');
   const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
   const [editString, setEditString] = useState<boolean>(false);
   const [editNum, setEditNum] = useState<boolean>(false);
@@ -138,29 +143,6 @@ export const Invoice = ({ order, strings, currentTable, reason, getStringData }:
       });
     }
   }, [currentTable, currentOwner, driver]);
-
-  useEffect(() => {
-    if (order.accountNumber != null && order.accountNumber != '') {
-      setInvoiceNumber(order.accountNumber);
-    } else {
-      const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
-      let invoiceList;
-      if (currentTable === 'oderslist') {
-        invoiceList = orderList.filter(
-          (order: OrderType) => new Date(order.date) >= firstDateOfYear
-        );
-      } else {
-        invoiceList = driverOrderList.filter(
-          (order: OrderType) => new Date(order.date) >= firstDateOfYear
-        );
-      }
-      const lastInvoiceNumber = invoiceList.reduce((maxNumber: number, order: OrderType) => {
-        const num = Number(order.accountNumber) || 0;
-        return Math.max(maxNumber, num);
-      }, 0);
-      setInvoiceNumber(lastInvoiceNumber + 1);
-    }
-  }, [order]);
 
   useEffect(() => {
     setRouteStrings(strings);
@@ -230,7 +212,7 @@ export const Invoice = ({ order, strings, currentTable, reason, getStringData }:
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
         <div style={styles.header}>
-          СЧЕТ-ФАКТУРА № {invoiceNumber}
+          СЧЕТ-ФАКТУРА № {actNumber}
           <br />
           от {new Date(order.date).toLocaleDateString()}
         </div>

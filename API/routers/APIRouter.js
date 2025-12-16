@@ -45,6 +45,7 @@ router.post('/addOrderApp', API.taskAddOrderApp);
 router.post('/proxy/:id', API.taskProxy);
 router.post('/addData', API.taskAddData);
 router.post('/addPdf/:id', API.taskAddPdfDoc);
+router.post('/createAccountingDoc', docAPI.createAccountingDoc)
 router.post('/createDoc', API.taskCreateDoc);
 router.post('/createDocWithoutStamp', API.taskCreateDocWithoutStamp);
 router.post('/createApp', API.taskCreateApp);

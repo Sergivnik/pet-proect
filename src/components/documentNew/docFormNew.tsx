@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './act.tsx';
+import { Act } from './act';
 import { Invoice } from './invoice';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
+import { createBill } from '../../actions/documentAction.js';
 import './docFormNew.sass';
 
 interface checkBoxType {
@@ -26,6 +27,7 @@ interface DocString {
 }
 
 export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
+  const dispatch = useDispatch();
   const [checkBoxesValue, setCheckBoxesValue] = useState<checkBoxType>({
     ttn: false,
     contract: false,
@@ -34,7 +36,9 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     dateFromApp: false,
     reason: false,
   });
-  const [choisenTypeDoc, setChosenTypeDoc] = useState<string | null>('Bill');
+  const DOC_TYPES = ['Bill', 'BillNoStamp', 'Invoice'] as const;
+  type DocType = (typeof DOC_TYPES)[number];
+  const [choisenTypeDoc, setChosenTypeDoc] = useState<DocType | null>('Bill');
   const [ttnData, setTtnData] = useState<string>('');
   const [editTtn, setEditTtn] = useState<boolean>(true);
   const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
@@ -47,11 +51,14 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const trackDriverList = useSelector((state: any) => state.oderReducer.trackdrivers);
   const trackList = useSelector((state: any) => state.oderReducer.tracklist);
   const appList = useSelector((state: any) => state.customerReducer.customerOrders);
+  const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
+  const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const trackDriver = trackDriverList.find((item: TrackDriver) => item._id === order.idTrackDriver);
   const track = trackList.find((item: any) => item._id === order.idTrack);
   const application = appList.find((item: any) => item.orderId == order._id);
+  const [actNumber, setActNumber] = useState<string | number>('');
 
   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.currentTarget.name as keyof checkBoxType;
@@ -61,7 +68,10 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     });
   };
   const handleClickTypeDoc = (e: React.MouseEvent<HTMLDivElement>) => {
-    setChosenTypeDoc(e.currentTarget.id);
+    const id = e.currentTarget.id;
+    if (DOC_TYPES.includes(id as DocType)) {
+      setChosenTypeDoc(id as DocType);
+    }
   };
   const getTtnData = e => {
     setTtnData(e.currentTarget.value);
@@ -90,6 +100,44 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     arr.push(strings[0]);
     setStrings(arr);
   };
+  const handleSaveDoc = () => {
+    let htmlDoc = document.querySelector('.wrapperTable');
+    let year = new Date(order.date).getFullYear();
+    if (choisenTypeDoc === 'Bill') {
+      dispatch(
+        createBill(
+          htmlDoc.innerHTML,
+          actNumber,
+          year,
+          customer.value,
+          currentTable,
+          order._id,
+          true,
+          'Bill'
+        )
+      );
+    }
+  };
+  useEffect(() => {
+    if (order.accountNumber != null && order.accountNumber != '') {
+      setActNumber(order.accountNumber);
+    } else {
+      const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
+      let actList: OrderType[];
+      if (currentTable === 'oderslist') {
+        actList = orderList.filter((order: OrderType) => new Date(order.date) >= firstDateOfYear);
+      } else {
+        actList = driverOrderList.filter(
+          (order: OrderType) => new Date(order.date) >= firstDateOfYear
+        );
+      }
+      const lastActNumber = actList.reduce((maxNumber: number, order: OrderType) => {
+        const num = Number(order.accountNumber) || 0;
+        return Math.max(maxNumber, num);
+      }, 0);
+      setActNumber(lastActNumber + 1);
+    }
+  }, [order]);
   useEffect(() => {
     let string = 'Перевозка по маршруту загрузка ';
     const { ttn, contract, app, trackTrailer, dateFromApp, reason } = addData?.checkBoxesValue;
@@ -244,7 +292,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
         </div>
         <div className="wrapperBtnBlock">
           <button onClick={handleAddString}>Добавить строку</button>
-          <button>Сохранить</button>
+          <button onClick={handleSaveDoc}>Сохранить</button>
         </div>
       </div>
       <div className="wrapperTable">
@@ -254,6 +302,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
             strings={strings}
             currentTable={currentTable}
             reason={checkBoxesValue.reason}
+            actNumber={actNumber}
             getStringData={getStringData}
           />
         )}
@@ -265,6 +314,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={true}
+              actNumber={actNumber}
               getStringData={getStringData}
             />
             <Act
@@ -273,6 +323,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={true}
+              actNumber={actNumber}
               getStringData={getStringData}
             />
           </React.Fragment>
@@ -285,6 +336,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={false}
+              actNumber={actNumber}
               getStringData={getStringData}
             />
             <Act
@@ -293,6 +345,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={false}
+              actNumber={actNumber}
               getStringData={getStringData}
             />
             <Act
@@ -301,6 +354,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={false}
+              actNumber={actNumber}
               getStringData={getStringData}
             />
           </React.Fragment>

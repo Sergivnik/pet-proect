@@ -10,6 +10,7 @@ interface BillProps {
   currentTable: string;
   reason: boolean;
   stamp: boolean;
+  actNumber: string | number;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -77,12 +78,18 @@ const styles = {
   } as React.CSSProperties,
 };
 
-export const Bill = ({ order, strings, currentTable, reason, stamp, getStringData }: BillProps) => {
+export const Bill = ({
+  order,
+  strings,
+  currentTable,
+  reason,
+  stamp,
+  actNumber,
+  getStringData,
+}: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
-  const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
-  const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
   const yearConst = useSelector((state: any) => state.oderReducer.yearconst);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
@@ -90,7 +97,6 @@ export const Bill = ({ order, strings, currentTable, reason, stamp, getStringDat
   const IGC = yearConst.IGC;
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
-  const [actNumber, setActNumber] = useState<string | number>('');
   const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
   const [editString, setEditString] = useState<boolean>(false);
   const [editNum, setEditNum] = useState<boolean>(false);
@@ -134,26 +140,7 @@ export const Bill = ({ order, strings, currentTable, reason, stamp, getStringDat
       });
     }
   }, [currentTable, currentOwner, driver]);
-  useEffect(() => {
-    if (order.accountNumber != null && order.accountNumber != '') {
-      setActNumber(order.accountNumber);
-    } else {
-      const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
-      let actList;
-      if (currentTable === 'oderslist') {
-        actList = orderList.filter((order: OrderType) => new Date(order.date) >= firstDateOfYear);
-      } else {
-        actList = driverOrderList.filter(
-          (order: OrderType) => new Date(order.date) >= firstDateOfYear
-        );
-      }
-      const lastActNumber = actList.reduce((maxNumber: number, order: OrderType) => {
-        const num = Number(order.accountNumber) || 0;
-        return Math.max(maxNumber, num);
-      }, 0);
-      setActNumber(lastActNumber + 1);
-    }
-  }, [order]);
+
   useEffect(() => {
     setRouteStrings(strings);
   }, [strings]);
