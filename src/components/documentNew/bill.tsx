@@ -10,7 +10,7 @@ interface BillProps {
   currentTable: string;
   reason: boolean;
   stamp: boolean;
-  actNumber: string | number;
+  actNumberString: string;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -84,7 +84,7 @@ export const Bill = ({
   currentTable,
   reason,
   stamp,
-  actNumber,
+  actNumberString,
   getStringData,
 }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
@@ -283,9 +283,7 @@ export const Bill = ({
         </table>
         <div>
           <div style={styles.invoiceNumber}>
-            <h4 style={styles.invoiceTitle}>
-              Счет № {actNumber} от {new Date(order.date).toLocaleDateString()}
-            </h4>
+            <h4 style={styles.invoiceTitle}>Счет № {actNumberString}</h4>
           </div>
         </div>
         <div style={{ fontSize: '14px' }}>

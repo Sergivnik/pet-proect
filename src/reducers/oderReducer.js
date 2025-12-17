@@ -1399,21 +1399,24 @@ export const oderReducer = (store = initialStore, action) => {
       return { ...store, request: { status: 'FAILURE', error: action.error } };
     }
     case CREATE_BILL_SUCCESS: {
-      console.log(action);
-      if (action.currentTable == 'oderslist') {
-        let orderList = [...store.odersList];
-        let originOrderList = [...store.originOdersList];
-        let index = orderList.findIndex(order => order._id == action.orderId);
-        let originIndex = originOrderList.findIndex(order => order._id == action.orderId);
-        orderList[index].accountNumber = action.billNumber;
-        originOrderList[originIndex].accountNumber = action.billNumber;
-        return { ...store, odersList: orderList, originOdersList: originOrderList };
-      }
-      if (action.currentTable == 'driverorderlist') {
-        let orderList = [...store.driverOrderList];
-        let index = orderList.findIndex(order => order._id == action.orderId);
-        orderList[index].accountNumber = action.billNumber;
-        return { ...store, driverOrderList: orderList };
+      if (action.typeDoc == 'Bill') {
+        if (action.currentTable == 'oderslist') {
+          let orderList = [...store.odersList];
+          let originOrderList = [...store.originOdersList];
+          let index = orderList.findIndex(order => order._id == action.orderId);
+          let originIndex = originOrderList.findIndex(order => order._id == action.orderId);
+          orderList[index].accountNumber = action.billNumber;
+          originOrderList[originIndex].accountNumber = action.billNumber;
+          return { ...store, odersList: orderList, originOdersList: originOrderList, request: {} };
+        }
+        if (action.currentTable == 'driverorderlist') {
+          let orderList = [...store.driverOrderList];
+          let index = orderList.findIndex(order => order._id == action.orderId);
+          orderList[index].accountNumber = action.billNumber;
+          return { ...store, driverOrderList: orderList, request: {} };
+        }
+      } else {
+        return { ...store, request: {} };
       }
     }
 

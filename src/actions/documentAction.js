@@ -143,11 +143,12 @@ export const createBillRequest = () => ({
 export const createBillFailure = () => ({
   type: CREATE_BILL_FAILURE,
 });
-export const createBillSucces = (orderId, currentTable, billNumber) => ({
+export const createBillSucces = (orderId, currentTable, billNumber, typeDoc) => ({
   type: CREATE_BILL_SUCCESS,
   orderId,
   currentTable,
   billNumber,
+  typeDoc,
 });
 export const createBill = (
   docHtml,

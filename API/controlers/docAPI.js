@@ -144,7 +144,8 @@ module.exports.createAccountingDoc = async (req, res) => {
         return res.json(data);
       });
     } else {
-      res.json('success!');
+      req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber, typeDoc });
+      return res.json(data);
     }
   } catch (error) {
     console.error('Ошибка при создании PDF:', error);

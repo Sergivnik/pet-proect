@@ -176,7 +176,9 @@ export const socketMiddleware = store => next => action => {
   if (!socket.hasListeners('createBillNew')) {
     socket.on('createBillNew', data => {
       console.log('Создан новый счет через WebSocket:', data);
-      store.dispatch(createBillSucces(data.orderId, data.currentTable, data.billNumber));
+      store.dispatch(
+        createBillSucces(data.orderId, data.currentTable, data.billNumber, data.typeDoc)
+      );
     });
   }
 

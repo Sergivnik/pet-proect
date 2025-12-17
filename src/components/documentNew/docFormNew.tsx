@@ -42,6 +42,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const [ttnData, setTtnData] = useState<string>('');
   const [editTtn, setEditTtn] = useState<boolean>(true);
   const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
+  const [requestMessage, setRequestMessage] = useState<string | null>(null);
   const [strings, setStrings] = useState<DocString[]>([
     { mainPart: '', numberOfShipments: 1, customerPrice: 0 },
   ]);
@@ -53,12 +54,14 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const appList = useSelector((state: any) => state.customerReducer.customerOrders);
   const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
   const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
+  const requestStatus = useSelector((state: any) => state.oderReducer.request);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const trackDriver = trackDriverList.find((item: TrackDriver) => item._id === order.idTrackDriver);
   const track = trackList.find((item: any) => item._id === order.idTrack);
   const application = appList.find((item: any) => item.orderId == order._id);
   const [actNumber, setActNumber] = useState<string | number>('');
+  const [actNumberString, setActNumberString] = useState<string | null>(null);
 
   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.currentTarget.name as keyof checkBoxType;
@@ -137,6 +140,9 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     }
   }, [order]);
   useEffect(() => {
+    setActNumberString(`${actNumber} от ${new Date(order.date).toLocaleDateString()}`);
+  }, [actNumber]);
+  useEffect(() => {
     let string = 'Перевозка по маршруту загрузка ';
     const { ttn, contract, app, trackTrailer, dateFromApp, reason } = addData?.checkBoxesValue;
     const loadingString = order.idLoadingPoint.map((item, index: number) => {
@@ -208,6 +214,25 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   useEffect(() => {
     setAddData({ checkBoxesValue, ttnData });
   }, [checkBoxesValue, ttnData]);
+  useEffect(() => {
+    if (requestStatus.status == 'REQUEST') {
+      setRequestMessage('Saving...');
+    }
+    if (requestStatus.status == 'FAILURE') {
+      setRequestMessage(requestStatus.error);
+    }
+    if (Object.keys(requestStatus).length === 0) {
+      if (requestMessage != null) {
+        setChosenTypeDoc(prev => {
+          if (!prev) return DOC_TYPES[0];
+          const currentIndex = DOC_TYPES.indexOf(prev);
+          const nextIndex = (currentIndex + 1) % DOC_TYPES.length;
+          return DOC_TYPES[nextIndex];
+        });
+        setRequestMessage(null);
+      }
+    }
+  }, [requestStatus]);
   return (
     <React.Fragment>
       <header className="divHeader">
@@ -300,7 +325,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
             strings={strings}
             currentTable={currentTable}
             reason={checkBoxesValue.reason}
-            actNumber={actNumber}
+            actNumberString={actNumberString}
             getStringData={getStringData}
           />
         )}
@@ -312,7 +337,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={true}
-              actNumber={actNumber}
+              actNumberString={actNumberString}
               getStringData={getStringData}
             />
             <Act
@@ -321,7 +346,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={true}
-              actNumber={actNumber}
+              actNumberString={actNumberString}
               getStringData={getStringData}
             />
           </React.Fragment>
@@ -334,7 +359,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={false}
-              actNumber={actNumber}
+              actNumberString={actNumberString}
               getStringData={getStringData}
             />
             <Act
@@ -343,7 +368,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={false}
-              actNumber={actNumber}
+              actNumberString={actNumberString}
               getStringData={getStringData}
             />
             <Act
@@ -352,12 +377,13 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               currentTable={currentTable}
               reason={checkBoxesValue.reason}
               stamp={false}
-              actNumber={actNumber}
+              actNumberString={actNumberString}
               getStringData={getStringData}
             />
           </React.Fragment>
         )}
       </div>
+      {requestMessage != null && <div className="messageRequest">{requestMessage}</div>}
     </React.Fragment>
   );
 };

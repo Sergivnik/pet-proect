@@ -8,7 +8,7 @@ interface InvoiceProps {
   strings: DocString[];
   currentTable: string;
   reason: boolean;
-  actNumber: string | number;
+  actNumberString: string;
   getStringData: (strings: DocString[]) => void;
 }
 interface ClientData {
@@ -88,7 +88,7 @@ export const Invoice = ({
   strings,
   currentTable,
   reason,
-  actNumber,
+  actNumberString,
   getStringData,
 }: InvoiceProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
@@ -212,9 +212,8 @@ export const Invoice = ({
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
         <div style={styles.header}>
-          СЧЕТ-ФАКТУРА № {actNumber}
+          СЧЕТ-ФАКТУРА № {actNumberString}
           <br />
-          от {new Date(order.date).toLocaleDateString()}
         </div>
 
         <table style={styles.infoTable}>
