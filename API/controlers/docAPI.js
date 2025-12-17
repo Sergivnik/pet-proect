@@ -138,6 +138,7 @@ module.exports.createAccountingDoc = async (req, res) => {
         if (data.error) {
           return res.status(500).json({ message: data.error });
         }
+        console.log('socket.io');
 
         req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber });
         return res.json(data);

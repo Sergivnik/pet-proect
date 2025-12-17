@@ -18,6 +18,7 @@ import {
   createNewInvoiceSuccess,
   sendEmailSuccess,
   createAppSuccess,
+  createBillSucces,
 } from '../actions/documentAction';
 
 // Actions для водителей
@@ -32,6 +33,7 @@ import {
 
 // Actions для данных
 import { editDataSuccess, addDataSuccess, delDataSuccess } from '../actions/editDataAction';
+import { data } from 'react-router-dom';
 
 const socket = io(DOMENNAME);
 
@@ -169,6 +171,12 @@ export const socketMiddleware = store => next => action => {
     socket.on('delData', data => {
       console.log('Удалены данные через WebSocket:', data);
       store.dispatch(delDataSuccess(data.id, data.editTable));
+    });
+  }
+  if (!socket.hasListeners('createBillNew')) {
+    socket.on('createBillNew', data => {
+      console.log('Создан новый счет через WebSocket:', data);
+      store.dispatch(createBillSucces(data.orderId, data.currentTable, data.billNumber));
     });
   }
 
