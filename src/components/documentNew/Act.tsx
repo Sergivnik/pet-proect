@@ -394,7 +394,7 @@ export const Act = ({
             <img
               style={{
                 position: 'absolute',
-                left: '60px',
+                left: '100px',
                 top: '-70px',
                 opacity: '0.7',
                 zIndex: '-2',
@@ -408,8 +408,8 @@ export const Act = ({
             <img
               style={{
                 position: 'absolute',
-                left: '60px',
-                top: '-70px',
+                left: '140px',
+                top: '-90px',
                 opacity: '0.7',
                 zIndex: '-2',
               }}

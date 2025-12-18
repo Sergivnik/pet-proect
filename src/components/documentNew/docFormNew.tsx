@@ -105,7 +105,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     const result = Number.isNaN(num) ? actNumberStr : num;
     setActNumber(result);
   };
-  
+
   const handleAddString = () => {
     let arr = structuredClone(strings);
     arr.push(strings[0]);
@@ -115,7 +115,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     let htmlDoc = document.querySelector('.wrapperTable');
     let year = new Date(order.date).getFullYear();
     console.log('Hi');
-    
+
     dispatch(
       createBill(
         htmlDoc.innerHTML,
@@ -202,6 +202,8 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     if (app) appString = ` по заявке № ${order.applicationNumber}`;
     let trackTrailerString: string = '';
     if (trackTrailer) trackTrailerString = ` прецеп ${track.trackTrailerLicensePlate}`;
+    const noWrapTrackString = trackString.replace(/\s+/g, '\u00A0');
+    const noWrapTrackTrailerString = trackTrailerString.replace(/\s+/g, '\u00A0');
     string =
       string +
       loadingString.join('') +
@@ -210,8 +212,8 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
       ' водитель ' +
       'A/M ' +
       trackDriverString +
-      trackString +
-      trackTrailerString +
+      noWrapTrackString +
+      noWrapTrackTrailerString +
       ttnString +
       contractString +
       appString;

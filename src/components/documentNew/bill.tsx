@@ -47,7 +47,7 @@ const styles = {
     fontFamily: 'arial',
   } as React.CSSProperties,
   warningText: {
-    width: '95%',
+    width: '75%',
     margin: '0 auto',
     textAlign: 'center',
     fontSize: '11px',
@@ -230,15 +230,36 @@ export const Bill = ({
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
-        <h5 style={styles.warningText}>
-          Внимание! Оплата данного счета означает согласие с условиями поставки товара. Уведомление
-          об оплате
-          <br />
-          обязательно, в противном случае не гарантируется наличие товара на складе. Товар
-          отпускается по факту
-          <br />
-          прихода денег на р/с Поставщика, самовывозом, при наличии доверенности и паспорта.
-        </h5>
+        <div style={{ display: 'flex' }}>
+          <div
+            style={{
+              marginLeft: '20px',
+              width: '15%',
+              height: '52px',
+              overflow: 'hidden',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+            }}
+          >
+            <img
+              src={`${DOMENNAME}/img/track.png`}
+              style={{
+                height: '100px',
+                width: 'auto',
+              }}
+            />
+          </div>
+          <h5 style={styles.warningText}>
+            Внимание! Оплата данного счета означает согласие с условиями поставки товара.
+            Уведомление об оплате
+            <br />
+            обязательно, в противном случае не гарантируется наличие товара на складе. Товар
+            отпускается по факту
+            <br />
+            прихода денег на р/с Поставщика, самовывозом, при наличии доверенности и паспорта.
+          </h5>
+        </div>
         <h4 style={styles.paymentSample}>Образец заполнения платежного поручения</h4>
         <table style={styles.table}>
           <tbody>
@@ -558,7 +579,7 @@ export const Bill = ({
             <img
               style={{
                 position: 'absolute',
-                left: '300px',
+                left: '350px',
                 top: '-65px',
                 opacity: '0.7',
                 zIndex: '-2',
@@ -572,7 +593,7 @@ export const Bill = ({
             <img
               style={{
                 position: 'absolute',
-                left: '330px',
+                left: '400px',
                 top: '-75px',
                 zIndex: '-1',
                 transform: 'rotate(15deg)',

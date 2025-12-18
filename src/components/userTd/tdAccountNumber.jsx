@@ -6,7 +6,7 @@ import { FormAddDoc } from '../userTrNew/formAddDoc.jsx';
 import { FormAddEmailData } from '../userTrNew/fornAddEmailData.jsx';
 import { UserWindow } from '../userWindow/userWindow.jsx';
 import { AppFormExtra } from '../documents/appFormExtra.jsx';
-import { DocForm } from '../documents/docForm.jsx';
+import { DocFormNew } from '../documentNew/docFormNew.tsx';
 import { CreateAppForm } from '../customerPart/cusstomerApp/createAppForm.tsx';
 
 export const TdAccountNumber = props => {
@@ -133,7 +133,12 @@ export const TdAccountNumber = props => {
     setShowContextMenu(false);
     setShowCreateAppForm(true);
   };
-  const handleCreateBill = () => {
+  const handleCreateBill = e => {
+    let elem = e.currentTarget.parentElement.parentElement;
+    if (elem) console.log(elem, elem.getBoundingClientRect());
+    const rect = elem.getBoundingClientRect();
+    const top = rect.top + window.scrollY - 130;
+    setTop(Math.round(top));
     let i = orderList.length - 1;
     while (orderList[i].accountNumber == null) {
       i = i - 1;
@@ -145,7 +150,12 @@ export const TdAccountNumber = props => {
     setShowDocForm(true);
     setShowContextMenu(false);
   };
-  const handleChangeBill = () => {
+  const handleChangeBill = e => {
+    let elem = e.currentTarget.parentElement.parentElement;
+    if (elem) console.log(elem, elem.getBoundingClientRect());
+    const rect = elem.getBoundingClientRect();
+    const top = rect.top + window.scrollY - 130;
+    setTop(Math.round(top));
     let { ...obj } = printObj;
     obj.number = Number(props.elem.accountNumber);
     obj.odersListId = [props.elem._id];
@@ -169,6 +179,7 @@ export const TdAccountNumber = props => {
   const handleClickUserWindowClose = () => {
     setShowAppForm(false);
     setShowCreateAppForm(false);
+    setShowDocForm(false);
   };
 
   useEffect(() => {
@@ -343,11 +354,17 @@ export const TdAccountNumber = props => {
         </UserWindow>
       )}
       {showDocForm && (
-        <DocForm
-          dataDoc={printObj}
-          handleClickClose={handleClickCloseDoc}
-          getNewNumber={getNewNumber}
-        />
+        <UserWindow
+          header={'Печать документов'}
+          width={800}
+          height={600}
+          left={`calc( -50vw - 200px)`}
+          top={`${-1 * top}px`}
+          handleClickWindowClose={handleClickUserWindowClose}
+          windowId="createApplication"
+        >
+          <DocFormNew order={props.elem} currentTable="oderslist" />
+        </UserWindow>
       )}
       {showCreateAppForm && (
         <UserWindow

@@ -1,43 +1,47 @@
-import React, { useEffect, useState, useRef } from "react";
-import { useFrame, useLoader } from "@react-three/fiber";
-import { Center, Text3D } from "@react-three/drei";
-import Roboto from "./Roboto_Regular.json";
-import { Clock, TextureLoader } from "three";
-import { DOMENNAME } from "../../middlewares/initialState";
+import React, { useEffect, useRef } from 'react';
+import { useFrame, useLoader } from '@react-three/fiber';
+import { Center, Text3D } from '@react-three/drei';
+import { Clock, TextureLoader } from 'three';
 
-export const Text3DComponent = (props) => {
-  const [position, setPosition] = useState([0, 0, -30]);
+import Roboto from './Roboto_Regular.json';
+import { DOMENNAME } from '../../middlewares/initialState';
+
+export const Text3DComponent = ({ text }) => {
+  const groupRef = useRef(null);
   const clock = useRef(new Clock());
 
-  useEffect(() => {
-    clock.current.start();
-    setPosition([0, 0, -30]);
-  }, [props.text]);
-
-  useFrame(() => {
-    const deltaTime = clock.current.getDelta();
-    let z = position[2] + 2 * deltaTime;
-    setPosition([0, 0, z]);
-  });
   const colorMap = useLoader(
     TextureLoader,
     `${DOMENNAME}/textures/WoodFloor051_2K_Color.png`
   );
+
+  useEffect(() => {
+    clock.current.start();
+    if (groupRef.current) {
+      groupRef.current.position.set(0, 0, -30);
+    }
+  }, [text]);
+
+  useFrame((_, delta) => {
+    if (!groupRef.current) return;
+    groupRef.current.position.z += 2 * delta;
+  });
+
   return (
-    <Center position={position}>
+    <Center ref={groupRef}>
       <Text3D
         font={Roboto}
         size={2}
         height={1.5}
         bevelThickness={10}
-        castShadow={true}
+        castShadow
         letterSpacing={-0.15}
-        flatShading={true}
+        flatShading
       >
-        {props.text}
+        {text}
         <meshStandardMaterial
           map={colorMap}
-          color={"white"}
+          color="white"
           roughness={1}
           metalness={0}
         />
