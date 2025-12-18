@@ -98,6 +98,14 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const getStringData = (strings: DocString[]) => {
     setStrings(strings);
   };
+  const getActNumberString = (actNumberString: string) => {
+    setActNumberString(actNumberString);
+    const actNumberStr = actNumberString.split(' ')[0];
+    const num = Number(actNumberStr);
+    const result = Number.isNaN(num) ? actNumberStr : num;
+    setActNumber(result);
+  };
+  
   const handleAddString = () => {
     let arr = structuredClone(strings);
     arr.push(strings[0]);
@@ -106,6 +114,8 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
   const handleSaveDoc = () => {
     let htmlDoc = document.querySelector('.wrapperTable');
     let year = new Date(order.date).getFullYear();
+    console.log('Hi');
+    
     dispatch(
       createBill(
         htmlDoc.innerHTML,
@@ -339,6 +349,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               stamp={true}
               actNumberString={actNumberString}
               getStringData={getStringData}
+              getActNumberString={getActNumberString}
             />
             <Act
               order={order}
@@ -361,6 +372,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
               stamp={false}
               actNumberString={actNumberString}
               getStringData={getStringData}
+              getActNumberString={getActNumberString}
             />
             <Act
               order={order}

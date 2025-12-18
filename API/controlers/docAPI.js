@@ -140,12 +140,12 @@ module.exports.createAccountingDoc = async (req, res) => {
         }
         console.log('socket.io');
 
-        req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber });
-        return res.json(data);
+        req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber, typeDoc });
+        return res.json('Success!');
       });
     } else {
       req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber, typeDoc });
-      return res.json(data);
+      return res.json('Success!');
     }
   } catch (error) {
     console.error('Ошибка при создании PDF:', error);

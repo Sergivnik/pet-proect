@@ -12,6 +12,7 @@ interface BillProps {
   stamp: boolean;
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
+  getActNumberString: (actNumberString: string) => void;
 }
 interface ClientData {
   name: string;
@@ -86,6 +87,7 @@ export const Bill = ({
   stamp,
   actNumberString,
   getStringData,
+  getActNumberString,
 }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
@@ -102,6 +104,8 @@ export const Bill = ({
   const [editNum, setEditNum] = useState<boolean>(false);
   const [editPrice, setEditPrice] = useState<boolean>(false);
   const [editReason, setEditReason] = useState<boolean>(false);
+  const [editActNumber, setEditActNumber] = useState<boolean>(false);
+  const [textActNumber, setTextActNumber] = useState<string>();
   const [textReason, setTextReason] = useState<string>(`  ИГК ${IGC}`);
   const [heighrEditInput, setHeightEditInput] = useState<number>(0);
   const [indexEditString, setIndexEditString] = useState<number>();
@@ -206,6 +210,17 @@ export const Bill = ({
   const handleEnterReason = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditReason(false);
   };
+  const handleDblClkActNumber = () => {
+    setEditActNumber(true);
+    setTextActNumber(actNumberString);
+  };
+  const handleChangeActNumber = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTextActNumber(e.currentTarget.value);
+  };
+  const handleEnterActNumber = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditActNumber(false);
+    getActNumberString(textActNumber);
+  };
 
   const totalSum = routeStrings.reduce(
     (sum, item) => sum + item.customerPrice * item.numberOfShipments,
@@ -283,7 +298,19 @@ export const Bill = ({
         </table>
         <div>
           <div style={styles.invoiceNumber}>
-            <h4 style={styles.invoiceTitle}>Счет № {actNumberString}</h4>
+            <h4 style={styles.invoiceTitle} onDoubleClick={handleDblClkActNumber}>
+              Счет №{' '}
+              {editActNumber ? (
+                <input
+                  type="text"
+                  value={textActNumber}
+                  onChange={handleChangeActNumber}
+                  onKeyDown={handleEnterActNumber}
+                />
+              ) : (
+                actNumberString
+              )}
+            </h4>
           </div>
         </div>
         <div style={{ fontSize: '14px' }}>
