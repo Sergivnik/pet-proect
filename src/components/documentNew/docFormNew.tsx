@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './act.tsx';
+import { Act } from './Act.tsx';
 import { Invoice } from './invoice';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
@@ -158,8 +158,17 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     const loadingString = order.idLoadingPoint.map((item, index: number) => {
       if (currentTable == 'oderslist') {
         if (dateFromApp) {
-          const dateOfLoading = application.dateOfLoading;
-          return dateOfLoading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+          const dateOfLoading = application?.dateOfLoading;
+          if (dateOfLoading) {
+            return (
+              new Date(dateOfLoading[index]).toLocaleDateString() +
+              ' ' +
+              findValueBy_Id(item, citiesList).value +
+              ' '
+            );
+          } else {
+            return ' ' + findValueBy_Id(item, citiesList).value + ' ';
+          }
         } else {
           return findValueBy_Id(item, citiesList).value + ' ';
         }
@@ -175,8 +184,17 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     const unloadingString = order.idUnloadingPoint.map((item, index: number) => {
       if (currentTable == 'oderslist') {
         if (dateFromApp) {
-          const dateOfUploading = application.dateOfLoading;
-          return dateOfUploading[index] + ' ' + findValueBy_Id(item, citiesList).value + ' ';
+          const dateOfUploading = application?.dateOfUnloading;
+          if (dateOfUploading) {
+            return (
+              new Date(dateOfUploading[index]).toLocaleDateString() +
+              ' ' +
+              findValueBy_Id(item, citiesList).value +
+              ' '
+            );
+          } else {
+            return ' ' + findValueBy_Id(item, citiesList).value + ' ';
+          }
         } else {
           return findValueBy_Id(item, citiesList).value + ' ';
         }
@@ -210,8 +228,8 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
       'выгрузка ' +
       unloadingString.join('') +
       ' водитель ' +
-      'A/M ' +
       trackDriverString +
+      'A/M ' +
       noWrapTrackString +
       noWrapTrackTrailerString +
       ttnString +
