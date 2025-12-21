@@ -52,7 +52,7 @@ const styles = {
   } as React.CSSProperties,
   table: {
     borderCollapse: 'collapse',
-    width: '100%',
+    width: 'calc(100% - 40px)',
     fontSize: '11px',
     border: '1px solid black',
   } as React.CSSProperties,
@@ -108,6 +108,11 @@ export const Invoice = ({
   const [vatRate, setVatRate] = useState<number>(5);
   const [paymentDocNumber, setPaymentDocNumber] = useState<string>('');
   const [shipmentDoc, setShipmentDoc] = useState<string>('');
+  const [invoiceDate, setInvoiceDate] = useState<string>('');
+  const [correctionNumber, setCorrectionNumber] = useState<string>('');
+  const [correctionDate, setCorrectionDate] = useState<string>('');
+  const [currency, setCurrency] = useState<string>('Российский рубль, 643');
+  const [contractId, setContractId] = useState<string>('');
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -142,7 +147,21 @@ export const Invoice = ({
         dateOfReg: driver.dateOfReg,
       });
     }
-  }, [currentTable, currentOwner, driver]);
+    // Устанавливаем дату счета-фактуры из заказа
+    if (order?.date) {
+      const date = new Date(order.date);
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+      setInvoiceDate(`${day}.${month}.${year}`);
+    } else {
+      const today = new Date();
+      const day = today.getDate().toString().padStart(2, '0');
+      const month = (today.getMonth() + 1).toString().padStart(2, '0');
+      const year = today.getFullYear();
+      setInvoiceDate(`${day}.${month}.${year}`);
+    }
+  }, [currentTable, currentOwner, driver, order]);
 
   useEffect(() => {
     setRouteStrings(strings);
@@ -211,68 +230,83 @@ export const Invoice = ({
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
+        <div style={{ textAlign: 'right', fontSize: '10px', marginBottom: '5px' }}>
+          Приложение № 1
+          <br />к постановлению Правительства РФ от 26.12.2011 N 1137 (в редакции постановления
+          Правительства РФ от 16.08.2024 № 1096)
+        </div>
         <div style={styles.header}>
           СЧЕТ-ФАКТУРА № {actNumberString}
-          <br />
+          {correctionNumber && (
+            <>
+              <br />
+              ИСПРАВЛЕНИЕ N {correctionNumber} от {correctionDate || '__________'}
+            </>
+          )}
         </div>
 
         <table style={styles.infoTable}>
           <tbody>
             <tr>
-              <td style={{ ...styles.infoCell, width: '15%' }}>(1) Продавец</td>
-              <td style={{ ...styles.infoCell, fontWeight: 700 }}>
-                {accountOwner?.name}
-                <br />
-                {accountOwner?.address}
-              </td>
+              <td style={{ ...styles.infoCell, width: '30%' }}>(1) Продавец</td>
+              <td style={{ ...styles.infoCell, fontWeight: 700 }}>{accountOwner?.name}</td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(2) Адрес</td>
+              <td style={styles.infoCell}>(1a) Адрес</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>{accountOwner?.address}</td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(2а) ИНН/КПП продавца</td>
+              <td style={styles.infoCell}>(2) ИНН/КПП продавца</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>
                 {accountOwner?.inn} / {accountOwner?.kpp}
               </td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(3) Грузоотправитель и его адрес</td>
+              <td style={styles.infoCell}>(2а) Грузоотправитель и его адрес</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>
                 {accountOwner?.name}, {accountOwner?.address}
               </td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(4) Грузополучатель и его адрес</td>
+              <td style={styles.infoCell}>(2б) Грузополучатель и его адрес</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>
                 {customer?.companyName}, {customer?.address}
               </td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(5) К платежно-расчетному документу №</td>
+              <td style={styles.infoCell}>(3) К платежно-расчетному документу №</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>{paymentDocNumber || '-'}</td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(6) Документ об отгрузке: наименование, №</td>
+              <td style={styles.infoCell}>(4) Документ об отгрузке: наименование, №</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>{shipmentDoc || '-'}</td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(2) Покупатель</td>
+              <td style={styles.infoCell}>(5) Покупатель</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>
                 {customer?.companyName}
                 <br />
-                {customer?.address}
               </td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(2а) Адрес</td>
+              <td style={styles.infoCell}>(5a) Адрес</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>{customer?.address}</td>
             </tr>
             <tr>
-              <td style={styles.infoCell}>(2б) ИНН/КПП покупателя</td>
+              <td style={styles.infoCell}>(6) ИНН/КПП покупателя</td>
               <td style={{ ...styles.infoCell, fontWeight: 700 }}>
                 {customer?.TIN} / {customer?.KPP || '-'}
               </td>
+            </tr>
+            <tr>
+              <td style={styles.infoCell}>(6a) Валюта: наименование, код</td>
+              <td style={{ ...styles.infoCell, fontWeight: 700 }}>{currency}</td>
+            </tr>
+            <tr>
+              <td style={styles.infoCell}>
+                (6б) Идентификатор государственного контракта, договора (соглашения) (при наличии)
+              </td>
+              <td style={{ ...styles.infoCell, fontWeight: 700 }}>{contractId || '-'}</td>
             </tr>
           </tbody>
         </table>
@@ -280,37 +314,52 @@ export const Invoice = ({
         <table style={styles.table}>
           <thead>
             <tr>
-              <td style={{ ...styles.headerCell, width: '30%' }} rowSpan={2}>
+              <td style={{ ...styles.headerCell, width: '24%', minWidth: '250px' }} rowSpan={2}>
                 (1) Наименование товара (описание выполненных работ, оказанных услуг),
                 имущественного права
               </td>
               <td style={{ ...styles.headerCell, width: '5%' }} rowSpan={2}>
-                (2) Код вида товара
+                (1б) Код вида товара
+              </td>
+              <td style={{ ...styles.headerCell, width: '4%' }} colSpan={2}>
+                Единица измерения
               </td>
               <td style={{ ...styles.headerCell, width: '5%' }} rowSpan={2}>
-                (2а) Условие обозначение (национальное)
-              </td>
-              <td style={{ ...styles.headerCell, width: '6%' }} rowSpan={2}>
                 (3) Количество (объем)
               </td>
-              <td style={{ ...styles.headerCell, width: '8%' }} rowSpan={2}>
+              <td style={{ ...styles.headerCell, width: '6%' }} rowSpan={2}>
                 (4) Цена (тариф) за единицу измерения
               </td>
-              <td style={{ ...styles.headerCell, width: '10%' }} rowSpan={2}>
+              <td style={{ ...styles.headerCell, width: '8%' }} rowSpan={2}>
                 (5) Стоимость товаров (работ, услуг), имущественных прав без налога - всего
               </td>
               <td style={{ ...styles.headerCell, width: '5%' }} rowSpan={2}>
-                (5а) Налоговая ставка
+                (6) В том числе сумма акциза
+              </td>
+              <td style={{ ...styles.headerCell, width: '5%' }} rowSpan={2}>
+                (7) Налоговая ставка
+              </td>
+              <td style={{ ...styles.headerCell, width: '7%' }} rowSpan={2}>
+                (8) Сумма налога, предъявляемая покупателю
               </td>
               <td style={{ ...styles.headerCell, width: '8%' }} rowSpan={2}>
-                (6) Сумма налога, предъявленная покупателю
+                (9) Стоимость товаров (работ, услуг), имущественных прав с налогом - всего
               </td>
-              <td style={{ ...styles.headerCell, width: '10%' }} rowSpan={2}>
-                (7) Стоимость товаров (работ, услуг), имущественных прав с налогом - всего
+              <td style={{ ...styles.headerCell, width: '4%' }} colSpan={2}>
+                (10) Страна происхождения товара
               </td>
-              <td style={{ ...styles.headerCell, width: '8%' }} rowSpan={2}>
-                (8) В том числе сумма налога
+              <td style={{ ...styles.headerCell, width: '4%' }} rowSpan={2}>
+                (11) Регистрационный номер декларации на товары или регистрационный номер партии
+                товара, подлежащего прослеживаемости
               </td>
+            </tr>
+            <tr>
+              <td style={{ ...styles.headerCell, width: '2%' }}>(2) код</td>
+              <td style={{ ...styles.headerCell, width: '2%' }}>
+                (2а) условное обозначение (национальное)
+              </td>
+              <td style={{ ...styles.headerCell, width: '2%' }}>(10) цифровой код</td>
+              <td style={{ ...styles.headerCell, width: '2%' }}>(10а) краткое наименование</td>
             </tr>
           </thead>
           <tbody>
@@ -336,6 +385,7 @@ export const Invoice = ({
                       string?.mainPart
                     )}
                   </td>
+                  <td style={styles.tableCell}></td>
                   <td style={styles.tableCell}></td>
                   <td style={styles.tableCell}></td>
                   <td
@@ -381,6 +431,7 @@ export const Invoice = ({
                       maximumFractionDigits: 2,
                     })}
                   </td>
+                  <td style={styles.tableCell}></td>
                   <td style={{ ...styles.tableCell, textAlign: 'center' }}>{vatRate}%</td>
                   <td style={{ ...styles.tableCell, textAlign: 'right', paddingRight: '4px' }}>
                     {vat.toLocaleString('ru-RU', {
@@ -395,11 +446,13 @@ export const Invoice = ({
                     })}
                   </td>
                   <td style={styles.tableCell}></td>
+                  <td style={styles.tableCell}></td>
+                  <td style={styles.tableCell}></td>
                 </tr>
               );
             })}
             <tr style={{ fontWeight: 700 }}>
-              <td style={styles.tableCell} colSpan={4}></td>
+              <td style={styles.tableCell} colSpan={5}></td>
               <td style={{ ...styles.tableCell, textAlign: 'right', paddingRight: '4px' }}>
                 {totalSumWithoutVat.toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
@@ -407,6 +460,7 @@ export const Invoice = ({
                 })}
               </td>
               <td style={styles.tableCell}></td>
+              <td style={styles.tableCell}>X</td>
               <td style={{ ...styles.tableCell, textAlign: 'right', paddingRight: '4px' }}>
                 {totalVat.toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
@@ -419,44 +473,59 @@ export const Invoice = ({
                   maximumFractionDigits: 2,
                 })}
               </td>
-              <td style={styles.tableCell}></td>
+              <td style={styles.tableCell} colSpan={4}></td>
             </tr>
             <tr>
-              <td style={styles.tableCell} colSpan={10}>
+              <td style={styles.tableCell} colSpan={9}>
                 Всего к оплате (9)
               </td>
+              <td style={styles.tableCell} colSpan={6}></td>
             </tr>
           </tbody>
         </table>
 
         <div style={styles.signatureBlock}>
-          <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-            <tbody>
-              <tr>
-                <td style={{ width: '50%', padding: '5px' }}>
-                  Руководитель организации или иное уполномоченное лицо
-                  <br />
-                  (подпись) _____________________________ (ф.и.о.)
-                </td>
-                <td style={{ width: '50%', padding: '5px' }}>
-                  Индивидуальный предприниматель или иное уполномоченное лицо
-                  <br />
-                  (подпись) _____________________________ (ф.и.о.)
-                  <br />
-                  (реквизиты свидетельства о государственной регистрации индивидуального
-                  предпринимателя)
-                </td>
-              </tr>
-              <tr>
-                <td style={{ padding: '5px' }}>
-                  Главный бухгалтер или иное уполномоченное лицо
-                  <br />
-                  (подпись) _____________________________ (ф.и.о.)
-                </td>
-                <td style={{ padding: '5px' }}></td>
-              </tr>
-            </tbody>
-          </table>
+          <div style={{ marginTop: '30px', width: '100%', display: 'flex' }}>
+            <div style={{ marginBottom: '15px', display: 'flex' }}>
+              <div style={{ width: '40%' }}>
+                Руководитель организации или иное уполномоченное лицо
+              </div>
+              <div style={{ width: '60%' }}>(подпись) _____________________________ (ф.и.о.)</div>
+            </div>
+            <div style={{ marginBottom: '15px', display: 'flex' }}>
+              <div style={{ width: '40%' }}>Главный бухгалтер или иное уполномоченное лицо</div>
+              <div style={{ width: '60%' }}>(подпись) _____________________________ (ф.и.о.)</div>
+            </div>
+          </div>
+          <div
+            style={{ marginTop: '30px', width: '100%', display: 'flex', justifyContent: 'start' }}
+          >
+            <div style={{ width: '25%' }}>
+              Индивидуальный предприниматель или иное уполномоченное лицо (подпись)
+            </div>
+            <div style={{ width: '25%' }}>___________________________________ (ф.и.о.)</div>
+
+            <div
+              style={{
+                width: '50%',
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'start',
+              }}
+            >
+              {currentTable == 'oderslist' ? (
+                <div>
+                  {accountOwner?.ogrn} от {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
+                </div>
+              ) : (
+                <div></div>
+              )}
+              <div style={{ borderTop: '1px solid black' }}>
+                (реквизиты свидетельства о государственной регистрации индивидуального
+                предпринимателя)
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

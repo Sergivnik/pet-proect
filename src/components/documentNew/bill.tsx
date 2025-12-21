@@ -47,7 +47,7 @@ const styles = {
     fontFamily: 'arial',
   } as React.CSSProperties,
   warningText: {
-    width: '75%',
+    width: '87%',
     margin: '0 auto',
     textAlign: 'center',
     fontSize: '11px',
@@ -233,8 +233,8 @@ export const Bill = ({
         <div style={{ display: 'flex' }}>
           <div
             style={{
-              marginLeft: '20px',
-              width: '15%',
+              marginLeft: '0',
+              width: '13%',
               height: '52px',
               overflow: 'hidden',
               display: 'flex',

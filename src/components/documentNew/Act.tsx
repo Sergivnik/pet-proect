@@ -388,7 +388,7 @@ export const Act = ({
         <div style={{ position: 'relative', height: '100px', marginTop: '40px', fontSize: '14px' }}>
           <p style={{ marginTop: '20px' }}>
             Исполнитель _____________________ {shortName(accountOwner?.bossName)}
-                Заказчик ________________________ {shortName(customer?.bossName)}
+                Заказчик ________________________ 
           </p>
           {stamp && (
             <img

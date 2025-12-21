@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './Act.tsx';
+import { Act } from './act.tsx';
 import { Invoice } from './invoice';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';

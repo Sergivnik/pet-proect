@@ -85,6 +85,10 @@ export const TdAccountNumber = props => {
     dispatch(getWithoutStampPdf(currentId));
     setShowContextMenu(false);
   };
+  const handleClickPrintInvoice=() => {
+    dispatch(getPdf(currentId, 'invoice'));
+    setShowContextMenu(false);
+  };
   const handleClickAddDoc = (e, typeDoc) => {
     if (props.elem.accountNumber !== null || typeDoc !== 'ttn') {
       const TD = e.currentTarget.parentElement.parentElement;
@@ -288,6 +292,9 @@ export const TdAccountNumber = props => {
           </p>
           <p className="contextmenu" onClick={handleClickPrintWithoutStamp}>
             Печать без штампа
+          </p>
+          <p className="contextmenu" onClick={handleClickPrintInvoice}>
+            Печать счет-фактуры
           </p>
           <p className="contextmenu" onClick={handleDeleteBill}>
             Удалить счет
