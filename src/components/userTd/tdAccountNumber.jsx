@@ -294,7 +294,7 @@ export const TdAccountNumber = props => {
             Печать без штампа
           </p>
           <p className="contextmenu" onClick={handleClickPrintInvoice}>
-            Печать счет-фактуры
+            Печать сч-фактуры
           </p>
           <p className="contextmenu" onClick={handleDeleteBill}>
             Удалить счет

@@ -357,7 +357,7 @@ export const Bill = ({
               }}
             >
               {accountOwner?.name}, ИНН {accountOwner?.inn}, свидетельство № {accountOwner?.ogrn} от
-              {accountOwner?.dateOfReg} {accountOwner?.address}
+              {new Date(accountOwner?.dateOfReg).toLocaleDateString()} {accountOwner?.address}
             </div>
           </div>
           <div style={{ height: '60px' }}>

@@ -214,7 +214,7 @@ export const Act = ({
               <td style={{ width: '12%', padding: '3px 5px' }}>Исполнитель:</td>
               <td style={{ padding: '3px 5px', fontWeight: 700 }}>
                 {accountOwner?.name}, ИНН {accountOwner?.inn}, свидетельство № {accountOwner?.ogrn}{' '}
-                от {accountOwner?.dateOfReg} {accountOwner?.address}
+                от {new Date(accountOwner?.dateOfReg).toLocaleDateString()} {accountOwner?.address}
               </td>
             </tr>
             <tr>
