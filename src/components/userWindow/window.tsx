@@ -7,11 +7,12 @@ type Props = {
   title: string;
   startX: number;
   startY: number;
+  width: number;
   onClose: () => void;
   children: React.ReactNode;
 };
 
-export const Window = ({ title, startX, startY, onClose, children }: Props) => {
+export const Window = ({ title, startX, startY, width, onClose, children }: Props) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -19,7 +20,7 @@ export const Window = ({ title, startX, startY, onClose, children }: Props) => {
       default={{
         x: startX,
         y: startY,
-        width: 800,
+        width: width,
         height: 600,
       }}
       bounds="window"
@@ -32,7 +33,7 @@ export const Window = ({ title, startX, startY, onClose, children }: Props) => {
       <div className="window">
         {/* HEADER */}
         <div className="window-header">
-          <span>{title}</span>
+          <span className="window-header-span">{title}</span>
           <div className="window-controls">
             <button onClick={() => setCollapsed(!collapsed)}>▢</button>
             <button onClick={onClose}>✕</button>

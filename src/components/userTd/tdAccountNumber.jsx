@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { editOder } from '../../actions/oderActions.js';
 import { getPdf, getWithoutStampPdf } from '../../actions/documentAction.js';
 import { FormAddDoc } from '../userTrNew/formAddDoc.jsx';
 import { FormAddEmailData } from '../userTrNew/fornAddEmailData.jsx';
 import { UserWindow } from '../userWindow/userWindow.jsx';
+import { Window } from '../userWindow/window.tsx';
 import { AppFormExtra } from '../documents/appFormExtra.jsx';
 import { DocFormNew } from '../documentNew/docFormNew.tsx';
 import { CreateAppForm } from '../customerPart/cusstomerApp/createAppForm.tsx';
@@ -85,7 +87,7 @@ export const TdAccountNumber = props => {
     dispatch(getWithoutStampPdf(currentId));
     setShowContextMenu(false);
   };
-  const handleClickPrintInvoice=() => {
+  const handleClickPrintInvoice = () => {
     dispatch(getPdf(currentId, 'invoice'));
     setShowContextMenu(false);
   };
@@ -360,19 +362,20 @@ export const TdAccountNumber = props => {
           <AppFormExtra id={props.elem._id} />
         </UserWindow>
       )}
-      {showDocForm && (
-        <UserWindow
-          header={'Печать документов'}
-          width={800}
-          height={600}
-          left={`calc( -50vw - 200px)`}
-          top={`${-1 * top}px`}
-          handleClickWindowClose={handleClickUserWindowClose}
-          windowId="createApplication"
-        >
-          <DocFormNew order={props.elem} currentTable="oderslist" />
-        </UserWindow>
-      )}
+      {showDocForm
+        ? createPortal(
+            <Window
+              title="Документы для печати"
+              startX={400}
+              startY={200}
+              width={800}
+              onClose={() => handleClickUserWindowClose()}
+            >
+              <DocFormNew order={props.elem} currentTable="oderslist" />
+            </Window>,
+            document.body
+          )
+        : null}
       {showCreateAppForm && (
         <UserWindow
           header="Создание заявки"

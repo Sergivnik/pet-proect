@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { OrderType, Coords } from '../../tsTypes';
 import { ContextMenu } from './contextMenu.tsx';
-import { UserWindow } from '../../userWindow/userWindow.jsx';
 import { Window } from '../../userWindow/window.tsx';
 import { DocFormNew } from '../../documentNew/docFormNew.tsx';
 import './tdAccountVirtual.sass';
@@ -144,6 +143,7 @@ export const TdAccountVirtual = ({
           title="Документы для печати"
           startX={400}
           startY={200}
+          width={800}
           onClose={() => setShowUserWindow(false)}
         >
           {windowChild}

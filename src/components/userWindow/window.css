@@ -10,7 +10,7 @@
 
 .window-header {
   height: 40px;
-  background: white;
+  background: rgb(180, 178, 178);
   padding: 0 10px;
   cursor: grab;
   display: flex;
@@ -19,6 +19,14 @@
   user-select: none;
 }
 
+.window-header-span {
+  width: 80%;
+  text-align: center;
+}
+
+.window-controls {
+  min-width: 58px;
+}
 .window-controls button {
   margin-left: 6px;
   background: none;
