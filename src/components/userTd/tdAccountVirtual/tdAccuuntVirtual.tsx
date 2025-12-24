@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { OrderType, Coords } from '../../tsTypes';
 import { ContextMenu } from './contextMenu.tsx';
 import { UserWindow } from '../../userWindow/userWindow.jsx';
+import { Window } from '../../userWindow/window.tsx';
 import { DocFormNew } from '../../documentNew/docFormNew.tsx';
 import './tdAccountVirtual.sass';
 
@@ -139,17 +140,9 @@ export const TdAccountVirtual = ({
 
   const userWindow = showUserWindow
     ? createPortal(
-        <UserWindow
-          header={windowHeader}
-          width={800}
-          height={600}
-          left={'calc( 50% - 400px)'}
-          top={'calc( 50% - 300px)'}
-          handleClickWindowClose={handleClickUserWindowClose}
-          windowId="createApplication"
-        >
+        <Window title="Одно окно, как договаривались" onClose={() => setShowUserWindow(false)}>
           {windowChild}
-        </UserWindow>,
+        </Window>,
         document.body
       )
     : null;
