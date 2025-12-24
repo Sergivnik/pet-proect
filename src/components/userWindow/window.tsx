@@ -5,18 +5,20 @@ import './window.css';
 
 type Props = {
   title: string;
+  startX: number;
+  startY: number;
   onClose: () => void;
   children: React.ReactNode;
 };
 
-export const Window = ({ title, onClose, children }: Props) => {
+export const Window = ({ title, startX, startY, onClose, children }: Props) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
     <Rnd
       default={{
-        x: 120,
-        y: 80,
+        x: startX,
+        y: startY,
         width: 800,
         height: 600,
       }}

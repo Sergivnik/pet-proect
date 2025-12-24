@@ -140,7 +140,12 @@ export const TdAccountVirtual = ({
 
   const userWindow = showUserWindow
     ? createPortal(
-        <Window title="Одно окно, как договаривались" onClose={() => setShowUserWindow(false)}>
+        <Window
+          title="Документы для печати"
+          startX={400}
+          startY={200}
+          onClose={() => setShowUserWindow(false)}
+        >
           {windowChild}
         </Window>,
         document.body
