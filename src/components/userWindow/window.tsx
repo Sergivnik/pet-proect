@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Rnd } from 'react-rnd';
-import { useState } from 'react';
 import './window.css';
 
 type Props = {
@@ -12,36 +11,68 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const Window = ({ title, startX, startY, width, onClose, children }: Props) => {
+export const Window = ({
+  title,
+  startX,
+  startY,
+  width,
+  onClose,
+  children,
+}: Props) => {
   const [collapsed, setCollapsed] = useState(false);
+
+  const [state, setState] = useState({
+    x: startX,
+    y: startY,
+    width: width,
+    height: 600,
+  });
 
   return (
     <Rnd
-      default={{
-        x: startX,
-        y: startY,
-        width: width,
-        height: 600,
-      }}
       bounds="window"
       dragHandleClassName="window-header"
       enableResizing={!collapsed}
       minWidth={300}
       minHeight={collapsed ? 40 : 200}
+      position={{ x: state.x, y: state.y }}
+      size={{
+        width: state.width,
+        height: collapsed ? 40 : state.height,
+      }}
       style={{ zIndex: 100 }}
+      onDragStop={(e, d) => {
+        setState(prev => ({
+          ...prev,
+          x: d.x,
+          y: d.y,
+        }));
+      }}
+      onResizeStop={(e, dir, ref, delta, pos) => {
+        setState({
+          x: pos.x,
+          y: pos.y,
+          width: ref.offsetWidth,
+          height: ref.offsetHeight,
+        });
+      }}
     >
       <div className="window">
         {/* HEADER */}
         <div className="window-header">
           <span className="window-header-span">{title}</span>
           <div className="window-controls">
-            <button onClick={() => setCollapsed(!collapsed)}>▢</button>
+            <button onClick={() => setCollapsed(c => !c)}>▢</button>
             <button onClick={onClose}>✕</button>
           </div>
         </div>
 
         {/* BODY */}
-        {!collapsed && <div className="window-body">{children}</div>}
+        {!collapsed && (
+          <div className="window-body">
+            {children}
+          </div>
+        )}
       </div>
     </Rnd>
   );
