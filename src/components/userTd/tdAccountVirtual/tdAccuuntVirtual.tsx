@@ -27,6 +27,7 @@ export const TdAccountVirtual = ({
   const [windowHeader, setWindowHeader] = useState<string>('');
   const [windowChild, setWindowChild] = useState<React.ReactNode>(null);
   const [coords, setCoords] = useState<Coords>({ top: 0, left: 0 });
+  const [windowWidth, setWindowWidth] = useState<number>(800);
 
   useEffect(() => {
     if (currentId != elem._id) setShowContextMenu(false);
@@ -75,17 +76,28 @@ export const TdAccountVirtual = ({
     }
     setShowContextMenu(true);
   };
+  const getTypeOfDoc = (typeOfDoc: string) => {
+    if (typeOfDoc === 'Invoice') {
+      setWindowWidth(1300);
+    } else {
+      setWindowWidth(800);
+    }
+  };
   const handleClickContextMenu = (pointOfContextMenu: string) => {
     console.log(pointOfContextMenu);
     switch (pointOfContextMenu) {
       case 'createBill': {
         setWindowHeader('Создать счет');
-        setWindowChild(<DocFormNew order={elem} currentTable="driverorderlist" />);
+        setWindowChild(
+          <DocFormNew order={elem} currentTable="driverorderlist" getTypeOfDoc={getTypeOfDoc} />
+        );
         break;
       }
       case 'editBill':
         setWindowHeader('Редактировать счет');
-        setWindowChild(<DocFormNew order={elem} currentTable="driverorderlist" />);
+        setWindowChild(
+          <DocFormNew order={elem} currentTable="driverorderlist" getTypeOfDoc={getTypeOfDoc} />
+        );
         break;
       case 'printBill':
         setWindowHeader('Печать счета');
@@ -143,7 +155,7 @@ export const TdAccountVirtual = ({
           title="Документы для печати"
           startX={400}
           startY={200}
-          width={800}
+          width={windowWidth}
           onClose={() => setShowUserWindow(false)}
         >
           {windowChild}

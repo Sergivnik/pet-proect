@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Rnd } from 'react-rnd';
 import './window.css';
 
@@ -11,14 +11,7 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const Window = ({
-  title,
-  startX,
-  startY,
-  width,
-  onClose,
-  children,
-}: Props) => {
+export const Window = ({ title, startX, startY, width, onClose, children }: Props) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const [state, setState] = useState({
@@ -27,6 +20,15 @@ export const Window = ({
     width: width,
     height: 600,
   });
+
+  useEffect(() => {
+    console.log(width);
+
+    setState(prev => ({
+      ...prev,
+      width: width,
+    }));
+  }, [width]);
 
   return (
     <Rnd
@@ -68,11 +70,7 @@ export const Window = ({
         </div>
 
         {/* BODY */}
-        {!collapsed && (
-          <div className="window-body">
-            {children}
-          </div>
-        )}
+        {!collapsed && <div className="window-body">{children}</div>}
       </div>
     </Rnd>
   );

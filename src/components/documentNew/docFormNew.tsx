@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './Act.tsx';
+import { Act } from './act.tsx';
 import { Invoice } from './invoice';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
@@ -16,9 +16,13 @@ interface checkBoxType {
   dateFromApp: boolean;
   reason: boolean;
 }
+const DOC_TYPES = ['Bill', 'BillNoStamp', 'Invoice'] as const;
+type DocType = (typeof DOC_TYPES)[number];
+
 interface DocFormNewProps {
   order: OrderType;
   currentTable: string;
+  getTypeOfDoc: (typeOfDoc: DocType | null) => void;
 }
 interface DocString {
   mainPart: string;
@@ -26,7 +30,7 @@ interface DocString {
   customerPrice: number;
 }
 
-export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
+export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProps) => {
   const dispatch = useDispatch();
   const [checkBoxesValue, setCheckBoxesValue] = useState<checkBoxType>({
     ttn: false,
@@ -36,8 +40,6 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     dateFromApp: false,
     reason: false,
   });
-  const DOC_TYPES = ['Bill', 'BillNoStamp', 'Invoice'] as const;
-  type DocType = (typeof DOC_TYPES)[number];
   const [choisenTypeDoc, setChosenTypeDoc] = useState<DocType | null>('Bill');
   const [ttnData, setTtnData] = useState<string>('');
   const [editTtn, setEditTtn] = useState<boolean>(true);
@@ -74,6 +76,7 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     const id = e.currentTarget.id;
     if (DOC_TYPES.includes(id as DocType)) {
       setChosenTypeDoc(id as DocType);
+      getTypeOfDoc(id as DocType);
     }
   };
   const getTtnData = e => {
@@ -253,12 +256,11 @@ export const DocFormNew = ({ order, currentTable }: DocFormNewProps) => {
     }
     if (Object.keys(requestStatus).length === 0) {
       if (requestMessage != null) {
-        setChosenTypeDoc(prev => {
-          if (!prev) return DOC_TYPES[0];
-          const currentIndex = DOC_TYPES.indexOf(prev);
-          const nextIndex = (currentIndex + 1) % DOC_TYPES.length;
-          return DOC_TYPES[nextIndex];
-        });
+        const nextDocType = !choisenTypeDoc
+          ? DOC_TYPES[0]
+          : DOC_TYPES[(DOC_TYPES.indexOf(choisenTypeDoc) + 1) % DOC_TYPES.length];
+        setChosenTypeDoc(nextDocType);
+        getTypeOfDoc(nextDocType);
         setRequestMessage(null);
       }
     }

@@ -36,6 +36,7 @@ export const TdAccountNumber = props => {
   const [isAppExist, setIsAppExist] = useState(false);
   const [showDocForm, setShowDocForm] = useState(false);
   const [printObj, setPrintObj] = useState({ number: null, odersListId: [] });
+  const [windowWidth, setWindowWidth] = useState( );
 
   const handleDBLClick = e => {
     let element = e.currentTarget;
@@ -186,6 +187,13 @@ export const TdAccountNumber = props => {
     setShowAppForm(false);
     setShowCreateAppForm(false);
     setShowDocForm(false);
+  };
+  const getTypeOfDoc = typeOfDoc => {
+    if (typeOfDoc === 'Invoice') {
+      setWindowWidth(1300);
+    } else {
+      setWindowWidth(800);
+    }
   };
 
   useEffect(() => {
@@ -368,10 +376,10 @@ export const TdAccountNumber = props => {
               title="Документы для печати"
               startX={400}
               startY={200}
-              width={800}
+              width={windowWidth}
               onClose={() => handleClickUserWindowClose()}
             >
-              <DocFormNew order={props.elem} currentTable="oderslist" />
+              <DocFormNew order={props.elem} currentTable="oderslist" getTypeOfDoc={getTypeOfDoc} />
             </Window>,
             document.body
           )
