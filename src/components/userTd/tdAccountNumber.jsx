@@ -36,7 +36,7 @@ export const TdAccountNumber = props => {
   const [isAppExist, setIsAppExist] = useState(false);
   const [showDocForm, setShowDocForm] = useState(false);
   const [printObj, setPrintObj] = useState({ number: null, odersListId: [] });
-  const [windowWidth, setWindowWidth] = useState( );
+  const [windowWidth, setWindowWidth] = useState(800);
 
   const handleDBLClick = e => {
     let element = e.currentTarget;
