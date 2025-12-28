@@ -220,12 +220,12 @@ export const Invoice = ({
     }
   };
 
-  const totalSumWithoutVat = routeStrings.reduce(
+  const totalSumWithVat = routeStrings.reduce(
     (sum, item) => sum + item.customerPrice * item.numberOfShipments,
     0
   );
-  const totalVat = (totalSumWithoutVat * vatRate) / 100;
-  const totalSumWithVat = totalSumWithoutVat + totalVat;
+  const totalSumWithoutVat = totalSumWithVat / (1 + vatRate / 100);
+  const totalVat = totalSumWithVat - totalSumWithoutVat;
 
   return (
     <div className="invoicePrintForm" style={styles.container}>
@@ -364,9 +364,9 @@ export const Invoice = ({
           </thead>
           <tbody>
             {routeStrings.map((string, index) => {
-              const sumWithoutVat = string.customerPrice * string.numberOfShipments;
-              const vat = (sumWithoutVat * vatRate) / 100;
-              const sumWithVat = sumWithoutVat + vat;
+              const sumWithVat = string.customerPrice * string.numberOfShipments;
+              const sumWithoutVat = sumWithVat / (1 + vatRate / 100);
+              const vat = sumWithVat - sumWithoutVat;
               return (
                 <tr key={`invoiceString${index}`}>
                   <td
