@@ -1,32 +1,24 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import { PointsForm } from "./pointsForm.jsx";
-import {
-  addOder,
-  addOrderApp,
-  editOderNew,
-} from "../../actions/oderActions.js";
-import { dateLocal, findValueBy_Id } from "../myLib/myLib.js";
-import { InputText } from "../myLib/inputText.jsx";
-import "./createOder.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import { PointsForm } from './pointsForm.jsx';
+import { addOder, addOrderApp, editOderNew } from '../../actions/oderActions.js';
+import { dateLocal, findValueBy_Id } from '../myLib/myLib.js';
+import { InputText } from '../myLib/inputText.jsx';
+import './createOder.sass';
 
-export const CreateOderNew = (props) => {
-  const driverlist = useSelector((state) => state.oderReducer.driverlist);
-  const clientList = useSelector((state) => state.oderReducer.clientList);
-  const orderList = useSelector((state) => state.oderReducer.originOdersList);
-  const clientManagerFull = useSelector(
-    (state) => state.oderReducer.clientmanager
-  );
-  const trackdriversFull = useSelector(
-    (state) => state.oderReducer.trackdrivers
-  );
-  const pointList = useSelector((state) => state.oderReducer.citieslist);
-  const tracksFull = useSelector((state) => state.oderReducer.tracklist);
-  const addtable = useSelector((state) => state.oderReducer.addtable);
+export const CreateOderNew = props => {
+  const driverlist = useSelector(state => state.oderReducer.driverlist);
+  const clientList = useSelector(state => state.oderReducer.clientList);
+  const orderList = useSelector(state => state.oderReducer.originOdersList);
+  const clientManagerFull = useSelector(state => state.oderReducer.clientmanager);
+  const trackdriversFull = useSelector(state => state.oderReducer.trackdrivers);
+  const pointList = useSelector(state => state.oderReducer.citieslist);
+  const tracksFull = useSelector(state => state.oderReducer.tracklist);
+  const addtable = useSelector(state => state.oderReducer.addtable);
   const dispatch = useDispatch();
 
-  const [mainDivStyle, setMainDivStyle] = useState("crOderMainDiv");
+  const [mainDivStyle, setMainDivStyle] = useState('crOderMainDiv');
 
   const [odersData, setOdersData] = useState({
     idLoadingPoint: [],
@@ -37,6 +29,7 @@ export const CreateOderNew = (props) => {
     unloadingInfo: [],
     price: 0,
     interest: 10,
+    customerPriceWithVAT: null,
   });
 
   const [clientManager, setClientManager] = useState(clientManagerFull);
@@ -54,14 +47,25 @@ export const CreateOderNew = (props) => {
   const [checkBox, setCheckBox] = useState(false);
   const [checkPayment, setCheckPayment] = useState(false);
   const [showBtn, setShowBtn] = useState(false);
-  const [btnName, setBtnName] = useState("Добавить");
+  const [btnName, setBtnName] = useState('Добавить');
   const [showAddFields, setShowAddFields] = useState(false);
   const [debtOfCustomer, setDebtOfCustomer] = useState(null);
   const [limit, setLimit] = useState(null);
   const [isCustomerActive, setIsCustomerActive] = useState(true);
+  const [withVAT, setWithVAT] = useState(false);
+
+  const updateVATByDate = date => {
+    if (date) {
+      const orderDate = new Date(date);
+      const thresholdDate = new Date('2026-01-01');
+      setWithVAT(orderDate >= thresholdDate);
+    } else {
+      setWithVAT(false);
+    }
+  };
 
   useEffect(() => {
-    if (props.clickSave) setMainDivStyle("crOderMainDiv");
+    if (props.clickSave) setMainDivStyle('crOderMainDiv');
     if (props.elem) {
       let { ...obj } = props.elem;
       obj.valueLoadingPoint = [];
@@ -75,69 +79,62 @@ export const CreateOderNew = (props) => {
       }
       if (obj.idCustomer != null) {
         setShowClientInput(false);
-        obj.valueCustomer = clientList.find(
-          (elem) => elem._id == obj.idCustomer
-        ).value;
+        obj.valueCustomer = clientList.find(elem => elem._id == obj.idCustomer).value;
       }
       if (obj.idManager != null) {
         setShowManagerInput(false);
-        obj.valueManager = clientManagerFull.find(
-          (elem) => elem._id == obj.idManager
-        ).value;
+        obj.valueManager = clientManagerFull.find(elem => elem._id == obj.idManager).value;
       }
       if (obj.applicationNumber != null) {
         setShowAppInput(false);
       }
       if (obj.idDriver != null) {
         setShowOwnerInput(false);
-        obj.valueDriver = driverlist.find(
-          (elem) => elem._id == obj.idDriver
-        ).value;
+        obj.valueDriver = driverlist.find(elem => elem._id == obj.idDriver).value;
       }
       if (obj.idTrackDriver != null) {
         setShowTrackDriverInput(false);
-        obj.valueTrackDriver = trackdriversFull.find(
-          (elem) => elem._id == obj.idTrackDriver
-        ).value;
+        obj.valueTrackDriver = trackdriversFull.find(elem => elem._id == obj.idTrackDriver).value;
       }
       if (obj.idTrack != null) {
         setShowTrackInput(false);
-        obj.valueTrack = tracksFull.find(
-          (elem) => elem._id == obj.idTrack
-        ).value;
+        obj.valueTrack = tracksFull.find(elem => elem._id == obj.idTrack).value;
       }
       if (obj.idLoadingPoint != null) {
-        obj.idLoadingPoint.forEach((elem) => {
-          let pointValue = pointList.find((item) => item._id == elem).value;
+        obj.idLoadingPoint.forEach(elem => {
+          let pointValue = pointList.find(item => item._id == elem).value;
           obj.valueLoadingPoint.push(pointValue);
         });
       }
       if (obj.idUnloadingPoint != null) {
-        obj.idUnloadingPoint.forEach((elem) => {
-          let pointValue = pointList.find((item) => item._id == elem).value;
+        obj.idUnloadingPoint.forEach(elem => {
+          let pointValue = pointList.find(item => item._id == elem).value;
           obj.valueUnloadingPoint.push(pointValue);
         });
       }
-      if (obj.colorTR == "Blue") {
+      if (obj.colorTR == 'Blue') {
         setCheckBox(true);
       }
-      if (obj.colorTR == "hotpink") {
-        let addInfo = addtable.find((elem) => elem.orderId == obj._id);
+      if (obj.colorTR == 'hotpink') {
+        let addInfo = addtable.find(elem => elem.orderId == obj._id);
         if (addInfo != undefined) {
           obj.price = addInfo.sum;
           obj.interest = addInfo.interest;
         }
       }
-      if (obj.colorTR == "Orange") {
+      if (obj.colorTR == 'Orange') {
         setCheckPayment(true);
       }
       setOdersData(obj);
-      if (props.clickSave) setBtnName("Сохранить");
+      if (props.clickSave) setBtnName('Сохранить');
       setShowClientPrice(false);
       if (props.isMadeFromApp) {
         setShowDriverPrice(true);
       } else {
         setShowDriverPrice(false);
+      }
+      if (obj.date) {
+        updateVATByDate(obj.date);
       }
     }
   }, []);
@@ -152,48 +149,60 @@ export const CreateOderNew = (props) => {
   useEffect(() => {
     if (odersData.idCustomer) {
       let sumOfDebt = 0;
-      orderList.forEach((order) => {
-        if (
-          order.idCustomer == odersData.idCustomer &&
-          order.customerPayment != "Ок"
-        ) {
+      orderList.forEach(order => {
+        if (order.idCustomer == odersData.idCustomer && order.customerPayment != 'Ок') {
           sumOfDebt = sumOfDebt + Number(order.customerPrice);
         }
       });
       setDebtOfCustomer(sumOfDebt);
-      let customerLimit = clientList.find(
-        (elem) => elem._id == odersData.idCustomer
-      ).limit;
-      let isCustomerActive = clientList.find(
-        (elem) => elem._id == odersData.idCustomer
-      ).active;
+      let customerLimit = clientList.find(elem => elem._id == odersData.idCustomer).limit;
+      let isCustomerActive = clientList.find(elem => elem._id == odersData.idCustomer).active;
       setLimit(customerLimit);
       setIsCustomerActive(isCustomerActive);
     }
   }, [odersData.idCustomer]);
+  useEffect(() => {
+    if (odersData.date) {
+      updateVATByDate(odersData.date);
+    }
+  }, [odersData.date]);
+  useEffect(() => {
+    if (withVAT && odersData.customerPrice) {
+      let { ...obj } = odersData;
+      const calculatedPriceWithVAT = Number(obj.customerPrice) * 1.05;
+      if (obj.customerPriceWithVAT !== calculatedPriceWithVAT) {
+        obj.customerPriceWithVAT = calculatedPriceWithVAT;
+        setOdersData(obj);
+      }
+    } else if (!withVAT && odersData.customerPriceWithVAT) {
+      let { ...obj } = odersData;
+      obj.customerPriceWithVAT = null;
+      setOdersData(obj);
+    }
+  }, [withVAT]);
 
   useEffect(() => {
-    const secretKey = (e) => {
-      if (e.code == "NumpadAdd" && e.ctrlKey) {
+    const secretKey = e => {
+      if (e.code == 'NumpadAdd' && e.ctrlKey) {
         e.preventDefault();
         // let div = document.querySelector("#createOrderDiv");
         // div.style.height = "400px";
         setShowAddFields(true);
       }
     };
-    document.addEventListener("keydown", secretKey);
+    document.addEventListener('keydown', secretKey);
     return () => {
-      document.removeEventListener("keydown", secretKey);
+      document.removeEventListener('keydown', secretKey);
     };
   }, []);
-  const handleChangeAppNumber = (e) => {
+  const handleChangeAppNumber = e => {
     let { ...obj } = odersData;
     obj.applicationNumber = e.currentTarget.value;
     setOdersData(obj);
   };
-  const handleLostFocus = (e) => {
+  const handleLostFocus = e => {
     let { ...obj } = odersData;
-    if (e.target.className == "crOderDateInput") {
+    if (e.target.className == 'crOderDateInput') {
       let now = new Date();
       let date = new Date(e.target.value);
       if (date > now) {
@@ -202,99 +211,112 @@ export const CreateOderNew = (props) => {
         obj.completed = true;
       }
       obj.date = e.target.value;
-      if (e.target.value != "") {
+      updateVATByDate(e.target.value);
+      if (e.target.value != '') {
         setShowDateInput(false);
-        let emptyElem = document.querySelectorAll(".containerChoise");
+        let emptyElem = document.querySelectorAll('.containerChoise');
         if (emptyElem.length > 0) {
           let nextFocus = emptyElem[0].firstChild;
           nextFocus.focus();
         }
       }
     }
-    if (e.target.className == "crOderApplication") {
+    if (e.target.className == 'crOderApplication') {
       obj.applicationNumber = e.target.value;
-      if (e.target.value != "") setShowAppInput(false);
+      if (e.target.value != '') setShowAppInput(false);
     }
-    if (e.target.className == "crOderPriceInput") {
-      if (props.elem ? props.elem.customerPayment != "Ок" : true) {
-        obj.customerPrice = e.target.value;
-        if (e.target.value != "") setShowClientPrice(false);
+    if (e.target.className == 'crOderPriceInput' || e.target.className == 'crOderPriceInputNoVAT') {
+      if (props.elem ? props.elem.customerPayment != 'Ок' : true) {
+        const priceNoVAT = Number(e.target.value);
+        obj.customerPrice = priceNoVAT;
+        if (withVAT) {
+          obj.customerPriceWithVAT = priceNoVAT * 1.05;
+        }
+        if (e.target.value != '') setShowClientPrice(false);
       } else {
-        alert("Change is unacceptable!!!");
+        alert('Change is unacceptable!!!');
         setShowClientPrice(false);
       }
     }
-    if (e.target.className == "crOderDriverPriceInput") {
-      if (props.elem ? props.elem.driverPayment != "Ок" : true) {
-        obj.driverPrice = e.target.value;
-        if (e.target.value != "") setShowDriverPrice(false);
+    if (e.target.className == 'crOderPriceInputWithVAT') {
+      if (props.elem ? props.elem.customerPayment != 'Ок' : true) {
+        const priceWithVAT = Number(e.target.value);
+        obj.customerPriceWithVAT = priceWithVAT;
+        obj.customerPrice = priceWithVAT / 1.05;
+        if (e.target.value != '') setShowClientPrice(false);
       } else {
-        alert("Change is unacceptable!!!");
+        alert('Change is unacceptable!!!');
+        setShowClientPrice(false);
+      }
+    }
+    if (e.target.className == 'crOderDriverPriceInput') {
+      if (props.elem ? props.elem.driverPayment != 'Ок' : true) {
+        obj.driverPrice = e.target.value;
+        if (e.target.value != '') setShowDriverPrice(false);
+      } else {
+        alert('Change is unacceptable!!!');
         setShowDriverPrice(false);
       }
     }
     setOdersData(obj);
   };
-  const handleDblClick = (e) => {
-    if (e.target.className == "crOderDateP") {
+  const handleDblClick = e => {
+    if (e.target.className == 'crOderDateP') {
       setShowDateInput(true);
     }
-    if (
-      e.target.className == "crOderClientP" ||
-      e.target.className == "crOderClientP red"
-    ) {
+    if (e.target.className == 'crOderClientP' || e.target.className == 'crOderClientP red') {
       setShowClientInput(true);
     }
-    if (e.target.className == "crOderManagerP") {
+    if (e.target.className == 'crOderManagerP') {
       setShowManagerInput(true);
     }
-    if (e.target.className == "crOderApplicationP") {
+    if (e.target.className == 'crOderApplicationP') {
       setShowAppInput(true);
     }
-    if (e.target.className == "crOderPriceP") {
+    if (e.target.className == 'crOderPriceP') {
       setShowClientPrice(true);
     }
-    if (e.target.className == "crOderOwnerP") {
+    if (e.target.className == 'crOderOwnerP') {
       setShowOwnerInput(true);
     }
-    if (e.target.className == "crOderTrackDriverP") {
+    if (e.target.className == 'crOderTrackDriverP') {
       setShowTrackDriverInput(true);
     }
-    if (e.target.className == "crOderTrackP") {
+    if (e.target.className == 'crOderTrackP') {
       setShowTrackInput(true);
-      let arr = tracksFull.filter((elem) => elem.idOwner == odersData.idDriver);
+      let arr = tracksFull.filter(elem => elem.idOwner == odersData.idDriver);
       setTracks(arr);
     }
-    if (e.target.className == "crOderDriverPriceP") {
+    if (e.target.className == 'crOderDriverPriceP') {
       setShowDriverPrice(true);
     }
   };
   const setValue = (value, e) => {
     let { ...obj } = odersData;
-    if (value.field == "client") {
+    if (value.field == 'client') {
       obj.idCustomer = value._id;
       obj.valueCustomer = value.value;
-      let arr = clientManagerFull.filter((elem) => elem.odersId == value._id);
+      let arr = clientManagerFull.filter(elem => elem.odersId == value._id);
       setClientManager(arr);
       setShowClientInput(false);
-      let choiseElements = document.querySelectorAll(".containerChoise");
+      let choiseElements = document.querySelectorAll('.containerChoise');
       if (choiseElements.length > 1) {
         let nextFocus = choiseElements[1].firstChild;
         nextFocus.focus();
       }
     }
-    if (value.field == "manager") {
+    if (value.field == 'manager') {
       obj.idManager = value._id;
       obj.valueManager = value.value;
       setShowManagerInput(false);
       //let nextFocus = document.querySelector(".PFContentPoint").firstChild;
       //nextFocus.focus();
     }
-    if (value.field == "owner") {
+    if (value.field == 'owner') {
       obj.idDriver = value._id;
       obj.valueDriver = value.value;
       setShowOwnerInput(false);
-      let arr = trackdriversFull.filter((elem) => elem.idOwner == value._id);
+      let arr = trackdriversFull.filter(elem => elem.idOwner == value._id);
       setTrackdrivers(arr);
       if (arr != undefined) {
         if (arr.length == 1) {
@@ -308,7 +330,7 @@ export const CreateOderNew = (props) => {
           setShowTrackDriverInput(false);
         }
       }
-      arr = tracksFull.filter((elem) => elem.idOwner == value._id);
+      arr = tracksFull.filter(elem => elem.idOwner == value._id);
       setTracks(arr);
       if (arr != undefined) {
         if (arr.length == 1) {
@@ -325,7 +347,7 @@ export const CreateOderNew = (props) => {
       /* let nextFocus = document.querySelector(".PFContentPoint").firstChild;
       nextFocus.focus(); */
     }
-    if (value.field == "trackDriver") {
+    if (value.field == 'trackDriver') {
       obj.idTrackDriver = value._id;
       obj.valueTrackDriver = value.value;
       setShowTrackDriverInput(false);
@@ -338,7 +360,7 @@ export const CreateOderNew = (props) => {
       /* let nextFocus = document.querySelector(".PFContentPoint").firstChild;
       nextFocus.focus(); */
     }
-    if (value.field == "track") {
+    if (value.field == 'track') {
       obj.idTrack = value._id;
       obj.valueTrack = value.value;
       setShowTrackInput(false);
@@ -350,12 +372,12 @@ export const CreateOderNew = (props) => {
 
   const delPoint = (index, name) => {
     let { ...obj } = odersData;
-    if (name == "LoadingPoint") {
+    if (name == 'LoadingPoint') {
       obj.idLoadingPoint.splice(index, 1);
       obj.valueLoadingPoint.splice(index, 1);
       obj.loadingInfo.splice(index, 1);
     }
-    if (name == "UnloadingPoint") {
+    if (name == 'UnloadingPoint') {
       obj.idUnloadingPoint.splice(index, 1);
       obj.valueUnloadingPoint.splice(index, 1);
       obj.unloadingInfo.splice(index, 1);
@@ -364,12 +386,12 @@ export const CreateOderNew = (props) => {
   };
   const addPoint = (data, name) => {
     let { ...obj } = odersData;
-    if (name == "LoadingPoint") {
+    if (name == 'LoadingPoint') {
       obj.idLoadingPoint.push(data.id);
       obj.valueLoadingPoint.push(data.value);
       obj.loadingInfo.push(data.info);
     }
-    if (name == "UnloadingPoint") {
+    if (name == 'UnloadingPoint') {
       obj.idUnloadingPoint.push(data.id);
       obj.valueUnloadingPoint.push(data.value);
       obj.unloadingInfo.push(data.info);
@@ -378,116 +400,123 @@ export const CreateOderNew = (props) => {
   };
   const editPoint = (data, name, index) => {
     let { ...obj } = odersData;
-    if (name == "LoadingPoint") {
+    if (name == 'LoadingPoint') {
       console.log(obj, data, name, index);
       obj.loadingInfo[index] = data;
     }
-    if (name == "UnloadingPoint") {
+    if (name == 'UnloadingPoint') {
       console.log(obj, data, name, index);
       obj.unloadingInfo[index] = data;
     }
     setOdersData(obj);
   };
-  const handleCheck = (e) => {
+  const handleCheck = e => {
     let { ...obj } = odersData;
     if (e.currentTarget.checked) {
-      obj.colorTR = "Blue";
+      obj.colorTR = 'Blue';
       setCheckBox(true);
     } else {
-      obj.colorTR = "Black";
+      obj.colorTR = 'Black';
       setCheckBox(false);
     }
     setOdersData(obj);
   };
-  const handleCheckPayment = (e) => {
+  const handleCheckPayment = e => {
     let { ...obj } = odersData;
     if (e.currentTarget.checked) {
-      obj.colorTR = "Orange";
+      obj.colorTR = 'Orange';
       setCheckPayment(true);
     } else {
-      obj.colorTR = "Black";
+      obj.colorTR = 'Black';
       setCheckPayment(false);
+    }
+    setOdersData(obj);
+  };
+  const handleCheckVAT = e => {
+    const checked = e.currentTarget.checked;
+    setWithVAT(checked);
+    let { ...obj } = odersData;
+    if (checked && obj.customerPrice) {
+      obj.customerPriceWithVAT = Number(obj.customerPrice) * 1.05;
     }
     setOdersData(obj);
   };
   const handleClick = () => {
     let check = true;
-    if (
-      Number(odersData.customerPrice) * 0.95 <
-      Number(odersData.driverPrice)
-    ) {
-      check = confirm("Наценка меньше 5 % !! Продолжить?");
+    if (Number(odersData.customerPrice) * 0.95 < Number(odersData.driverPrice)) {
+      check = confirm('Наценка меньше 5 % !! Продолжить?');
     }
     if (check) {
-      if (btnName == "Добавить") {
+      let dataToSave = { ...odersData };
+      if (withVAT && odersData.customerPriceWithVAT != null) {
+        dataToSave.customerPrice = odersData.customerPriceWithVAT;
+      }
+      delete dataToSave.customerPriceWithVAT;
+      if (btnName == 'Добавить') {
         if (props.isMadeFromApp) {
-          dispatch(addOrderApp(odersData, props.appId));
+          dispatch(addOrderApp(dataToSave, props.appId));
           props.addOder();
         } else {
-          dispatch(addOder(odersData, props.orderTable));
+          dispatch(addOder(dataToSave, props.orderTable));
           props.addOder();
         }
       }
-      if (btnName == "Сохранить") {
+      if (btnName == 'Сохранить') {
         let isChanged = false;
         for (let key in props.elem) {
           if (
-            key != "idLoadingPoint" ||
-            key != "idUnloadingPoint" ||
-            key != "loadingInfo" ||
-            key != "unloadingInfo"
+            key != 'idLoadingPoint' ||
+            key != 'idUnloadingPoint' ||
+            key != 'loadingInfo' ||
+            key != 'unloadingInfo'
           ) {
-            if (props.elem[key] != odersData[key]) isChanged = true;
+            const compareValue =
+              key == 'customerPrice' && withVAT ? dataToSave.customerPrice : dataToSave[key];
+            if (props.elem[key] != compareValue) isChanged = true;
           } else {
             props.elem[key].forEach((elem, index) => {
-              if (elem != odersData[key][index]) isChanged = true;
+              if (elem != dataToSave[key][index]) isChanged = true;
             });
           }
         }
         if (isChanged && props.elem.accountNumber != null) {
-          isChanged = confirm("Заказ изменен, необходимо перевыставить счет?");
+          isChanged = confirm('Заказ изменен, необходимо перевыставить счет?');
         } else {
           isChanged = false;
         }
-        dispatch(editOderNew(odersData, props.orderTable));
+        dispatch(editOderNew(dataToSave, props.orderTable));
         props.clickSave(isChanged);
       }
     }
   };
   const getText = (name, text) => {
     let { ...obj } = odersData;
-    obj.colorTR = "hotpink";
-    if (name == "price") obj.price = text;
-    if (name == "interest") obj.interest = text;
+    obj.colorTR = 'hotpink';
+    if (name == 'price') obj.price = text;
+    if (name == 'interest') obj.interest = text;
     setOdersData(obj);
   };
 
   return (
     <div className={mainDivStyle} id="createOrderDiv">
       <h4 className="crOderCustomerHeader">
-        Информация о заказе{" "}
-        {props.elem != undefined && props.elem.accountNumber
-          ? props.elem.accountNumber
-          : null}
+        Информация о заказе{' '}
+        {props.elem != undefined && props.elem.accountNumber ? props.elem.accountNumber : null}
       </h4>
       <div className="crOderCustomDiv">
         <div className="crOderDate">
           <h4 className="crOderCustomHeader">Дата</h4>
           {showDateInput ? (
             <div className="containerInput">
-              <input
-                type="date"
-                className="crOderDateInput"
-                onBlur={handleLostFocus}
-              />
+              <input type="date" className="crOderDateInput" onBlur={handleLostFocus} />
             </div>
           ) : (
             <div className="containerInput">
               <p
                 className="crOderDateP"
                 onDoubleClick={handleDblClick}
-                onMouseDown={(e) => {
-                  if (e.target.className == "crOderDateP") e.preventDefault();
+                onMouseDown={e => {
+                  if (e.target.className == 'crOderDateP') e.preventDefault();
                 }}
               >
                 {dateLocal(odersData.date)}
@@ -502,20 +531,16 @@ export const CreateOderNew = (props) => {
               <h5 className="crOderCustomHeader">Клиент</h5>
               {showClientInput ? (
                 <div className="containerChoise">
-                  <ChoiseList
-                    name="client"
-                    arrlist={clientList}
-                    setValue={setValue}
-                  />
+                  <ChoiseList name="client" arrlist={clientList} setValue={setValue} />
                 </div>
               ) : (
                 <p
-                  className={isCustomerActive ? "crOderClientP" : "crOderClientP red"}
+                  className={isCustomerActive ? 'crOderClientP' : 'crOderClientP red'}
                   onDoubleClick={handleDblClick}
-                  onMouseDown={(e) => {
+                  onMouseDown={e => {
                     if (
-                      e.target.className == "crOderClientP" ||
-                      e.target.className == "crOderClientP red"
+                      e.target.className == 'crOderClientP' ||
+                      e.target.className == 'crOderClientP red'
                     )
                       e.preventDefault();
                   }}
@@ -528,19 +553,14 @@ export const CreateOderNew = (props) => {
               <h5 className="crOderCustomHeader">Менеджер</h5>
               {showManagerInput ? (
                 <div className="containerChoise">
-                  <ChoiseList
-                    name="manager"
-                    arrlist={clientManager}
-                    setValue={setValue}
-                  />
+                  <ChoiseList name="manager" arrlist={clientManager} setValue={setValue} />
                 </div>
               ) : (
                 <p
                   className="crOderManagerP"
                   onDoubleClick={handleDblClick}
-                  onMouseDown={(e) => {
-                    if (e.target.className == "crOderManagerP")
-                      e.preventDefault();
+                  onMouseDown={e => {
+                    if (e.target.className == 'crOderManagerP') e.preventDefault();
                   }}
                 >
                   {odersData.valueManager}
@@ -562,9 +582,8 @@ export const CreateOderNew = (props) => {
               <p
                 className="crOderApplicationP"
                 onDoubleClick={handleDblClick}
-                onMouseDown={(e) => {
-                  if (e.target.className == "crOderApplicationP")
-                    e.preventDefault();
+                onMouseDown={e => {
+                  if (e.target.className == 'crOderApplicationP') e.preventDefault();
                 }}
               >
                 {odersData.applicationNumber}
@@ -600,24 +619,89 @@ export const CreateOderNew = (props) => {
           </div>
         </div>
         <div className="crOderPrice">
-          <h4 className="crOderCustomPriceHeader">Цена</h4>
+          <div className="createOrderPriceHeaderWrap">
+            <h4 className="crOderCustomPriceHeader">Цена</h4>
+            <div className="createOrderVATWrap">
+              НДС 5% <input type="checkbox" onChange={handleCheckVAT} checked={withVAT} />
+            </div>
+          </div>
           <div className="crOderPriceWrap">
-            {showClientPrice ? (
-              <input
-                type="numnber"
-                className="crOderPriceInput"
-                onBlur={handleLostFocus}
-              />
+            {withVAT ? (
+              <>
+                <div className="createOrderTaxPriceWrap">
+                  <span className="createOrderTypeTaxP">без НДС</span>
+                  {showClientPrice ? (
+                    <input
+                      type="number"
+                      className="crOderPriceInputNoVAT"
+                      defaultValue={odersData.customerPrice}
+                      onBlur={handleLostFocus}
+                    />
+                  ) : (
+                    <p
+                      className="crOderPriceP"
+                      onDoubleClick={handleDblClick}
+                      onMouseDown={e => {
+                        if (e.target.className == 'crOderPriceP') e.preventDefault();
+                      }}
+                    >
+                      {odersData.customerPrice ? Number(odersData.customerPrice).toFixed(2) : ''}{' '}
+                      руб
+                    </p>
+                  )}
+                </div>
+                <div className="createOrderTaxPriceWrap">
+                  <span className="createOrderTypeTaxP">НДС 5%</span>
+                  {showClientPrice ? (
+                    <input
+                      type="number"
+                      className="crOderPriceInputWithVAT"
+                      defaultValue={
+                        odersData.customerPriceWithVAT ||
+                        (odersData.customerPrice ? Number(odersData.customerPrice) * 1.05 : '')
+                      }
+                      onBlur={handleLostFocus}
+                    />
+                  ) : (
+                    <p
+                      className="crOderPriceP"
+                      onDoubleClick={handleDblClick}
+                      onMouseDown={e => {
+                        if (e.target.className == 'crOderPriceP') e.preventDefault();
+                      }}
+                    >
+                      {odersData.customerPriceWithVAT
+                        ? Number(odersData.customerPriceWithVAT).toFixed(2)
+                        : odersData.customerPrice
+                          ? (Number(odersData.customerPrice) * 1.05).toFixed(2)
+                          : ''}{' '}
+                      руб
+                    </p>
+                  )}
+                </div>
+              </>
             ) : (
-              <p
-                className="crOderPriceP"
-                onDoubleClick={handleDblClick}
-                onMouseDown={(e) => {
-                  if (e.target.className == "crOderPriceP") e.preventDefault();
-                }}
-              >
-                {odersData.customerPrice} руб
-              </p>
+              <div className="createOrderTaxPriceWrap">
+                <span className="createOrderTypeTaxP">без НДС</span>
+                {showClientPrice ? (
+                  <input
+                    type="number"
+                    className="crOderPriceInputNoVAT"
+                    defaultValue={odersData.customerPrice}
+                    onBlur={handleLostFocus}
+                  />
+                ) : (
+                  <p
+                    className="crOderPriceP"
+                    onDoubleClick={handleDblClick}
+                    onMouseDown={e => {
+                      if (e.target.className == 'crOderPriceP') e.preventDefault();
+                    }}
+                  >
+                    {odersData.customerPrice} руб
+                  </p>
+                )}
+              </div>
             )}
           </div>
         </div>
@@ -628,18 +712,14 @@ export const CreateOderNew = (props) => {
           <h4 className="crOderOwnerHeader">Перевозчик</h4>
           {showOwnerInput ? (
             <div className="containerChoise">
-              <ChoiseList
-                name="owner"
-                arrlist={driverlist}
-                setValue={setValue}
-              />
+              <ChoiseList name="owner" arrlist={driverlist} setValue={setValue} />
             </div>
           ) : (
             <p
               className="crOderOwnerP"
               onDoubleClick={handleDblClick}
-              onMouseDown={(e) => {
-                if (e.target.className == "crOderOwnerP") e.preventDefault();
+              onMouseDown={e => {
+                if (e.target.className == 'crOderOwnerP') e.preventDefault();
               }}
             >
               {odersData.valueDriver}
@@ -650,19 +730,14 @@ export const CreateOderNew = (props) => {
           <h4 className="crOderTrackDriverHeader">Водитель</h4>
           {showTrackDriverInput ? (
             <div className="containerChoise">
-              <ChoiseList
-                name="trackDriver"
-                arrlist={trackdrivers}
-                setValue={setValue}
-              />
+              <ChoiseList name="trackDriver" arrlist={trackdrivers} setValue={setValue} />
             </div>
           ) : (
             <p
               className="crOderTrackDriverP"
               onDoubleClick={handleDblClick}
-              onMouseDown={(e) => {
-                if (e.target.className == "crOderTrackDriverP")
-                  e.preventDefault();
+              onMouseDown={e => {
+                if (e.target.className == 'crOderTrackDriverP') e.preventDefault();
               }}
             >
               {odersData.valueTrackDriver}
@@ -679,8 +754,8 @@ export const CreateOderNew = (props) => {
             <p
               className="crOderTrackP"
               onDoubleClick={handleDblClick}
-              onMouseDown={(e) => {
-                if (e.target.className == "crOderTrackP") e.preventDefault();
+              onMouseDown={e => {
+                if (e.target.className == 'crOderTrackP') e.preventDefault();
               }}
             >
               {odersData.valueTrack}
@@ -691,18 +766,13 @@ export const CreateOderNew = (props) => {
           <h4 className="crOderDriverPriceHeader">Цена</h4>
           <div className="crOderDriverPriceWrap">
             {showDriverPrice ? (
-              <input
-                type="numnber"
-                className="crOderDriverPriceInput"
-                onBlur={handleLostFocus}
-              />
+              <input type="numnber" className="crOderDriverPriceInput" onBlur={handleLostFocus} />
             ) : (
               <p
                 className="crOderDriverPriceP"
                 onDoubleClick={handleDblClick}
-                onMouseDown={(e) => {
-                  if (e.target.className == "crOderDriverPriceP")
-                    e.preventDefault();
+                onMouseDown={e => {
+                  if (e.target.className == 'crOderDriverPriceP') e.preventDefault();
                 }}
               >
                 {odersData.driverPrice} руб
@@ -716,12 +786,7 @@ export const CreateOderNew = (props) => {
           <div className="addFields">
             <span>еще цена</span>
             <div className="wrapInput">
-              <InputText
-                name="price"
-                typeInput="number"
-                text={odersData.price}
-                getText={getText}
-              />
+              <InputText name="price" typeInput="number" text={odersData.price} getText={getText} />
             </div>
             <span>проц</span>
             <div className="wrapInput">
@@ -735,28 +800,15 @@ export const CreateOderNew = (props) => {
           </div>
         )}
         <div className="rightPathWrap">
-          <div
-            className={
-              debtOfCustomer < limit || limit == null
-                ? "infoBlock"
-                : "infoBlock red"
-            }
-          >
-            {debtOfCustomer
-              ? `Долг клиента составляет ${debtOfCustomer} руб`
-              : null}
+          <div className={debtOfCustomer < limit || limit == null ? 'infoBlock' : 'infoBlock red'}>
+            {debtOfCustomer ? `Долг клиента составляет ${debtOfCustomer} руб` : null}
           </div>
           <div className="footerCheckBox">
-            Не включать в оплату{" "}
-            <input
-              type="checkbox"
-              onChange={handleCheckPayment}
-              checked={checkPayment}
-            />
+            Не включать в оплату{' '}
+            <input type="checkbox" onChange={handleCheckPayment} checked={checkPayment} />
           </div>
           <div className="footerCheckBox">
-            Выделить цветом{" "}
-            <input type="checkbox" onChange={handleCheck} checked={checkBox} />
+            Выделить цветом <input type="checkbox" onChange={handleCheck} checked={checkBox} />
           </div>
           {showBtn && (
             <button className="crOdBtn" onClick={handleClick}>
