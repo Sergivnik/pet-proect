@@ -542,10 +542,13 @@ export const Bill = ({
                     <>
                       <td style={{ border: '1px solid black', textAlign: 'center' }}>{VAT_RATE}</td>
                       <td style={{ border: '1px solid black', textAlign: 'center' }}>
-                        {(string.customerPrice / 21).toLocaleString('ru-RU', {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                        })}
+                        {((string.customerPrice / 21) * string.numberOfShipments).toLocaleString(
+                          'ru-RU',
+                          {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                          }
+                        )}
                       </td>
                       <td
                         style={{
@@ -617,6 +620,34 @@ export const Bill = ({
                 })}
               </td>
             </tr>
+            {withVAT && (
+              <tr>
+                <td
+                  style={{
+                    width: '84%',
+                    margin: '5px',
+                    textAlign: 'right',
+                    fontWeight: 700,
+                  }}
+                >
+                  В том числе НДС:
+                </td>
+                <td
+                  style={{
+                    width: '14%',
+                    margin: '5px',
+                    paddingRight: '10px',
+                    textAlign: 'right',
+                    fontWeight: 700,
+                  }}
+                >
+                  {getVat(totalSum).toLocaleString('ru-RU', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+              </tr>
+            )}
             <tr>
               <td style={{ width: '80%' }}>
                 Всего наименований {totalCount}, на сумму{' '}
@@ -624,7 +655,12 @@ export const Bill = ({
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}{' '}
-                руб без НДС
+                {withVAT
+                  ? `в том числе НДС - ${getVat(totalSum).toLocaleString('ru-RU', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })} руб.`
+                  : 'руб без НДС'}
               </td>
             </tr>
             <tr style={{ borderBottom: '2px solid black' }}>
