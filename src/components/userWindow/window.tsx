@@ -21,6 +21,10 @@ export const Window = ({ title, startX, startY, width, onClose, children }: Prop
     height: 600,
   });
 
+  const handleBlockDblClick = e => {
+    e.stopPropagation();
+  };
+
   useEffect(() => {
     console.log(width);
 
@@ -59,7 +63,7 @@ export const Window = ({ title, startX, startY, width, onClose, children }: Prop
         });
       }}
     >
-      <div className="window">
+      <div className="window" onDoubleClick={handleBlockDblClick}>
         {/* HEADER */}
         <div className="window-header">
           <span className="window-header-span">{title}</span>

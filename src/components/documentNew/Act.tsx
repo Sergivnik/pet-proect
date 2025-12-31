@@ -12,6 +12,7 @@ interface ActProps {
   stamp: boolean;
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
+  withVAT: boolean;
 }
 interface ClientData {
   name: string;
@@ -76,6 +77,7 @@ export const Act = ({
   stamp,
   actNumberString,
   getStringData,
+  withVAT,
 }: ActProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
@@ -131,7 +133,6 @@ export const Act = ({
       });
     }
   }, [currentTable, currentOwner, driver]);
-
 
   useEffect(() => {
     setRouteStrings(strings);
@@ -204,9 +205,7 @@ export const Act = ({
   return (
     <div className="invoicePrintForm" style={styles.container}>
       <div style={styles.mainContent}>
-        <div style={styles.titleRow}>
-          Акт № {actNumberString}
-        </div>
+        <div style={styles.titleRow}>Акт № {actNumberString}</div>
 
         <table style={styles.headerTable}>
           <tbody>
@@ -388,7 +387,7 @@ export const Act = ({
         <div style={{ position: 'relative', height: '100px', marginTop: '40px', fontSize: '14px' }}>
           <p style={{ marginTop: '20px' }}>
             Исполнитель _____________________ {shortName(accountOwner?.bossName)}
-                Заказчик ________________________ 
+                Заказчик ________________________
           </p>
           {stamp && (
             <img

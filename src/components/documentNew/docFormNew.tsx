@@ -45,6 +45,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const [editTtn, setEditTtn] = useState<boolean>(true);
   const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
   const [requestMessage, setRequestMessage] = useState<string | null>(null);
+  const [withVAT, setWithVAT] = useState<boolean>(false);
   const [strings, setStrings] = useState<DocString[]>([
     { mainPart: '', numberOfShipments: 1, customerPrice: 0 },
   ]);
@@ -64,6 +65,16 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const application = appList.find((item: any) => item.orderId == order._id);
   const [actNumber, setActNumber] = useState<string | number>('');
   const [actNumberString, setActNumberString] = useState<string | null>(null);
+
+  const updateVATByDate = (date: string | Date) => {
+    if (date) {
+      const orderDate = typeof date === 'string' ? new Date(date) : date;
+      const thresholdDate = new Date('2026-01-01');
+      setWithVAT(orderDate >= thresholdDate);
+    } else {
+      setWithVAT(false);
+    }
+  };
 
   const handleCheckBox = (e: React.ChangeEvent<HTMLInputElement>) => {
     const name = e.currentTarget.name as keyof checkBoxType;
@@ -151,6 +162,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
       }, 0);
       setActNumber(lastActNumber + 1);
     }
+    updateVATByDate(order.date);
   }, [order]);
   useEffect(() => {
     setActNumberString(`${actNumber} от ${new Date(order.date).toLocaleDateString()}`);
@@ -328,6 +340,14 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
             name="reason"
           />
         </div>
+        <div className="wrapperCheckBox">
+          <span>НДС 5%</span>
+          <input
+            type="checkbox"
+            checked={withVAT}
+            onChange={e => setWithVAT(e.currentTarget.checked)}
+          />
+        </div>
       </header>
       <div className="wrapperMenuDoc">
         <div className="wrapperTypeOfDoc">
@@ -372,6 +392,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               actNumberString={actNumberString}
               getStringData={getStringData}
               getActNumberString={getActNumberString}
+              withVAT={withVAT}
             />
             <Act
               order={order}
@@ -381,6 +402,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               stamp={true}
               actNumberString={actNumberString}
               getStringData={getStringData}
+              withVAT={withVAT}
             />
           </React.Fragment>
         )}
@@ -395,6 +417,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               actNumberString={actNumberString}
               getStringData={getStringData}
               getActNumberString={getActNumberString}
+              withVAT={withVAT}
             />
             <Act
               order={order}
@@ -404,6 +427,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               stamp={false}
               actNumberString={actNumberString}
               getStringData={getStringData}
+              withVAT={withVAT}
             />
             <Act
               order={order}
@@ -413,6 +437,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               stamp={false}
               actNumberString={actNumberString}
               getStringData={getStringData}
+              withVAT={withVAT}
             />
           </React.Fragment>
         )}

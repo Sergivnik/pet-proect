@@ -13,6 +13,7 @@ interface BillProps {
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
   getActNumberString: (actNumberString: string) => void;
+  withVAT: boolean;
 }
 interface ClientData {
   name: string;
@@ -88,6 +89,7 @@ export const Bill = ({
   actNumberString,
   getStringData,
   getActNumberString,
+  withVAT,
 }: BillProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
@@ -220,6 +222,18 @@ export const Bill = ({
   const handleEnterActNumber = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditActNumber(false);
     getActNumberString(textActNumber);
+  };
+
+  const VAT_RATE = 5;
+  const getVat = (sum: number) => (sum * VAT_RATE) / (100 + VAT_RATE);
+  const getSumWithoutVAT = (sum: number) => (100 * sum) / (100 + VAT_RATE);
+
+  const getPrice = (sum: number) => {
+    if (withVAT) {
+      return getSumWithoutVAT(sum);
+    } else {
+      return sum;
+    }
   };
 
   const totalSum = routeStrings.reduce(
@@ -438,13 +452,20 @@ export const Bill = ({
               }}
             >
               <td style={{ border: '1px solid black', width: '5.7%' }}>№</td>
-              <td style={{ border: '1px solid black', width: '51.3%' }}>
+              <td style={{ border: '1px solid black', width: withVAT ? '40%' : '51.3%' }}>
                 Наименование работы (услуги)
               </td>
-              <td style={{ border: '1px solid black', width: '9.7%' }}>Кол-во</td>
-              <td style={{ border: '1px solid black', width: '5.6%' }}>Ед.</td>
-              <td style={{ border: '1px solid black', width: '11.4%' }}>Цена</td>
-              <td style={{ border: '1px solid black', width: '14.3%' }}>Сумма</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '5%' : '9.7%' }}>Кол-во</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '4%' : '5.6%' }}>Ед.</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '6%' : '11.4%' }}>Цена</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '9%' : '14.3%' }}>Сумма</td>
+              {withVAT && (
+                <>
+                  <td style={{ border: '1px solid black', width: '5.6%' }}>Ставка НДС, %</td>
+                  <td style={{ border: '1px solid black', width: '11.4%' }}>НДС, руб.</td>
+                  <td style={{ border: '1px solid black', width: '14.3%' }}>Сумма с НДС, руб.</td>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -490,7 +511,7 @@ export const Bill = ({
                     style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
                     onDoubleClick={e => handleDblClkPrice(e, index)}
                   >
-                    {editPrice && indexEditString == index ? (
+                    {editPrice && indexEditString == index && !withVAT ? (
                       <input
                         type="number"
                         style={{ height: `${heighrEditInput}px` }}
@@ -500,7 +521,7 @@ export const Bill = ({
                         onKeyDown={handleEnterPrice}
                       />
                     ) : (
-                      string.customerPrice.toLocaleString('ru-RU', {
+                      getPrice(string.customerPrice).toLocaleString('ru-RU', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })
@@ -509,11 +530,52 @@ export const Bill = ({
                   <td
                     style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
                   >
-                    {(string.customerPrice * string.numberOfShipments).toLocaleString('ru-RU', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
+                    {(getPrice(string.customerPrice) * string.numberOfShipments).toLocaleString(
+                      'ru-RU',
+                      {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }
+                    )}
                   </td>
+                  {withVAT && (
+                    <>
+                      <td style={{ border: '1px solid black', textAlign: 'center' }}>{VAT_RATE}</td>
+                      <td style={{ border: '1px solid black', textAlign: 'center' }}>
+                        {(string.customerPrice / 21).toLocaleString('ru-RU', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })}
+                      </td>
+                      <td
+                        style={{
+                          border: '1px solid black',
+                          textAlign: 'right',
+                          paddingRight: '8px',
+                        }}
+                        onDoubleClick={e => handleDblClkPrice(e, index)}
+                      >
+                        {editPrice && indexEditString == index && withVAT ? (
+                          <input
+                            type="number"
+                            style={{ height: `${heighrEditInput}px` }}
+                            className="inputInTd"
+                            value={string.customerPrice}
+                            onChange={handleChangePrice}
+                            onKeyDown={handleEnterPrice}
+                          />
+                        ) : (
+                          (string.customerPrice * string.numberOfShipments).toLocaleString(
+                            'ru-RU',
+                            {
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                            }
+                          )
+                        )}
+                      </td>
+                    </>
+                  )}
                 </tr>
               );
             })}
