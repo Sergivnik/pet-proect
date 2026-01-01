@@ -82,8 +82,6 @@ export const Act = ({
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
-  const orderList = useSelector((state: any) => state.oderReducer.originOdersList);
-  const driverOrderList = useSelector((state: any) => state.oderReducer.driverOrderList);
   const yearConst = useSelector((state: any) => state.oderReducer.yearconst);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
@@ -98,6 +96,7 @@ export const Act = ({
   const [editReason, setEditReason] = useState<boolean>(false);
   const [textReason, setTextReason] = useState<string>(`  ИГК ${IGC}`);
   const [heighrEditInput, setHeightEditInput] = useState<number>(0);
+  const [indexEditString, setIndexEditString] = useState<number>();
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -138,14 +137,15 @@ export const Act = ({
     setRouteStrings(strings);
   }, [strings]);
 
-  const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>) => {
+  const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
+    setIndexEditString(index);
     setHeightEditInput(height);
     setEditString(true);
   };
   const handleChangeMainPart = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const editStrings = [...routeStrings];
-    editStrings[0].mainPart = e.currentTarget.value;
+    editStrings[indexEditString].mainPart = e.currentTarget.value;
     setRouteStrings(editStrings);
   };
   const handleEnterMainPart = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -154,14 +154,15 @@ export const Act = ({
       getStringData(routeStrings);
     }
   };
-  const handleDblClkNum = (e: React.MouseEvent<HTMLElement>) => {
+  const handleDblClkNum = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
+    setIndexEditString(index);
     setHeightEditInput(height);
     setEditNum(true);
   };
   const handleChangeNum = (e: React.ChangeEvent<HTMLInputElement>) => {
     const editStrings = [...routeStrings];
-    editStrings[0].numberOfShipments = Number(e.currentTarget.value);
+    editStrings[indexEditString].numberOfShipments = Number(e.currentTarget.value);
     setRouteStrings(editStrings);
   };
   const handleEnterNum = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -170,14 +171,15 @@ export const Act = ({
       getStringData(routeStrings);
     }
   };
-  const handleDblClkPrice = (e: React.MouseEvent<HTMLElement>) => {
+  const handleDblClkPrice = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
+    setIndexEditString(index);
     setHeightEditInput(height);
     setEditPrice(true);
   };
   const handleChangePrice = (e: React.ChangeEvent<HTMLInputElement>) => {
     const editStrings = [...routeStrings];
-    editStrings[0].customerPrice = Number(e.currentTarget.value);
+    editStrings[indexEditString].customerPrice = Number(e.currentTarget.value);
     setRouteStrings(editStrings);
   };
   const handleEnterPrice = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -194,6 +196,18 @@ export const Act = ({
   };
   const handleEnterReason = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditReason(false);
+  };
+
+  const VAT_RATE = 5;
+  const getVat = (sum: number) => (sum * VAT_RATE) / (100 + VAT_RATE);
+  const getSumWithoutVAT = (sum: number) => (100 * sum) / (100 + VAT_RATE);
+
+  const getPrice = (sum: number) => {
+    if (withVAT) {
+      return getSumWithoutVAT(sum);
+    } else {
+      return sum;
+    }
   };
 
   const totalSum = routeStrings.reduce(
@@ -252,11 +266,20 @@ export const Act = ({
               }}
             >
               <td style={{ ...styles.tableCell, width: '5.7%' }}>№</td>
-              <td style={{ ...styles.tableCell, width: '51.3%' }}>Наименование работы (услуги)</td>
-              <td style={{ ...styles.tableCell, width: '9.7%' }}>Кол-во</td>
-              <td style={{ ...styles.tableCell, width: '5.6%' }}>Ед.</td>
-              <td style={{ ...styles.tableCell, width: '11.4%' }}>Цена</td>
-              <td style={{ ...styles.tableCell, width: '14.3%' }}>Сумма</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '40%' : '51.3%' }}>
+                Наименование работы (услуги)
+              </td>
+              <td style={{ border: '1px solid black', width: withVAT ? '5%' : '9.7%' }}>Кол-во</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '4%' : '5.6%' }}>Ед.</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '6%' : '11.4%' }}>Цена</td>
+              <td style={{ border: '1px solid black', width: withVAT ? '9%' : '14.3%' }}>Сумма</td>
+              {withVAT && (
+                <>
+                  <td style={{ border: '1px solid black', width: '5.6%' }}>Ставка НДС, %</td>
+                  <td style={{ border: '1px solid black', width: '11.4%' }}>НДС, руб.</td>
+                  <td style={{ border: '1px solid black', width: '14.3%' }}>Сумма с НДС, руб.</td>
+                </>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -265,9 +288,9 @@ export const Act = ({
                 <td style={{ ...styles.tableCell, textAlign: 'center' }}>{index + 1}</td>
                 <td
                   style={{ ...styles.tableCell, padding: '4px' }}
-                  onDoubleClick={handleDblClkMainPart}
+                  onDoubleClick={e => handleDblClkMainPart(e, index)}
                 >
-                  {editString ? (
+                  {editString && indexEditString == index ? (
                     <textarea
                       style={{ height: `${heighrEditInput}px` }}
                       className="inputInTd"
@@ -281,9 +304,9 @@ export const Act = ({
                 </td>
                 <td
                   style={{ ...styles.tableCell, textAlign: 'center' }}
-                  onDoubleClick={handleDblClkNum}
+                  onDoubleClick={e => handleDblClkNum(e, index)}
                 >
-                  {editNum ? (
+                  {editNum && indexEditString == index ? (
                     <input
                       type="number"
                       style={{ height: `${heighrEditInput}px` }}
@@ -298,10 +321,10 @@ export const Act = ({
                 </td>
                 <td style={{ ...styles.tableCell, textAlign: 'center' }}>шт</td>
                 <td
-                  style={{ ...styles.tableCell, textAlign: 'right', paddingRight: '8px' }}
-                  onDoubleClick={handleDblClkPrice}
+                  style={{ border: '1px solid black', textAlign: 'right', paddingRight: '8px' }}
+                  onDoubleClick={e => handleDblClkPrice(e, index)}
                 >
-                  {editPrice ? (
+                  {editPrice && indexEditString == index && !withVAT ? (
                     <input
                       type="number"
                       style={{ height: `${heighrEditInput}px` }}
@@ -311,18 +334,59 @@ export const Act = ({
                       onKeyDown={handleEnterPrice}
                     />
                   ) : (
-                    string.customerPrice.toLocaleString('ru-RU', {
+                    getPrice(string.customerPrice).toLocaleString('ru-RU', {
                       minimumFractionDigits: 2,
                       maximumFractionDigits: 2,
                     })
                   )}
                 </td>
                 <td style={{ ...styles.tableCell, textAlign: 'right', paddingRight: '8px' }}>
-                  {(string.customerPrice * string.numberOfShipments).toLocaleString('ru-RU', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
+                  {(getPrice(string.customerPrice) * string.numberOfShipments).toLocaleString(
+                    'ru-RU',
+                    {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }
+                  )}
                 </td>
+                {withVAT && (
+                  <>
+                    <td style={{ border: '1px solid black', textAlign: 'center' }}>{VAT_RATE}</td>
+                    <td style={{ border: '1px solid black', textAlign: 'center' }}>
+                      {((string.customerPrice / 21) * string.numberOfShipments).toLocaleString(
+                        'ru-RU',
+                        {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        }
+                      )}
+                    </td>
+                    <td
+                      style={{
+                        border: '1px solid black',
+                        textAlign: 'right',
+                        paddingRight: '8px',
+                      }}
+                      onDoubleClick={e => handleDblClkPrice(e, index)}
+                    >
+                      {editPrice && indexEditString == index && withVAT ? (
+                        <input
+                          type="number"
+                          style={{ height: `${heighrEditInput}px` }}
+                          className="inputInTd"
+                          value={string.customerPrice}
+                          onChange={handleChangePrice}
+                          onKeyDown={handleEnterPrice}
+                        />
+                      ) : (
+                        (string.customerPrice * string.numberOfShipments).toLocaleString('ru-RU', {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                        })
+                      )}
+                    </td>
+                  </>
+                )}
               </tr>
             ))}
           </tbody>
@@ -342,41 +406,85 @@ export const Act = ({
                 style={{
                   width: '84%',
                   margin: '5px',
+                  textAlign: 'right',
+                  fontWeight: 700,
                 }}
               >
-                Всего наименований {totalCount}, на сумму{' '}
-                {totalSum.toLocaleString('ru-RU', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}{' '}
-                руб без НДС
+                Итого:
               </td>
               <td
                 style={{
                   width: '14%',
                   margin: '5px',
+                  paddingRight: '10px',
                   textAlign: 'right',
                   fontWeight: 700,
                 }}
               >
-                Итого:{' '}
                 {totalSum.toLocaleString('ru-RU', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
               </td>
             </tr>
+            {withVAT && (
+              <tr>
+                <td
+                  style={{
+                    width: '84%',
+                    margin: '5px',
+                    textAlign: 'right',
+                    fontWeight: 700,
+                  }}
+                >
+                  В том числе НДС:
+                </td>
+                <td
+                  style={{
+                    width: '14%',
+                    margin: '5px',
+                    paddingRight: '10px',
+                    textAlign: 'right',
+                    fontWeight: 700,
+                  }}
+                >
+                  {getVat(totalSum).toLocaleString('ru-RU', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  })}
+                </td>
+              </tr>
+            )}
             <tr>
-              <td colSpan={2} style={{ width: '100%', fontWeight: 700 }}>
-                ({sumInWords(totalSum)})
+              <td style={{ width: '80%' }}>
+                Всего наименований {totalCount}, на сумму{' '}
+                {totalSum.toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}{' '}
+                {withVAT
+                  ? `в том числе НДС - ${getVat(totalSum).toLocaleString('ru-RU', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    })} руб.`
+                  : 'руб без НДС'}
               </td>
+            </tr>
+            <tr style={{ borderBottom: '2px solid black' }}>
+              <td style={{ width: '80%', fontWeight: 700 }}>{sumInWords(totalSum)}</td>
             </tr>
           </tbody>
         </table>
 
         <div style={{ fontSize: '13px', marginTop: '15px' }}>
           <p style={{ margin: '4px 0' }}>
-            Всего оказано услуг на сумму: {sumInWords(totalSum)} без НДС
+            Всего оказано услуг на сумму: {sumInWords(totalSum)}{' '}
+            {withVAT
+              ? `в том числе НДС - ${getVat(totalSum).toLocaleString('ru-RU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })} руб.`
+              : 'без НДС'}
           </p>
           <p style={{ margin: '4px 0' }}>
             Вышеуказанные услуги выполнены полностью и в срок. Заказчик претензий по объему,
