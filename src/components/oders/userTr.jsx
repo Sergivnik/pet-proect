@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { CreateOderNew } from '../createOder/createOderNew.jsx';
 import { TdDate } from '../userTd/tdDate.jsx';
 import { TdDriver } from '../userTd/tdDriver.jsx';
@@ -12,18 +13,24 @@ import { TdDocument } from '../userTd/tdDocument.jsx';
 import { TdCustomerPayment } from '../userTd/tdCustomerPayment.jsx';
 import { TdDriverPayment } from '../userTd/tdDriverPayment.jsx';
 import { TdAccountNumber } from '../userTd/tdAccountNumber.jsx';
-import { DocForm } from '../documents/docForm.jsx';
+import { DocFormNew } from '../documentNew/docFormNew.tsx';
+import { Window } from '../userWindow/window.tsx';
 
 export const UserTr = props => {
   const [showEdit, setShowEdit] = useState(true);
   const [showDocForm, setShowDocForm] = useState(false);
+  const [windowWidth, setWindowWidth] = useState(800);
+  const [order, setOrder] = useState(props.elem);
 
   const handleClickEdit = () => {
     setShowEdit(false);
   };
-  const handleClickSave = isChanged => {
+  const handleClickSave = (isChanged, order) => {
     setShowEdit(true);
-    if (isChanged) setShowDocForm(true);
+    if (isChanged) {
+      setShowDocForm(true);
+      setOrder(order);
+    }
   };
   const handleClickClose = () => {
     setShowDocForm(false);
@@ -39,6 +46,14 @@ export const UserTr = props => {
   };
   const handleClickCtrl = (id, name) => {
     props.handleClickCtrl(id, name);
+  };
+
+  const getTypeOfDoc = typeOfDoc => {
+    if (typeOfDoc === 'Invoice') {
+      setWindowWidth(1300);
+    } else {
+      setWindowWidth(800);
+    }
   };
   useEffect(() => {
     const onKeypress = e => {
@@ -168,17 +183,21 @@ export const UserTr = props => {
           </td> */}
         </tr>
       )}
-      {showDocForm && (
-        <div className="orderDivDocForm">
-          <DocForm
-            dataDoc={{
-              number: props.elem.accountNumber,
-              odersListId: [props.elem._id],
-            }}
-            handleClickClose={handleClickClose}
-          />
-        </div>
-      )}
+
+      {showDocForm
+        ? createPortal(
+            <Window
+              title="Документы для печати"
+              startX={400}
+              startY={200}
+              width={windowWidth}
+              onClose={() => setShowDocForm(false)}
+            >
+              <DocFormNew order={order} currentTable="oderslist" getTypeOfDoc={getTypeOfDoc} />
+            </Window>,
+            document.body
+          )
+        : null}
     </>
   );
 };
