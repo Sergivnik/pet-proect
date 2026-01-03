@@ -65,7 +65,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const application = appList.find((item: any) => item.orderId == order._id);
   const [actNumber, setActNumber] = useState<string | number>('');
   const [actNumberString, setActNumberString] = useState<string | null>(null);
-  const [textReaason, setTextReason]=useState<string>('');
+  const [textReaason, setTextReason] = useState<string>('');
 
   const updateVATByDate = (date: string | Date) => {
     if (date) {
@@ -121,9 +121,9 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
     setActNumber(result);
   };
 
-  const getTextReason=(textReason:string)=>{
-    setTextReason(textReason)
-  }
+  const getTextReason = (textReason: string) => {
+    setTextReason(textReason);
+  };
 
   const handleAddString = () => {
     let arr = structuredClone(strings);

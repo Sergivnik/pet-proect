@@ -13,7 +13,7 @@ interface ActProps {
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
   withVAT: boolean;
-  getTextReason: (textReason:string)=>void;
+  getTextReason: (textReason: string) => void;
   textReason: string;
 }
 interface ClientData {
@@ -140,14 +140,14 @@ export const Act = ({
   useEffect(() => {
     setRouteStrings(strings);
   }, [strings]);
-  useEffect(()=>{
+  useEffect(() => {
     console.log(textReason);
-    if (textReason)   { 
+    if (textReason) {
       setTextReasonIGC(textReason);
-    }else{
-      setTextReasonIGC(`  ИГК ${IGC}`)
+    } else {
+      setTextReasonIGC(`  ИГК ${IGC}`);
     }
-  },[textReason,reason])
+  }, [textReason, reason]);
 
   const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;

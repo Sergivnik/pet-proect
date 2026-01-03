@@ -10,8 +10,8 @@ interface InvoiceProps {
   reason: boolean;
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
-  getTextReason: (textReason:string)=>void;
-  textReason:string;
+  getTextReason: (textReason: string) => void;
+  textReason: string;
 }
 interface ClientData {
   name: string;
@@ -93,7 +93,7 @@ export const Invoice = ({
   actNumberString,
   getStringData,
   getTextReason,
-  textReason
+  textReason,
 }: InvoiceProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
@@ -113,13 +113,15 @@ export const Invoice = ({
   const [indexEditString, setIndexEditString] = useState<number>();
   const [vatRate, setVatRate] = useState<number>(5);
   const [paymentDocNumber, setPaymentDocNumber] = useState<string>('');
-  const [shipmentDoc, setShipmentDoc] = useState<string>(`Акт выполненных работ № ${actNumberString}`);
+  const [shipmentDoc, setShipmentDoc] = useState<string>(
+    `Акт выполненных работ № ${actNumberString}`
+  );
   const [invoiceDate, setInvoiceDate] = useState<string>('');
   const [correctionNumber, setCorrectionNumber] = useState<string>('');
   const [correctionDate, setCorrectionDate] = useState<string>('');
   const [currency, setCurrency] = useState<string>('Российский рубль, 643');
   const [contractId, setContractId] = useState<string>(IGC);
-  const [textReasonIGC, setTextReasonIGC]=useState<string>(textReason)
+  const [textReasonIGC, setTextReasonIGC] = useState<string>(textReason);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -173,14 +175,14 @@ export const Invoice = ({
   useEffect(() => {
     setRouteStrings(strings);
   }, [strings]);
-  useEffect(()=>{
+  useEffect(() => {
     console.log(textReason);
-    if (textReason)   { 
+    if (textReason) {
       setTextReasonIGC(textReason);
-    }else{
-      setTextReasonIGC(`  ИГК ${IGC}`)
+    } else {
+      setTextReasonIGC(`  ИГК ${IGC}`);
     }
-  },[textReason,reason])
+  }, [textReason, reason]);
 
   const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
@@ -321,7 +323,9 @@ export const Invoice = ({
               <td style={styles.infoCell}>
                 (6б) Идентификатор государственного контракта, договора (соглашения) (при наличии)
               </td>
-              <td style={{ ...styles.infoCell, fontWeight: 700 }}>{reason?textReasonIGC :'-'}</td>
+              <td style={{ ...styles.infoCell, fontWeight: 700 }}>
+                {reason ? textReasonIGC : '-'}
+              </td>
             </tr>
           </tbody>
         </table>

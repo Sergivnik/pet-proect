@@ -14,8 +14,8 @@ interface BillProps {
   getStringData: (strings: DocString[]) => void;
   getActNumberString: (actNumberString: string) => void;
   withVAT: boolean;
-  getTextReason: (textReason:string)=>void;
-  textReason:string;
+  getTextReason: (textReason: string) => void;
+  textReason: string;
 }
 interface ClientData {
   name: string;
@@ -154,14 +154,14 @@ export const Bill = ({
   useEffect(() => {
     setRouteStrings(strings);
   }, [strings]);
-  useEffect(()=>{
+  useEffect(() => {
     console.log(textReason);
-    if (textReason)   { 
+    if (textReason) {
       setTextReasonIGC(textReason);
-    }else{
-      setTextReasonIGC(`  ИГК ${IGC}`)
+    } else {
+      setTextReasonIGC(`  ИГК ${IGC}`);
     }
-  },[textReason,reason])
+  }, [textReason, reason]);
 
   const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
