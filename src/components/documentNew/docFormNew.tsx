@@ -65,6 +65,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const application = appList.find((item: any) => item.orderId == order._id);
   const [actNumber, setActNumber] = useState<string | number>('');
   const [actNumberString, setActNumberString] = useState<string | null>(null);
+  const [textReaason, setTextReason]=useState<string>('');
 
   const updateVATByDate = (date: string | Date) => {
     if (date) {
@@ -119,6 +120,10 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
     const result = Number.isNaN(num) ? actNumberStr : num;
     setActNumber(result);
   };
+
+  const getTextReason=(textReason:string)=>{
+    setTextReason(textReason)
+  }
 
   const handleAddString = () => {
     let arr = structuredClone(strings);
@@ -379,6 +384,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
             reason={checkBoxesValue.reason}
             actNumberString={actNumberString}
             getStringData={getStringData}
+            getTextReason={getTextReason}
+            textReason={textReaason}
           />
         )}
         {choisenTypeDoc === 'Bill' && (
@@ -393,6 +400,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               getStringData={getStringData}
               getActNumberString={getActNumberString}
               withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
             />
             <Act
               order={order}
@@ -403,6 +412,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               actNumberString={actNumberString}
               getStringData={getStringData}
               withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
             />
           </React.Fragment>
         )}
@@ -418,6 +429,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               getStringData={getStringData}
               getActNumberString={getActNumberString}
               withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
             />
             <Act
               order={order}
@@ -428,6 +441,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               actNumberString={actNumberString}
               getStringData={getStringData}
               withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
             />
             <Act
               order={order}
@@ -438,6 +453,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               actNumberString={actNumberString}
               getStringData={getStringData}
               withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
             />
           </React.Fragment>
         )}

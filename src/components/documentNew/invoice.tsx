@@ -10,6 +10,8 @@ interface InvoiceProps {
   reason: boolean;
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
+  getTextReason: (textReason:string)=>void;
+  textReason:string;
 }
 interface ClientData {
   name: string;
@@ -90,13 +92,17 @@ export const Invoice = ({
   reason,
   actNumberString,
   getStringData,
+  getTextReason,
+  textReason
 }: InvoiceProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
   const currentOwner = useSelector((state: any) => state.oderReducer.currentOwner);
+  const yearConst = useSelector((state: any) => state.oderReducer.yearconst);
 
   const customer = customerList.find((item: any) => item._id === order.idCustomer);
   const driver = driverList.find((item: Driver) => item._id === order.idDriver);
+  const IGC = yearConst.IGC;
 
   const [accountOwner, setAccountOwner] = useState<ClientData | null>(null);
   const [routeStrings, setRouteStrings] = useState<DocString[]>(strings);
@@ -107,12 +113,13 @@ export const Invoice = ({
   const [indexEditString, setIndexEditString] = useState<number>();
   const [vatRate, setVatRate] = useState<number>(5);
   const [paymentDocNumber, setPaymentDocNumber] = useState<string>('');
-  const [shipmentDoc, setShipmentDoc] = useState<string>('');
+  const [shipmentDoc, setShipmentDoc] = useState<string>(`Акт выполненных работ № ${actNumberString}`);
   const [invoiceDate, setInvoiceDate] = useState<string>('');
   const [correctionNumber, setCorrectionNumber] = useState<string>('');
   const [correctionDate, setCorrectionDate] = useState<string>('');
   const [currency, setCurrency] = useState<string>('Российский рубль, 643');
-  const [contractId, setContractId] = useState<string>('');
+  const [contractId, setContractId] = useState<string>(IGC);
+  const [textReasonIGC, setTextReasonIGC]=useState<string>(textReason)
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -166,6 +173,14 @@ export const Invoice = ({
   useEffect(() => {
     setRouteStrings(strings);
   }, [strings]);
+  useEffect(()=>{
+    console.log(textReason);
+    if (textReason)   { 
+      setTextReasonIGC(textReason);
+    }else{
+      setTextReasonIGC(`  ИГК ${IGC}`)
+    }
+  },[textReason,reason])
 
   const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
@@ -306,7 +321,7 @@ export const Invoice = ({
               <td style={styles.infoCell}>
                 (6б) Идентификатор государственного контракта, договора (соглашения) (при наличии)
               </td>
-              <td style={{ ...styles.infoCell, fontWeight: 700 }}>{contractId || '-'}</td>
+              <td style={{ ...styles.infoCell, fontWeight: 700 }}>{reason?textReasonIGC :'-'}</td>
             </tr>
           </tbody>
         </table>

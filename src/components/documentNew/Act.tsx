@@ -13,6 +13,8 @@ interface ActProps {
   actNumberString: string;
   getStringData: (strings: DocString[]) => void;
   withVAT: boolean;
+  getTextReason: (textReason:string)=>void;
+  textReason: string;
 }
 interface ClientData {
   name: string;
@@ -78,6 +80,8 @@ export const Act = ({
   actNumberString,
   getStringData,
   withVAT,
+  getTextReason,
+  textReason,
 }: ActProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
@@ -94,7 +98,7 @@ export const Act = ({
   const [editNum, setEditNum] = useState<boolean>(false);
   const [editPrice, setEditPrice] = useState<boolean>(false);
   const [editReason, setEditReason] = useState<boolean>(false);
-  const [textReason, setTextReason] = useState<string>(`  ИГК ${IGC}`);
+  const [textReasonIGC, setTextReasonIGC] = useState<string>(`  ИГК ${IGC}`);
   const [heighrEditInput, setHeightEditInput] = useState<number>(0);
   const [indexEditString, setIndexEditString] = useState<number>();
 
@@ -136,6 +140,14 @@ export const Act = ({
   useEffect(() => {
     setRouteStrings(strings);
   }, [strings]);
+  useEffect(()=>{
+    console.log(textReason);
+    if (textReason)   { 
+      setTextReasonIGC(textReason);
+    }else{
+      setTextReasonIGC(`  ИГК ${IGC}`)
+    }
+  },[textReason,reason])
 
   const handleDblClkMainPart = (e: React.MouseEvent<HTMLElement>, index: number) => {
     const height = e.currentTarget.clientHeight;
@@ -192,10 +204,13 @@ export const Act = ({
     setEditReason(true);
   };
   const handleChangeReason = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setTextReason(e.currentTarget.value);
+    setTextReasonIGC(e.currentTarget.value);
   };
   const handleEnterReason = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.code == 'Enter' || e.code == 'NumpadEnter') setEditReason(false);
+    if (e.code == 'Enter' || e.code == 'NumpadEnter') {
+      setEditReason(false);
+      getTextReason(textReasonIGC);
+    }
   };
 
   const VAT_RATE = 5;
@@ -243,12 +258,12 @@ export const Act = ({
                   {editReason ? (
                     <input
                       type="text"
-                      value={textReason}
+                      value={textReasonIGC}
                       onChange={handleChangeReason}
                       onKeyDown={handleEnterReason}
                     />
                   ) : (
-                    <span onDoubleClick={handleDblClkReason}>{textReason}</span>
+                    <span onDoubleClick={handleDblClkReason}>{textReasonIGC}</span>
                   )}
                 </td>
               </tr>
