@@ -200,6 +200,24 @@ export const CreateOderNew = props => {
     obj.applicationNumber = e.currentTarget.value;
     setOdersData(obj);
   };
+  const handleChangeImput = e => {
+    let { ...obj } = odersData;
+    if (e.currentTarget.className == 'crOderDateInput') {
+      obj.date = e.currentTarget.value;
+    }
+    if (e.currentTarget.className == 'crOderPriceInputNoVAT') {
+      obj.customerPrice = e.currentTarget.value;
+      obj.customerPriceWithVAT = e.currentTarget.value * 1.05;
+    }
+    if (e.currentTarget.className == 'crOderPriceInputWithVAT') {
+      obj.customerPriceWithVAT = e.currentTarget.value;
+      obj.customerPrice = e.currentTarget.value / 1.05;
+    }
+    if (e.currentTarget.className == 'crOderDriverPriceInput') {
+      obj.driverPrice = e.currentTarget.value;
+    }
+    setOdersData(obj);
+  };
   const handleLostFocus = e => {
     let { ...obj } = odersData;
     if (e.target.className == 'crOderDateInput') {
@@ -508,7 +526,13 @@ export const CreateOderNew = props => {
           <h4 className="crOderCustomHeader">Дата</h4>
           {showDateInput ? (
             <div className="containerInput">
-              <input type="date" className="crOderDateInput" onBlur={handleLostFocus} />
+              <input
+                type="date"
+                className="crOderDateInput"
+                onBlur={handleLostFocus}
+                value={odersData.date}
+                onChange={handleChangeImput}
+              />
             </div>
           ) : (
             <div className="containerInput">
@@ -634,7 +658,8 @@ export const CreateOderNew = props => {
                     <input
                       type="number"
                       className="crOderPriceInputNoVAT"
-                      defaultValue={odersData.customerPrice}
+                      value={odersData.customerPrice}
+                      onChange={handleChangeImput}
                       onBlur={handleLostFocus}
                     />
                   ) : (
@@ -656,10 +681,11 @@ export const CreateOderNew = props => {
                     <input
                       type="number"
                       className="crOderPriceInputWithVAT"
-                      defaultValue={
+                      value={
                         odersData.customerPriceWithVAT ||
                         (odersData.customerPrice ? Number(odersData.customerPrice) * 1.05 : '')
                       }
+                      onChange={handleChangeImput}
                       onBlur={handleLostFocus}
                     />
                   ) : (
@@ -687,7 +713,8 @@ export const CreateOderNew = props => {
                   <input
                     type="number"
                     className="crOderPriceInputNoVAT"
-                    defaultValue={odersData.customerPrice}
+                    value={odersData.customerPrice}
+                    onChange={handleChangeImput}
                     onBlur={handleLostFocus}
                   />
                 ) : (
@@ -766,7 +793,13 @@ export const CreateOderNew = props => {
           <h4 className="crOderDriverPriceHeader">Цена</h4>
           <div className="crOderDriverPriceWrap">
             {showDriverPrice ? (
-              <input type="numnber" className="crOderDriverPriceInput" onBlur={handleLostFocus} />
+              <input
+                type="numnber"
+                className="crOderDriverPriceInput"
+                value={odersData.driverPrice}
+                onChange={handleChangeImput}
+                onBlur={handleLostFocus}
+              />
             ) : (
               <p
                 className="crOderDriverPriceP"
