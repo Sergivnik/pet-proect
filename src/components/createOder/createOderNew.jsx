@@ -21,6 +21,7 @@ export const CreateOderNew = props => {
   const [mainDivStyle, setMainDivStyle] = useState('crOderMainDiv');
 
   const [odersData, setOdersData] = useState({
+    date: '',
     idLoadingPoint: [],
     idUnloadingPoint: [],
     valueLoadingPoint: [],
@@ -30,6 +31,10 @@ export const CreateOderNew = props => {
     price: 0,
     interest: 10,
     customerPriceWithVAT: null,
+    applicationNumber: '',
+    customerPrice: '',
+    customerPriceWithVAT:'',
+    driverPrice:''
   });
 
   const [clientManager, setClientManager] = useState(clientManagerFull);
