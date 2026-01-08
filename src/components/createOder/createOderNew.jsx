@@ -30,11 +30,11 @@ export const CreateOderNew = props => {
     unloadingInfo: [],
     price: 0,
     interest: 10,
-    customerPriceWithVAT: null,
+    customerPriceNohVAT: '',
     applicationNumber: '',
     customerPrice: '',
-    customerPriceWithVAT:'',
-    driverPrice:''
+    customerPriceWithVAT: '',
+    driverPrice: '',
   });
 
   const [clientManager, setClientManager] = useState(clientManagerFull);
@@ -174,13 +174,13 @@ export const CreateOderNew = props => {
   useEffect(() => {
     if (withVAT && odersData.customerPrice) {
       let { ...obj } = odersData;
-      const calculatedPriceWithVAT = Number(obj.customerPrice) * 1.05;
-      if (obj.customerPriceWithVAT !== calculatedPriceWithVAT) {
-        obj.customerPriceWithVAT = calculatedPriceWithVAT;
-        setOdersData(obj);
-      }
-    } else if (!withVAT && odersData.customerPriceWithVAT) {
+      obj.customerPriceWithVAT = Number(obj.customerPrice);
+      obj.customerPriceNohVAT = Number(obj.customerPrice) / 1.05;
+      setOdersData(obj);
+    }
+    if (!withVAT && odersData.customerPriceWithVAT) {
       let { ...obj } = odersData;
+      obj.customerPriceNohVAT = Number(obj.customerPrice);
       obj.customerPriceWithVAT = null;
       setOdersData(obj);
     }
@@ -211,12 +211,16 @@ export const CreateOderNew = props => {
       obj.date = e.currentTarget.value;
     }
     if (e.currentTarget.className == 'crOderPriceInputNoVAT') {
-      obj.customerPrice = e.currentTarget.value;
-      obj.customerPriceWithVAT = e.currentTarget.value * 1.05;
+      if (withVAT) {
+        obj.customerPriceNohVAT = e.currentTarget.value;
+        obj.customerPriceWithVAT = e.currentTarget.value * 1.05;
+      } else {
+        obj.customerPriceNohVAT = e.currentTarget.value;
+      }
     }
     if (e.currentTarget.className == 'crOderPriceInputWithVAT') {
       obj.customerPriceWithVAT = e.currentTarget.value;
-      obj.customerPrice = e.currentTarget.value / 1.05;
+      obj.customerPriceNohVAT = e.currentTarget.value / 1.05;
     }
     if (e.currentTarget.className == 'crOderDriverPriceInput') {
       obj.driverPrice = e.currentTarget.value;
@@ -248,24 +252,16 @@ export const CreateOderNew = props => {
       obj.applicationNumber = e.target.value;
       if (e.target.value != '') setShowAppInput(false);
     }
-    if (e.target.className == 'crOderPriceInput' || e.target.className == 'crOderPriceInputNoVAT') {
+    if (
+      e.target.className == 'crOderPriceInputWithVAT' ||
+      e.target.className == 'crOderPriceInputNoVAT'
+    ) {
       if (props.elem ? props.elem.customerPayment != 'Ок' : true) {
-        const priceNoVAT = Number(e.target.value);
-        obj.customerPrice = priceNoVAT;
         if (withVAT) {
-          obj.customerPriceWithVAT = priceNoVAT * 1.05;
+          obj.customerPrice = obj.customerPriceWithVAT;
+        } else {
+          obj.customerPrice = obj.customerPriceNohVAT;
         }
-        if (e.target.value != '') setShowClientPrice(false);
-      } else {
-        alert('Change is unacceptable!!!');
-        setShowClientPrice(false);
-      }
-    }
-    if (e.target.className == 'crOderPriceInputWithVAT') {
-      if (props.elem ? props.elem.customerPayment != 'Ок' : true) {
-        const priceWithVAT = Number(e.target.value);
-        obj.customerPriceWithVAT = priceWithVAT;
-        obj.customerPrice = priceWithVAT / 1.05;
         if (e.target.value != '') setShowClientPrice(false);
       } else {
         alert('Change is unacceptable!!!');
@@ -461,12 +457,17 @@ export const CreateOderNew = props => {
     let { ...obj } = odersData;
     if (checked && obj.customerPrice) {
       obj.customerPriceWithVAT = Number(obj.customerPrice) * 1.05;
+      obj.customerPriceNohVAT = Number(obj.customerPrice);
+    }
+    if (!checked && obj.customerPrice) {
+      obj.customerPriceWithVAT = null;
+      obj.customerPriceNohVAT = Number(obj.customerPrice);
     }
     setOdersData(obj);
   };
   const handleClick = () => {
     let check = true;
-    if (Number(odersData.customerPrice) * 0.95 < Number(odersData.driverPrice)) {
+    if (Number(odersData.customerPriceNohVAT) * 0.95 < Number(odersData.driverPrice)) {
       check = confirm('Наценка меньше 5 % !! Продолжить?');
     }
     if (check) {
@@ -474,7 +475,11 @@ export const CreateOderNew = props => {
       if (withVAT && odersData.customerPriceWithVAT != null) {
         dataToSave.customerPrice = odersData.customerPriceWithVAT;
       }
+      if (!withVAT && orderDate.customerPriceNohVAT != null) {
+        dataToSave.customerPrice = odersData.customerPriceNohVAT;
+      }
       delete dataToSave.customerPriceWithVAT;
+      delete dataToSave.customerPriceNohVAT;
       if (btnName == 'Добавить') {
         if (props.isMadeFromApp) {
           dispatch(addOrderApp(dataToSave, props.appId));
@@ -663,7 +668,7 @@ export const CreateOderNew = props => {
                     <input
                       type="number"
                       className="crOderPriceInputNoVAT"
-                      value={odersData.customerPrice}
+                      value={odersData.customerPriceNohVAT}
                       onChange={handleChangeImput}
                       onBlur={handleLostFocus}
                     />
@@ -675,8 +680,7 @@ export const CreateOderNew = props => {
                         if (e.target.className == 'crOderPriceP') e.preventDefault();
                       }}
                     >
-                      {odersData.customerPrice ? Number(odersData.customerPrice).toFixed(2) : ''}{' '}
-                      руб
+                      {Number(odersData.customerPriceNohVAT).toFixed(2)} руб
                     </p>
                   )}
                 </div>
@@ -686,10 +690,7 @@ export const CreateOderNew = props => {
                     <input
                       type="number"
                       className="crOderPriceInputWithVAT"
-                      value={
-                        odersData.customerPriceWithVAT ||
-                        (odersData.customerPrice ? Number(odersData.customerPrice) * 1.05 : '')
-                      }
+                      value={odersData.customerPriceWithVAT}
                       onChange={handleChangeImput}
                       onBlur={handleLostFocus}
                     />
@@ -703,9 +704,7 @@ export const CreateOderNew = props => {
                     >
                       {odersData.customerPriceWithVAT
                         ? Number(odersData.customerPriceWithVAT).toFixed(2)
-                        : odersData.customerPrice
-                          ? (Number(odersData.customerPrice) * 1.05).toFixed(2)
-                          : ''}{' '}
+                        : ''}{' '}
                       руб
                     </p>
                   )}
@@ -718,7 +717,7 @@ export const CreateOderNew = props => {
                   <input
                     type="number"
                     className="crOderPriceInputNoVAT"
-                    value={odersData.customerPrice}
+                    value={odersData.customerPriceNohVAT}
                     onChange={handleChangeImput}
                     onBlur={handleLostFocus}
                   />
@@ -730,7 +729,7 @@ export const CreateOderNew = props => {
                       if (e.target.className == 'crOderPriceP') e.preventDefault();
                     }}
                   >
-                    {odersData.customerPrice} руб
+                    {odersData.customerPriceNohVAT} руб
                   </p>
                 )}
               </div>
