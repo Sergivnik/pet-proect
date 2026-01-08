@@ -1,64 +1,83 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { editAddData, deleteAddData } from "../../actions/specialAction";
-import { dateLocal, findValueBy_Id } from "../myLib/myLib.js";
-import { TdWithList } from "../myLib/myTd/tdWithList.jsx";
-import "./specialTable.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { editAddData, deleteAddData } from '../../actions/specialAction';
+import { dateLocal, findValueBy_Id } from '../myLib/myLib.js';
+import { TdWithList } from '../myLib/myTd/tdWithList.jsx';
+import './specialTable.sass';
 
-export const SpecialTableTr = (props) => {
+export const SpecialTableTr = props => {
   const dispatch = useDispatch();
   const elem = props.elem;
-  const customers = useSelector((state) => state.oderReducer.clientList);
-  const odersList = useSelector((state) => state.oderReducer.originOdersList);
+  const customers = useSelector(state => state.oderReducer.clientList);
+  const odersList = useSelector(state => state.oderReducer.originOdersList);
   const orderPrice = findValueBy_Id(elem.orderId, odersList).customerPrice;
+  //const wuthWAT = new Date(elem.date) < new Date('2026-01-01');
+  //console.log(wuthWAT);
 
-  const sum =
-    ((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) /
-    100;
+  const sum1 = withWAT
+    ? (((Number(orderPrice) - Number(elem.sum)) / 1.05) * (100 - Number(elem.interest))) / 100
+    : ((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100;
   const yesNoList = [
-    { _id: 0, value: "нет" },
-    { _id: 1, value: "Ок" },
+    { _id: 0, value: 'нет' },
+    { _id: 1, value: 'Ок' },
   ];
 
   const [addData, setAddData] = useState({});
   const [showDelete, setShowDelete] = useState(false);
-  const [classTr, setClassTr] = useState("");
-  const [classTd, setClassTd] = useState("specialTableBodyTd");
+  const [classTr, setClassTr] = useState('');
+  const [classTd, setClassTd] = useState('specialTableBodyTd');
+  const [withWAT, setWithWAT] = useState(false);
+  const [sum, setSum] = useState(null);
 
   useEffect(() => {
     setAddData(elem);
   }, [elem]);
 
   useEffect(() => {
+    if (withWAT) {
+      setSum(
+        (((Number(orderPrice) - Number(elem.sum)) / 1.05) * (100 - Number(elem.interest))) / 100
+      );
+    } else {
+      setSum(((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100);
+    }
+  }, [withWAT]);
+
+  useEffect(() => {
+    const order = odersList.find(order => order._id == elem.orderId);
+    setWithWAT(new Date(order.date) >= new Date('2026-01-01'));
+  }, [elem]);
+
+  useEffect(() => {
     if (props.currentId == elem.id) {
       setShowDelete(true);
-      setClassTr("specialClassTr");
+      setClassTr('specialClassTr');
     } else {
       setShowDelete(false);
-      setClassTr("");
+      setClassTr('');
     }
   }, [props.currentId]);
   useEffect(() => {
     if (!props.isCtrl) {
-      setClassTd("specialTableBodyTd");
+      setClassTd('specialTableBodyTd');
     }
   }, [props.isCtrl]);
 
-  const callBack = (data) => {
+  const callBack = data => {
     let { ...obj } = addData;
-    if (data.name == "customer") {
+    if (data.name == 'customer') {
       obj.customerId = data.id;
     }
-    if (data.name == "safe") {
+    if (data.name == 'safe') {
       obj.safe = data.id;
     }
-    if (data.name == "card") {
+    if (data.name == 'card') {
       obj.card = data.id;
     }
-    if (data.name == "customerPayment") {
+    if (data.name == 'customerPayment') {
       obj.customerPayment = data.id;
     }
-    if (data.name == "returnPayment") {
+    if (data.name == 'returnPayment') {
       let now = new Date();
       obj.returnPayment = data.id;
       if (data.id == 1) {
@@ -75,22 +94,22 @@ export const SpecialTableTr = (props) => {
     props.getCurrentId(elem.id);
   };
   const handleClickDelete = () => {
-    let check = confirm("Are you sure?");
+    let check = confirm('Are you sure?');
     if (check) dispatch(deleteAddData(props.currentId));
   };
-  const handleClickSum = (e) => {
+  const handleClickSum = e => {
     if (e.ctrlKey) {
       e.stopPropagation();
-      if (classTd == "specialTableBodyTd") {
+      if (classTd == 'specialTableBodyTd') {
         props.getSum(sum, true);
-        setClassTd("specialTableBodyTd specialClassTd");
+        setClassTd('specialTableBodyTd specialClassTd');
       } else {
         props.getSum(-sum, true);
-        setClassTd("specialTableBodyTd");
+        setClassTd('specialTableBodyTd');
       }
     } else {
       props.getSum(0, false);
-      setClassTd("specialTableBodyTd");
+      setClassTd('specialTableBodyTd');
     }
   };
 
