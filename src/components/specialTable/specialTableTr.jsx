@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { editAddData, deleteAddData } from '../../actions/specialAction';
 import { dateLocal, findValueBy_Id } from '../myLib/myLib.js';
 import { TdWithList } from '../myLib/myTd/tdWithList.jsx';
+import { VAT } from '../../middlewares/initialState.js';
 import './specialTable.sass';
 
 export const SpecialTableTr = props => {
@@ -12,9 +13,6 @@ export const SpecialTableTr = props => {
   const odersList = useSelector(state => state.oderReducer.originOdersList);
   const orderPrice = findValueBy_Id(elem.orderId, odersList).customerPrice;
 
-  const sum1 = withVAT
-    ? (((Number(orderPrice) - Number(elem.sum)) / 1.05) * (100 - Number(elem.interest))) / 100
-    : ((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100;
   const yesNoList = [
     { _id: 0, value: 'нет' },
     { _id: 1, value: 'Ок' },
@@ -34,7 +32,7 @@ export const SpecialTableTr = props => {
   useEffect(() => {
     if (withVAT) {
       setSum(
-        (((Number(orderPrice) - Number(elem.sum)) / 1.05) * (100 - Number(elem.interest))) / 100
+        (((Number(orderPrice) - Number(elem.sum)) / (1 + VAT / 100)) * (100 - Number(elem.interest))) / 100
       );
     } else {
       setSum(((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100);

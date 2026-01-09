@@ -5,6 +5,7 @@ import { PointsForm } from './pointsForm.jsx';
 import { addOder, addOrderApp, editOderNew } from '../../actions/oderActions.js';
 import { dateLocal, findValueBy_Id } from '../myLib/myLib.js';
 import { InputText } from '../myLib/inputText.jsx';
+import { VAT } from '../../middlewares/initialState.js';
 import './createOder.sass';
 
 export const CreateOderNew = props => {
@@ -93,6 +94,16 @@ export const CreateOderNew = props => {
       if (obj.applicationNumber != null) {
         setShowAppInput(false);
       }
+      if (obj.customerPrice != null) {
+        if (withVAT) {
+          obj.customerPriceWithVAT = Number(obj.customerPrice);
+          obj.customerPriceNohVAT = Number(obj.customerPrice) / (1 + VAT / 100);
+        } else {
+          obj.customerPriceNohVAT = Number(obj.customerPrice);
+          obj.customerPriceWithVAT = '';
+        }
+        setShowClientPrice(false);
+      }
       if (obj.idDriver != null) {
         setShowOwnerInput(false);
         obj.valueDriver = driverlist.find(elem => elem._id == obj.idDriver).value;
@@ -140,6 +151,7 @@ export const CreateOderNew = props => {
       }
       if (obj.date) {
         updateVATByDate(obj.date);
+        console.log(obj.date);
       }
     }
   }, []);
@@ -172,16 +184,16 @@ export const CreateOderNew = props => {
     }
   }, [odersData.date]);
   useEffect(() => {
-    if (withVAT && odersData.customerPrice) {
+    if (withVAT && odersData.customerPrice != null) {
       let { ...obj } = odersData;
       obj.customerPriceWithVAT = Number(obj.customerPrice);
-      obj.customerPriceNohVAT = Number(obj.customerPrice) / 1.05;
+      obj.customerPriceNohVAT = Number(obj.customerPrice) / (1 + VAT / 100);
       setOdersData(obj);
     }
     if (!withVAT && odersData.customerPriceWithVAT) {
       let { ...obj } = odersData;
       obj.customerPriceNohVAT = Number(obj.customerPrice);
-      obj.customerPriceWithVAT = null;
+      obj.customerPriceWithVAT = '';
       setOdersData(obj);
     }
   }, [withVAT]);
@@ -213,14 +225,14 @@ export const CreateOderNew = props => {
     if (e.currentTarget.className == 'crOderPriceInputNoVAT') {
       if (withVAT) {
         obj.customerPriceNohVAT = e.currentTarget.value;
-        obj.customerPriceWithVAT = e.currentTarget.value * 1.05;
+        obj.customerPriceWithVAT = e.currentTarget.value * (1 + VAT / 100);
       } else {
         obj.customerPriceNohVAT = e.currentTarget.value;
       }
     }
     if (e.currentTarget.className == 'crOderPriceInputWithVAT') {
       obj.customerPriceWithVAT = e.currentTarget.value;
-      obj.customerPriceNohVAT = e.currentTarget.value / 1.05;
+      obj.customerPriceNohVAT = e.currentTarget.value / (1 + VAT / 100);
     }
     if (e.currentTarget.className == 'crOderDriverPriceInput') {
       obj.driverPrice = e.currentTarget.value;
@@ -456,18 +468,18 @@ export const CreateOderNew = props => {
     setWithVAT(checked);
     let { ...obj } = odersData;
     if (checked && obj.customerPrice) {
-      obj.customerPriceWithVAT = Number(obj.customerPrice) * 1.05;
+      obj.customerPriceWithVAT = Number(obj.customerPrice) * (1 + VAT / 100);
       obj.customerPriceNohVAT = Number(obj.customerPrice);
     }
     if (!checked && obj.customerPrice) {
-      obj.customerPriceWithVAT = null;
+      obj.customerPriceWithVAT = '';
       obj.customerPriceNohVAT = Number(obj.customerPrice);
     }
     setOdersData(obj);
   };
   const handleClick = () => {
     let check = true;
-    if (Number(odersData.customerPriceNohVAT) * 0.95 < Number(odersData.driverPrice)) {
+    if (Number(odersData.customerPriceNohVAT) * (1 - VAT / 100) < Number(odersData.driverPrice)) {
       check = confirm('Наценка меньше 5 % !! Продолжить?');
     }
     if (check) {
@@ -475,7 +487,7 @@ export const CreateOderNew = props => {
       if (withVAT && odersData.customerPriceWithVAT != null) {
         dataToSave.customerPrice = odersData.customerPriceWithVAT;
       }
-      if (!withVAT && orderDate.customerPriceNohVAT != null) {
+      if (!withVAT && odersData.customerPriceNohVAT != null) {
         dataToSave.customerPrice = odersData.customerPriceNohVAT;
       }
       delete dataToSave.customerPriceWithVAT;
@@ -540,7 +552,7 @@ export const CreateOderNew = props => {
                 type="date"
                 className="crOderDateInput"
                 onBlur={handleLostFocus}
-                value={odersData.date}
+                value={odersData.date ?? ''}
                 onChange={handleChangeImput}
               />
             </div>
@@ -608,7 +620,7 @@ export const CreateOderNew = props => {
               <input
                 type="text"
                 className="crOderApplication"
-                value={odersData.applicationNumber}
+                value={odersData.applicationNumber ?? ''}
                 onChange={handleChangeAppNumber}
                 onBlur={handleLostFocus}
               />
@@ -668,7 +680,7 @@ export const CreateOderNew = props => {
                     <input
                       type="number"
                       className="crOderPriceInputNoVAT"
-                      value={odersData.customerPriceNohVAT}
+                      value={odersData.customerPriceNohVAT ?? ''}
                       onChange={handleChangeImput}
                       onBlur={handleLostFocus}
                     />
@@ -690,7 +702,7 @@ export const CreateOderNew = props => {
                     <input
                       type="number"
                       className="crOderPriceInputWithVAT"
-                      value={odersData.customerPriceWithVAT}
+                      value={odersData.customerPriceWithVAT ?? ''}
                       onChange={handleChangeImput}
                       onBlur={handleLostFocus}
                     />
@@ -717,7 +729,7 @@ export const CreateOderNew = props => {
                   <input
                     type="number"
                     className="crOderPriceInputNoVAT"
-                    value={odersData.customerPriceNohVAT}
+                    value={odersData.customerPriceNohVAT ?? ''}
                     onChange={handleChangeImput}
                     onBlur={handleLostFocus}
                   />
@@ -798,9 +810,9 @@ export const CreateOderNew = props => {
           <div className="crOderDriverPriceWrap">
             {showDriverPrice ? (
               <input
-                type="numnber"
+                type="number"
                 className="crOderDriverPriceInput"
-                value={odersData.driverPrice}
+                value={odersData.driverPrice ?? ''}
                 onChange={handleChangeImput}
                 onBlur={handleLostFocus}
               />
