@@ -10,6 +10,8 @@ import { editYearConst } from '../../actions/reportActions.js';
 export const IncomeReport = () => {
   const dispatch = useDispatch();
 
+  const VAT = 5;
+
   const incomereport = useSelector(state => state.oderReducer.incomereport);
   const ordersList = useSelector(state => state.oderReducer.originOdersList);
   const yearconst = useSelector(state => state.oderReducer.yearconst);
@@ -31,6 +33,9 @@ export const IncomeReport = () => {
   const [showAddTr, setShowAddTr] = useState(false);
   const [incomeList, setIncomeList] = useState(incomereport ? incomereport : []);
   const [showBtn, setShowBtn] = useState(false);
+  const [yearVAT, setYearVAT] = useState(null);
+  const [paidVT, setPaidVAT] = useState('In develope');
+  const [editPaidVAT, setEditPaidVAD] = useState(false);
   const [newMonthData, setNewMonthData] = useState({
     date: null,
     incomeFirst: null,
@@ -42,6 +47,15 @@ export const IncomeReport = () => {
   const [showEditTaxAdvance, setShowEditTaxAdvance] = useState(false);
   const [taxAdvance, setTaxAdvance] = useState(yearconst ? yearconst.taxadvance : null);
 
+  useEffect(() => {
+    const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
+    const orderYearList = ordersList.filter(order => new Date(order.date) >= firstDateOfYear);
+    let sumOfVAT = 0;
+    orderYearList.forEach(order => {
+      sumOfVAT = sumOfVAT + (Number(order.customerPrice) * VAT) / (100 + VAT);
+    });
+    setYearVAT(sumOfVAT);
+  }, [ordersList]);
   useEffect(() => {
     let addSum = clientList.reduce((s, item) => s + Number(item.extraPayments), 0);
     setExtraPay(addSum);
@@ -146,7 +160,9 @@ export const IncomeReport = () => {
     setIncomeTotal(income);
   }, [sumAccount, customerDebt, driverDebt, yearconst, currentTax, sumPink]);
   useEffect(() => {
-    let lastMonthDate = new Date(incomeList[incomeList.length - 1] ? incomeList[incomeList.length - 1].date : null);
+    let lastMonthDate = new Date(
+      incomeList[incomeList.length - 1] ? incomeList[incomeList.length - 1].date : null
+    );
     let now = new Date();
     if (
       now.getFullYear() > lastMonthDate.getFullYear() ||
@@ -274,6 +290,10 @@ export const IncomeReport = () => {
             <p className="incomeReportP">
               {currentTax ? currentTax.toLocaleString() + ' руб' : null}
             </p>
+          </div>
+          <div className="incomeReportDivWraper">
+            <span className="incomeReportSpan">НДС начисленный с начала года</span>
+            <p className="incomeReportP">{yearVAT}</p>
           </div>
           <div className="incomeReportDivWraper">
             <span className="incomeReportSpan">Розовые</span>

@@ -11,10 +11,8 @@ export const SpecialTableTr = props => {
   const customers = useSelector(state => state.oderReducer.clientList);
   const odersList = useSelector(state => state.oderReducer.originOdersList);
   const orderPrice = findValueBy_Id(elem.orderId, odersList).customerPrice;
-  //const wuthWAT = new Date(elem.date) < new Date('2026-01-01');
-  //console.log(wuthWAT);
 
-  const sum1 = withWAT
+  const sum1 = withVAT
     ? (((Number(orderPrice) - Number(elem.sum)) / 1.05) * (100 - Number(elem.interest))) / 100
     : ((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100;
   const yesNoList = [
@@ -26,7 +24,7 @@ export const SpecialTableTr = props => {
   const [showDelete, setShowDelete] = useState(false);
   const [classTr, setClassTr] = useState('');
   const [classTd, setClassTd] = useState('specialTableBodyTd');
-  const [withWAT, setWithWAT] = useState(false);
+  const [withVAT, setwithVAT] = useState(false);
   const [sum, setSum] = useState(null);
 
   useEffect(() => {
@@ -34,18 +32,18 @@ export const SpecialTableTr = props => {
   }, [elem]);
 
   useEffect(() => {
-    if (withWAT) {
+    if (withVAT) {
       setSum(
         (((Number(orderPrice) - Number(elem.sum)) / 1.05) * (100 - Number(elem.interest))) / 100
       );
     } else {
       setSum(((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100);
     }
-  }, [withWAT]);
+  }, [withVAT]);
 
   useEffect(() => {
     const order = odersList.find(order => order._id == elem.orderId);
-    setWithWAT(new Date(order.date) >= new Date('2026-01-01'));
+    setwithVAT(new Date(order.date) >= new Date('2026-01-01'));
   }, [elem]);
 
   useEffect(() => {
