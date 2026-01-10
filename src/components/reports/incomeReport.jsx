@@ -3,9 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { dateLocal } from '../myLib/myLib.js';
 import { addData, editData } from '../../actions/editDataAction.js';
 import { TdWithText } from '../myLib/myTd/tdWithText.jsx';
+import { editYearConst } from '../../actions/reportActions.js';
+import { TAX } from '../../middlewares/initialState.js';
 
 import './reports.sass';
-import { editYearConst } from '../../actions/reportActions.js';
 
 export const IncomeReport = () => {
   const dispatch = useDispatch();
@@ -34,8 +35,7 @@ export const IncomeReport = () => {
   const [incomeList, setIncomeList] = useState(incomereport ? incomereport : []);
   const [showBtn, setShowBtn] = useState(false);
   const [yearVAT, setYearVAT] = useState(null);
-  const [paidVT, setPaidVAT] = useState('In develope');
-  const [editPaidVAT, setEditPaidVAD] = useState(false);
+  const [paidVAT, setPaidVAT] = useState(0);
   const [newMonthData, setNewMonthData] = useState({
     date: null,
     incomeFirst: null,
@@ -46,6 +46,8 @@ export const IncomeReport = () => {
   );
   const [showEditTaxAdvance, setShowEditTaxAdvance] = useState(false);
   const [taxAdvance, setTaxAdvance] = useState(yearconst ? yearconst.taxadvance : null);
+  const [prepayment, setPrepayment] = useState(yearconst ? yearconst.prePay : null);
+  const [showEditPrepayment, setShowEditPrepayment] = useState(false);
 
   useEffect(() => {
     const firstDateOfYear = new Date(new Date().getFullYear(), 0, 1);
@@ -88,6 +90,7 @@ export const IncomeReport = () => {
     let daysThisYear = (dateEnd.getTime() - dateBegin.getTime()) / (1000 * 3600 * 24);
     let sumIn = 0;
     let sumOut = 0;
+    let sumVAT = 0;
     customerPayments.forEach(elem => {
       let date = new Date(elem.date);
       if (date >= dateBegin && date <= dateEnd) {
@@ -99,17 +102,19 @@ export const IncomeReport = () => {
       if (date >= dateBegin && date <= dateEnd && elem.category == 1) {
         if (Number(elem.sum) > 0) sumOut = sumOut + Number(elem.sum);
         if (Number(elem.sum) < 0) sumIn = sumIn - Number(elem.sum);
+        if (elem.idContractor === 22) sumVAT = sumVAT + Number(elem.sum);
       }
     });
+    setPaidVAT(sumVAT);
     driverpayments.forEach(elem => {
       let date = new Date(elem.date);
       if (date >= dateBegin && date <= dateEnd) {
         sumOut = sumOut + Number(elem.sumOfPayment) - Number(elem.sumOfDebts);
       }
     });
-    if ((sumIn - sumOut) / 10 > sumIn / 100) {
+    if (((sumIn - sumOut) * TAX) / 100 > sumIn / 100) {
       setCurrentTax(
-        (sumIn - sumOut) / 10 +
+        ((sumIn - sumOut) * TAX) / 100 +
           (Number(yearconst.fixedincometax) / 365) * daysThisYear +
           (sumIn - sumOut) / 100
       );
@@ -156,9 +161,12 @@ export const IncomeReport = () => {
       Number(yearconst ? yearconst.lastyeartaxdebt : 0) +
       Number(yearconst ? yearconst.taxadvance : 0) -
       currentTax -
-      sumPink;
+      sumPink +
+      paidVAT -
+      yearVAT +
+      Number(prepayment);
     setIncomeTotal(income);
-  }, [sumAccount, customerDebt, driverDebt, yearconst, currentTax, sumPink]);
+  }, [sumAccount, customerDebt, driverDebt, yearconst, currentTax, sumPink, paidVAT, yearVAT]);
   useEffect(() => {
     let lastMonthDate = new Date(
       incomeList[incomeList.length - 1] ? incomeList[incomeList.length - 1].date : null
@@ -179,6 +187,7 @@ export const IncomeReport = () => {
   const handleChangeConstInput = e => {
     if (e.currentTarget.name == 'lastYearTaxDebt') setLastYearTaxDebt(e.currentTarget.value);
     if (e.currentTarget.name == 'taxAdvdnce') setTaxAdvance(e.currentTarget.value);
+    if (e.currentTarget.name == 'prepayment') setPrepayment(e.currentTarget.value);
   };
   const handleEnterInput = e => {
     if (e.code == 'Enter' || e.code == 'NumpadEnter') {
@@ -192,6 +201,10 @@ export const IncomeReport = () => {
         dispatch(editYearConst('taxadvance', taxAdvance));
         setShowEditTaxAdvance(false);
       }
+      if (e.currentTarget.name == 'prepayment') {
+        dispatch(editYearConst('prePay', prepayment));
+        setShowEditPrepayment(false);
+      }
     }
   };
   const handleLastYearDebtDblClick = () => {
@@ -199,6 +212,9 @@ export const IncomeReport = () => {
   };
   const handleTaxAdvanceDblClick = () => {
     setShowEditTaxAdvance(true);
+  };
+  const handlePrepaymentDblClick = () => {
+    setShowEditPrepayment(true);
   };
 
   const handleClick = () => {
@@ -292,8 +308,28 @@ export const IncomeReport = () => {
             </p>
           </div>
           <div className="incomeReportDivWraper">
+            <span className="incomeReportSpan">НДС уплаченный с начала года</span>
+            <p className="incomeReportP">{paidVAT ? paidVAT.toLocaleString() + ' руб' : null}</p>
+          </div>
+          <div className="incomeReportDivWraper">
             <span className="incomeReportSpan">НДС начисленный с начала года</span>
-            <p className="incomeReportP">{yearVAT}</p>
+            <p className="incomeReportP">{yearVAT ? yearVAT.toLocaleString() + ' руб' : null}</p>
+          </div>
+          <div className="incomeReportDivWraper">
+            <span className="incomeReportSpan">Предоплата</span>
+            {showEditPrepayment ? (
+              <input
+                type="number"
+                name="prepayment"
+                value={prepayment}
+                onChange={handleChangeConstInput}
+                onKeyDown={handleEnterInput}
+              />
+            ) : (
+              <p className="incomeReportP" onDoubleClick={handlePrepaymentDblClick}>
+                {prepayment ? Number(prepayment).toLocaleString() + ' руб' : null}
+              </p>
+            )}
           </div>
           <div className="incomeReportDivWraper">
             <span className="incomeReportSpan">Розовые</span>
