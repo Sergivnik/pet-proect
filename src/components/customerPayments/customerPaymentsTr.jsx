@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useSelector } from 'react-redux';
 
-export const CustomerPaymentsTr = props => {
+export const CustomerPaymentsTr = React.forwardRef((props, ref) => {
   const clientList = useSelector(state => state.oderReducer.clientList);
   const odersList = useSelector(state => state.oderReducer.originOdersList);
   const driversList = useSelector(state => state.oderReducer.driverlist);
   const citieslist = useSelector(state => state.oderReducer.citieslist);
 
-  const [showDetails, setShowDetails] = useState(false);
-  const [fontWeight, setFontWeight] = useState('');
+  const showDetails = props.isOpen || false;
+  const fontWeight = showDetails ? 'customerPaymentBoldFont' : '';
   const DateStr = date => {
     date = new Date(date);
     return date.toLocaleDateString();
@@ -16,12 +16,7 @@ export const CustomerPaymentsTr = props => {
 
   const handleClickTr = e => {
     if (e.target.tagName == 'TD') {
-      setShowDetails(!showDetails);
-      if (fontWeight == '') {
-        setFontWeight('customerPaymentBoldFont');
-      } else {
-        setFontWeight('');
-      }
+      props.onToggle && props.onToggle();
     }
   };
   let elem = props.paymentData;
@@ -36,8 +31,14 @@ export const CustomerPaymentsTr = props => {
     }
   };
   return (
-    <React.Fragment>
-      <tr onClick={handleClickTr} className={fontWeight}>
+    <>
+      <tr
+        ref={ref}
+        onClick={handleClickTr}
+        className={fontWeight}
+        style={props.style}
+        {...(props['data-index'] !== undefined ? { 'data-index': props['data-index'] } : {})}
+      >
         <td className="customerPaymentMainTd">{DateStr(elem.date)}</td>
         <td className="customerPaymentMainTd">{nameOfCustomer}</td>
         <td className="customerPaymentMainTd">{elem.sumOfPayment}</td>
@@ -59,14 +60,35 @@ export const CustomerPaymentsTr = props => {
             </div>
           )}
         </td>
-        {showDetails && <td className="customerPaymentMainTd"></td>}
       </tr>
       {showDetails && (
-        <tr className="customerPaymentBoldFont">
-          <td colSpan="5">
-            <table className="customerPaymentInsideTable">
+        <tr
+          className="customerPaymentBoldFont"
+          style={
+            props.style
+              ? {
+                  ...props.style,
+                  position: 'absolute',
+                  top: props.style.transform
+                    ? `${parseInt(props.style.transform.match(/\d+/)?.[0] || 0) + 20}px`
+                    : '0',
+                  left: 0,
+                  transform: 'none',
+                  display: 'table',
+                  tableLayout: 'fixed',
+                  width: '100%',
+                  zIndex: 10,
+                }
+              : { zIndex: 10 }
+          }
+        >
+          <td colSpan="5" className="customerPaymentMainTd" style={{ padding: '5px 5px 0 10px' }}>
+            <table
+              className="customerPaymentInsideTable"
+              style={{ zIndex: 10, position: 'relative' }}
+            >
               <thead className="customerPaymentInsideHeader">
-                <tr onClick={handleClickTr}>
+                <tr style={{ backgroundColor: 'while' }} onClick={handleClickTr}>
                   <td className="customerPaymentInsideTd">Дата рейса</td>
                   <td className="customerPaymentInsideTd">Водитель</td>
                   <td className="customerPaymentInsideTd">Заказчик</td>
@@ -80,27 +102,35 @@ export const CustomerPaymentsTr = props => {
               <tbody>
                 {elem.listOfOders.map(item => {
                   let oder = odersList.find(element => element._id == item.id);
+                  if (!oder) return null;
+
                   let driver = driversList.find(element => element._id == oder.idDriver);
                   let loadingPoints = '';
-                  oder.idLoadingPoint.forEach(element => {
-                    let point = citieslist.find(city => city._id == element).value;
-                    loadingPoints = loadingPoints + point + '\n';
-                  });
+                  if (oder.idLoadingPoint && Array.isArray(oder.idLoadingPoint)) {
+                    oder.idLoadingPoint.forEach(element => {
+                      let point = citieslist.find(city => city._id == element)?.value;
+                      if (point) loadingPoints = loadingPoints + point + '\n';
+                    });
+                  }
                   let unloadingPoints = '';
-                  oder.idUnloadingPoint.forEach(element => {
-                    let point = citieslist.find(city => city._id == element).value;
-                    unloadingPoints = unloadingPoints + point + '\n';
-                  });
+                  if (oder.idUnloadingPoint && Array.isArray(oder.idUnloadingPoint)) {
+                    oder.idUnloadingPoint.forEach(element => {
+                      let point = citieslist.find(city => city._id == element)?.value;
+                      if (point) unloadingPoints = unloadingPoints + point + '\n';
+                    });
+                  }
                   return (
                     <tr key={`trOder${item.id}`} onClick={handleClickTr}>
-                      <td className="customerPaymentInsideTd">{DateStr(oder.date)}</td>
-                      <td className="customerPaymentInsideTd">{driver.value}</td>
+                      <td className="customerPaymentInsideTd">
+                        {oder.date ? DateStr(oder.date) : ''}
+                      </td>
+                      <td className="customerPaymentInsideTd">{driver?.value || ''}</td>
                       <td className="customerPaymentInsideTd">{nameOfCustomer}</td>
                       <td className="customerPaymentInsideTd">{loadingPoints}</td>
                       <td className="customerPaymentInsideTd">{unloadingPoints}</td>
-                      <td className="customerPaymentInsideTd">{item.customerPrice}</td>
-                      <td className="customerPaymentInsideTd">{oder.customerPrice}</td>
-                      <td className="customerPaymentInsideTd">{oder.accountNumber}</td>
+                      <td className="customerPaymentInsideTd">{item.customerPrice || ''}</td>
+                      <td className="customerPaymentInsideTd">{oder.customerPrice || ''}</td>
+                      <td className="customerPaymentInsideTd">{oder.accountNumber || ''}</td>
                     </tr>
                   );
                 })}
@@ -109,6 +139,6 @@ export const CustomerPaymentsTr = props => {
           </td>
         </tr>
       )}
-    </React.Fragment>
+    </>
   );
-};
+});

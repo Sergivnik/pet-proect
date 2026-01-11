@@ -4,6 +4,7 @@ import { UserThead } from './userThead.jsx';
 import { UserTr } from './userTr.jsx';
 import { CreateOderNew } from '../createOder/createOderNew.jsx';
 import { UserWindow } from '../userWindow/userWindow.jsx';
+import { Window } from '../userWindow/window.tsx';
 import { CustomerPaymentForm } from '../customerPaymentForm/customerPaymentForm.jsx';
 import { CustomerPayments } from '../customerPayments/customerPayments.jsx';
 import { DriverPaymentForm } from '../driverComponents/driverPaymentForm.jsx';
@@ -495,27 +496,27 @@ export const Oders = () => {
         />
       </div>
       {showWindow && (
-        <UserWindow
-          header={windowHeader}
+        <Window
+          title={windowHeader}
+          startX={400}
+          startY={200}
           width={windowWidth}
-          handleClickWindowClose={handleClickWindowClose}
-          windowId="commonWindow"
+          onClose={handleClickWindowClose}
         >
           {children}
-        </UserWindow>
+        </Window>
       )}
       {showPrintForm && <PrintFormBill elem={currentElem} closePrintForm={handleClosePrintForm} />}
       {showEditDataWindow && (
-        <UserWindow
-          header="Редактирование данных"
+        <Window
+        title="Редактирование данных"
           width={1400}
-          handleClickWindowClose={handleClickEditWindowClose}
-          windowId="editDataWindow"
-          top="12%"
-          left="12%"
+          startX={400}
+          startY={200}
+          onClose={handleClickEditWindowClose}
         >
           <EditDataForm editTable={editTable} id={idEdit} />
-        </UserWindow>
+        </Window>
       )}
       {showAppWindow && (
         <UserWindow
