@@ -283,7 +283,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
     }
   }, [requestStatus]);
   return (
-    <React.Fragment>
+    <div style={{ backgroundColor: 'white' }}>
       <header className="divHeader">
         <div className="wrapperCheckBox">
           <span>ТТН</span>
@@ -460,6 +460,6 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         )}
       </div>
       {requestMessage != null && <div className="messageRequest">{requestMessage}</div>}
-    </React.Fragment>
+    </div>
   );
 };

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes';
 import { shortName } from '../myLib/myLib';
+import { DOMENNAME } from '../../middlewares/initialState.js';
 
 interface InvoiceProps {
   order: OrderType;
@@ -523,7 +524,17 @@ export const Invoice = ({
               Индивидуальный предприниматель или иное уполномоченное лицо (подпись)
             </div>
             <div style={{ width: '25%' }}>___________________________________ (ф.и.о.)</div>
-
+            <img
+              style={{
+                position: 'absolute',
+                left: '385px',
+                top: '640px',
+                opacity: '0.7',
+              }}
+              height="120"
+              width="120"
+              src={`${DOMENNAME}/img/sign.png`}
+            />
             <div
               style={{
                 width: '50%',

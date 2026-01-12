@@ -1008,8 +1008,7 @@ module.exports.taskSendEmail = (req, res) => {
   const configEmail = require('../models/config.js');
   tasks.getDataById(req.body.id, 'oderslist', data => {
     if (data.error) {
-      res.status(500);
-      res.json({ message: data.error });
+      return res.status(500).json({ message: data.error });
     } else {
       let Year = data.date.getFullYear();
       let customer = data.customer[0].value;
@@ -1047,6 +1046,9 @@ module.exports.taskSendEmail = (req, res) => {
         let attachmentFiles = [
           {
             path: `./API/Bills/${Year}/${customer}/doc${accountNumber}.pdf`,
+          },
+          {
+            path: `./API/Bills/${Year}/${customer}/invoice${accountNumber}.pdf`,
           },
         ];
         const fs = require('fs');
@@ -1096,11 +1098,10 @@ module.exports.taskSendEmail = (req, res) => {
               data => {
                 console.log(data);
                 if (data.error) {
-                  res.status(500);
-                  res.json({ message: data.error });
+                  return res.status(500).json({ message: data.error });
                 } else {
                   req.app.get('io').emit('sentEmail', req.body.id);
-                  res.json(data);
+                  return res.json(data);
                 }
               }
             );
