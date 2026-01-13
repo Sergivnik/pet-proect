@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes';
-import { shortName } from '../myLib/myLib';
 import { DOMENNAME } from '../../middlewares/initialState.js';
 
 interface InvoiceProps {
@@ -13,6 +12,7 @@ interface InvoiceProps {
   getStringData: (strings: DocString[]) => void;
   getTextReason: (textReason: string) => void;
   textReason: string;
+  invoiceSeal: boolean;
 }
 interface ClientData {
   name: string;
@@ -95,6 +95,7 @@ export const Invoice = ({
   getStringData,
   getTextReason,
   textReason,
+  invoiceSeal,
 }: InvoiceProps) => {
   const customerList = useSelector((state: any) => state.oderReducer.clientList);
   const driverList = useSelector((state: any) => state.oderReducer.driverlist);
@@ -523,18 +524,23 @@ export const Invoice = ({
             <div style={{ width: '25%' }}>
               Индивидуальный предприниматель или иное уполномоченное лицо (подпись)
             </div>
-            <div style={{ width: '25%' }}>___________________________________ (ф.и.о.)</div>
-            <img
-              style={{
-                position: 'absolute',
-                left: '385px',
-                top: '640px',
-                opacity: '0.7',
-              }}
-              height="120"
-              width="120"
-              src={`${DOMENNAME}/img/sign.png`}
-            />
+            <div style={{ width: '25%' }}>
+              ___________________________________ (ф.и.о.)
+              {invoiceSeal && (
+                <img
+                  style={{
+                    position: 'relative',
+                    left: '30px',
+                    top: '-95px',
+                    opacity: '0.7',
+                  }}
+                  height="120"
+                  width="120"
+                  src={`${DOMENNAME}/img/sign.png`}
+                />
+              )}
+            </div>
+
             <div
               style={{
                 width: '50%',

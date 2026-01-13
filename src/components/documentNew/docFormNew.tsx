@@ -46,6 +46,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
   const [requestMessage, setRequestMessage] = useState<string | null>(null);
   const [withVAT, setWithVAT] = useState<boolean>(false);
+  const [invoiceSeal, setInvoiceSeal] = useState<boolean>(true);
+  const [showInvoiceSeal, setShowInvoiceSeal] = useState<boolean>(false);
   const [strings, setStrings] = useState<DocString[]>([
     { mainPart: '', numberOfShipments: 1, customerPrice: 0 },
   ]);
@@ -138,7 +140,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
     dispatch(
       createBill(
         htmlDoc.innerHTML,
-        actNumber,
+        isNaN(Number(actNumber)) ? actNumber : Number(actNumber),
         year,
         customer.value,
         currentTable,
@@ -148,6 +150,13 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
       )
     );
   };
+  useEffect(() => {
+    if (choisenTypeDoc === 'Invoice') {
+      setShowInvoiceSeal(true);
+    } else {
+      setShowInvoiceSeal(false);
+    }
+  }, [choisenTypeDoc]);
   useEffect(() => {
     if (order.accountNumber != null && order.accountNumber != '') {
       setActNumber(order.accountNumber);
@@ -372,6 +381,17 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         </div>
         <div className="wrapperBtnBlock">
           <button onClick={handleAddString}>Добавить строку</button>
+          {showInvoiceSeal && (
+            <label>
+              {' '}
+              Печать
+              <input
+                type="checkbox"
+                checked={invoiceSeal}
+                onChange={e => setInvoiceSeal(e.currentTarget.checked)}
+              />
+            </label>
+          )}
           <button onClick={handleSaveDoc}>Сохранить</button>
         </div>
       </div>
@@ -386,6 +406,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
             getStringData={getStringData}
             getTextReason={getTextReason}
             textReason={textReaason}
+            invoiceSeal={invoiceSeal}
           />
         )}
         {choisenTypeDoc === 'Bill' && (
