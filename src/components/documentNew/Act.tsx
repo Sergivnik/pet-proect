@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes.js';
 import { sumInWords, shortName } from '../myLib/myLib.js';
-import { DOMENNAME } from '../../middlewares/initialState.js';
+import { DOMENNAME, VAT } from '../../middlewares/initialState.js';
 
 interface ActProps {
   order: OrderType;
@@ -213,9 +213,8 @@ export const Act = ({
     }
   };
 
-  const VAT_RATE = 5;
-  const getVat = (sum: number) => (sum * VAT_RATE) / (100 + VAT_RATE);
-  const getSumWithoutVAT = (sum: number) => (100 * sum) / (100 + VAT_RATE);
+  const getVat = (sum: number) => (sum * VAT) / (100 + VAT);
+  const getSumWithoutVAT = (sum: number) => (100 * sum) / (100 + VAT);
 
   const getPrice = (sum: number) => {
     if (withVAT) {
@@ -366,7 +365,7 @@ export const Act = ({
                 </td>
                 {withVAT && (
                   <>
-                    <td style={{ border: '1px solid black', textAlign: 'center' }}>{VAT_RATE}</td>
+                    <td style={{ border: '1px solid black', textAlign: 'center' }}>{VAT}</td>
                     <td style={{ border: '1px solid black', textAlign: 'center' }}>
                       {((string.customerPrice / 21) * string.numberOfShipments).toLocaleString(
                         'ru-RU',

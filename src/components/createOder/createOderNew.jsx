@@ -5,7 +5,7 @@ import { PointsForm } from './pointsForm.jsx';
 import { addOder, addOrderApp, editOderNew } from '../../actions/oderActions.js';
 import { dateLocal, findValueBy_Id } from '../myLib/myLib.js';
 import { InputText } from '../myLib/inputText.jsx';
-import { VAT } from '../../middlewares/initialState.js';
+import { TAX, VAT } from '../../middlewares/initialState.js';
 import './createOder.sass';
 
 export const CreateOderNew = props => {
@@ -851,6 +851,7 @@ export const CreateOderNew = props => {
         <div className="rightPathWrap">
           <div className={debtOfCustomer < limit || limit == null ? 'infoBlock' : 'infoBlock red'}>
             {debtOfCustomer ? `Долг клиента составляет ${debtOfCustomer} руб` : null}
+            {`    Прибыль после вычета налогов:  ${((Number(odersData.customerPriceNohVAT) - Number(odersData.driverPrice)) * (1 - TAX / 100)).toFixed(2)}`}
           </div>
           <div className="footerCheckBox">
             Не включать в оплату{' '}
