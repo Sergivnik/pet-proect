@@ -133,7 +133,9 @@ export const CardReport = () => {
       unClosedCustomerDebt.map((debt: CustomerAddDebt) => {
         if (arrCustomer.includes(debt.id)) {
           let order: any = orderList.find((order: any) => order._id == debt.orderId);
-          let sumOfdebt: number = ((order.customerPrice - debt.sum) * (100 - debt.interest)) / 100;
+          let sumOfdebt: number = updateVATByDate(order.date)
+            ? ((order.customerPrice - debt.sum) * (100 - debt.interest)) / (100 + VAT)
+            : ((order.customerPrice - debt.sum) * (100 - debt.interest)) / 100;
           sumToCard = sumToCard + sumOfdebt;
         }
       });

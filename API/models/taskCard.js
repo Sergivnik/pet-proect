@@ -8,6 +8,15 @@ let TasksCard = {
     let sumOfCustomerDebts = 0;
     let driverPaymentId, customerPaymentId;
     const connection = await db.getConnection();
+    const updateVATByDate = date => {
+      if (date) {
+        const orderDate = typeof date === 'string' ? new Date(date) : date;
+        const thresholdDate = new Date('2026-01-01');
+        return orderDate >= thresholdDate;
+      } else {
+        return false;
+      }
+    };
 
     try {
       await connection.beginTransaction();
@@ -25,12 +34,16 @@ let TasksCard = {
       if (data.customerDebtsId.length > 0) {
         let placeholders = data.customerDebtsId.map(() => '?').join(',');
         let [listOfCustomerDebts] = await connection.query(
-          `SELECT sum,interest,customerPrice FROM addtable, oderslist where _id=orderId and id in (${placeholders})`,
+          `SELECT sum,interest,customerPrice,oderslist.date FROM addtable, oderslist where _id=orderId and id in (${placeholders})`,
           data.customerDebtsId
         );
+        console.log(listOfCustomerDebts);
+
         sumOfCustomerDebts = listOfCustomerDebts.reduce(
           (sum, debt) =>
-            sum + ((Number(debt.customerPrice) - debt.sum) * (100 - debt.interest)) / 100,
+            sum +
+            ((Number(debt.customerPrice) - debt.sum) * (100 - debt.interest)) /
+              (updateVATByDate(debt.date) ? 105 : 100),
           0
         );
         console.log(sumOfCustomerDebts);
