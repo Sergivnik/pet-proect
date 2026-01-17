@@ -98,7 +98,7 @@ export const CardReport = () => {
     if (tableRef.current) {
       tableRef.current.scrollTop = tableRef.current.scrollHeight;
     }
-  }, [driverDebtCard, customerDebtCard]);
+  }, [unReturnedDebt, unClosedCustomerDebt]);
 
   useEffect(() => {
     dispatch(getDataDriverDebt());
