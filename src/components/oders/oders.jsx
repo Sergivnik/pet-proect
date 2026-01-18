@@ -29,6 +29,7 @@ import { MenuAccount } from './taskBar/menuAccount/menuAccount.jsx';
 import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
 import { PostForm } from '../postForm/postForm.tsx';
 import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
+import { DriverPayListVirtual } from '../driverComponents/driverPayListVirtual.tsx';
 import { VirtualizedDriverTable } from './virtualizedDriverTable.tsx';
 import './oders.sass';
 
@@ -381,7 +382,7 @@ export const Oders = () => {
         setWindowHeader('Платежи перевозчикам');
         setShowWindow(true);
         setWindowWidth(1200);
-        setChildren(<DriverPaymentsList />);
+        setChildren(<DriverPayListVirtual />);
       }
       if (btnClick == 'driversDebt') {
         setWindowHeader('Задолженность перевозчика');
@@ -509,7 +510,7 @@ export const Oders = () => {
       {showPrintForm && <PrintFormBill elem={currentElem} closePrintForm={handleClosePrintForm} />}
       {showEditDataWindow && (
         <Window
-        title="Редактирование данных"
+          title="Редактирование данных"
           width={1400}
           startX={400}
           startY={200}

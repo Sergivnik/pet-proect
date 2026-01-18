@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getDataDriverPayments, getDataDriverDebt } from '../../actions/driverActions.js';
-import { Driver } from '../tsTypes.ts';
 import { DriverPaymentListTr } from './driverPaymentListTr.tsx';
 import { DriverPayment } from '../tsTypes.ts';
 import './driverForms.sass';
@@ -14,7 +13,6 @@ export const DriverPaymentsList = () => {
     (state: any) => state.driverReducer.driverpayment
   );
   const status: string = useSelector((state: any) => state.driverReducer.status);
-  const driverList: Driver[] = useSelector((state: any) => state.oderReducer.driverlist);
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getDataDriverPayments());

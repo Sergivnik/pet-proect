@@ -147,3 +147,47 @@
    text-align: center
 .blueTr
    color: blue
+.virtualTable
+   display: flex
+   flex-direction: column
+   height: 100%
+   font-size: 14px
+.virtualHeader
+   display: grid
+   grid-template-columns: 120px auto 200px 100px
+   padding: 0 23px 0 8px
+   position: sticky
+   top: 0
+   z-index: 10
+   border-bottom: 1px solid #333
+   background-color: #ccc
+.virtualHeader > .virtualCell:last-child
+   border-right: 1px solid #000
+.virtualCell
+   flex: 1
+   padding: 4px 10px
+   white-space: nowrap
+   overflow: hidden
+   text-overflow: ellipsis
+   border-bottom: 1px solid #000
+   border-left: 1px solid #000
+.virtualBody
+   height: 600px
+   overflow: auto
+   background-color: #e9d68c
+.virtualRow
+   box-sizing: border-box
+   height: auto
+   overflow: visible
+.virtualRowMain
+   display: grid
+   grid-template-columns: 120px 1fr 200px 100px
+   align-items: center
+   min-height: 20px
+   padding: 0 8px
+.virtualRowMain > .virtualCell:last-child
+   border-right: 1px solid #000
+.virtualRowDetails
+   padding: 8px 12px
+   font-size: 14px
+   box-sizing: border-box
