@@ -1,28 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { ChoiseList } from "../choiseList/choiseList.jsx";
-import { DriverPaymentDebtTr } from "./driverPaymentDebtTr.jsx";
-import { DriverPaymentTr } from "./driverPaymentTr.jsx";
-import { ObjIncludesId } from "../myLib/myLib.js";
-import {
-  getDataDriverDebt,
-  makePaymentDriver,
-} from "../../actions/driverActions.js";
-import "./driverForms.sass";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { ChoiseList } from '../choiseList/choiseList.jsx';
+import { DriverPaymentDebtTr } from './driverPaymentDebtTr.jsx';
+import { DriverPaymentTr } from './driverPaymentTr.jsx';
+import { ObjIncludesId } from '../myLib/myLib.js';
+import { getDataDriverDebt, makePaymentDriver } from '../../actions/driverActions.js';
+import './driverForms.sass';
 
 export const DriverPaymentForm = () => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(getDataDriverDebt());
   }, []);
-  const odersList = useSelector((state) => state.oderReducer.originOdersList);
-  const driversList = useSelector((state) => state.oderReducer.driverlist);
-  const driverDebtList = useSelector(
-    (state) => state.oderReducer.driverDebtList
-  );
-  const trackDriverList = useSelector(
-    (state) => state.oderReducer.trackdrivers
-  );
+  const odersList = useSelector(state => state.oderReducer.originOdersList);
+  const driversList = useSelector(state => state.oderReducer.driverlist);
+  const driverDebtList = useSelector(state => state.oderReducer.driverDebtList);
+  const trackDriverList = useSelector(state => state.oderReducer.trackdrivers);
 
   const [odersWithoutPayment, setOdersWithoutPayment] = useState([]);
   const [filteredOdersList, setFilteredOdersList] = useState([]);
@@ -48,43 +41,41 @@ export const DriverPaymentForm = () => {
   const [trakDriverSum, setTrackDriverSum] = useState([]);
 
   useEffect(() => {
-    let arr = odersList.filter(
-      (elem) => elem.driverPayment != "Ок" && elem.colorTR != "Orange"
-    );
+    let arr = odersList.filter(elem => elem.driverPayment != 'Ок' && elem.colorTR != 'Orange');
     setOdersWithoutPayment(arr);
     setFilteredOdersList(arr);
     let arrDriver = [];
-    arr.forEach((elem) => {
+    arr.forEach(elem => {
       if (!arrDriver.includes(elem.idDriver)) arrDriver.push(elem.idDriver);
     });
     let arrObj = [];
-    arrDriver.forEach((elem) => {
-      let driver = driversList.find((item) => item._id == elem);
+    arrDriver.forEach(elem => {
+      let driver = driversList.find(item => item._id == elem);
       arrObj.push(driver);
     });
     setDriverListWithoutPayment(arrObj);
     if (chosenDriverId) {
       console.log(chosenDriverId);
-      let arrOders = arr.filter((elem) => elem.idDriver == chosenDriverId);
+      let arrOders = arr.filter(elem => elem.idDriver == chosenDriverId);
       setFilteredOdersList(arrOders);
       let arrDebts = driverDebtList.filter(
-        (elem) => elem.idDriver == chosenDriverId && elem.debtClosed != "Ок"
+        elem => elem.idDriver == chosenDriverId && elem.debtClosed != 'Ок'
       );
       setDriverDebts(arrDebts);
       setSumOfChosenDebt(null);
     }
   }, [odersList, driverDebtList]);
 
-  const setValue = (data) => {
-    let arr = odersWithoutPayment.filter((elem) => elem.idDriver == data._id);
+  const setValue = data => {
+    let arr = odersWithoutPayment.filter(elem => elem.idDriver == data._id);
     setFilteredOdersList(arr);
     let sumOders = arr.reduce((sum, elem) => sum + Number(elem.driverPrice), 0);
     setCurrentDriverSum(sumOders);
     let arrDebt = driverDebtList.filter(
-      (elem) => elem.idDriver == data._id && elem.debtClosed != "Ок"
+      elem => elem.idDriver == data._id && elem.debtClosed != 'Ок'
     );
     let clone = [];
-    arrDebt.forEach((elem) => {
+    arrDebt.forEach(elem => {
       clone.push(Object.assign({}, elem));
     });
     setDriverDebts(clone);
@@ -109,8 +100,8 @@ export const DriverPaymentForm = () => {
       setShowDebts(true);
     } else setShowDebts(false);
   };
-  const handleEnter = (e) => {
-    if (e.key == "Enter") {
+  const handleEnter = e => {
+    if (e.key == 'Enter') {
       setSumOfChosenDebt(e.currentTarget.value);
       setShowInputFieldOfDebt(false);
       setChoiceEnabled(true);
@@ -128,31 +119,27 @@ export const DriverPaymentForm = () => {
     let [...arr] = chosenOders;
     let sum = currentDriverSumOfOders;
     let [...arrTrackDriver] = trakDriverSum;
-    let order = odersList.find((order) => order._id == oderId);
+    let order = odersList.find(order => order._id == oderId);
     let indexTrackDriver = arrTrackDriver.findIndex(
-      (trackDriver) => trackDriver.id == order.idTrackDriver
+      trackDriver => trackDriver.id == order.idTrackDriver
     );
     if (indexTrackDriver == -1) {
       indexTrackDriver = arrTrackDriver.length;
       arrTrackDriver.push({
         id: order.idTrackDriver,
         sum: 0,
-        name: trackDriverList.find(
-          (trackdriver) => trackdriver._id == order.idTrackDriver
-        ).value,
+        name: trackDriverList.find(trackdriver => trackdriver._id == order.idTrackDriver).value,
       });
     }
     if (!arr.includes(oderId)) {
       arr.push(oderId);
       sum = sum + driverPrice;
-      arrTrackDriver[indexTrackDriver].sum =
-        arrTrackDriver[indexTrackDriver].sum + driverPrice;
+      arrTrackDriver[indexTrackDriver].sum = arrTrackDriver[indexTrackDriver].sum + driverPrice;
     } else {
-      let index = arr.findIndex((elem) => elem == oderId);
+      let index = arr.findIndex(elem => elem == oderId);
       arr.splice(index, 1);
       sum = sum - driverPrice;
-      arrTrackDriver[indexTrackDriver].sum =
-        arrTrackDriver[indexTrackDriver].sum - driverPrice;
+      arrTrackDriver[indexTrackDriver].sum = arrTrackDriver[indexTrackDriver].sum - driverPrice;
     }
     setChosenOders(arr);
     setCurrentDriverSumOfOders(sum);
@@ -172,30 +159,28 @@ export const DriverPaymentForm = () => {
         setCurrentDriverSumOfDebts(Number(sumOfChosenDebt));
         setPartialDebt({ id: debtId, sum: sumOfDebt });
         let [...arrDebts] = driverDebts;
-        let indexDebt = arrDebts.findIndex((elem) => elem.id == debtId);
+        let indexDebt = arrDebts.findIndex(elem => elem.id == debtId);
         let lastDebtPart = Number(sumOfChosenDebt) - sum;
-        arrDebts[indexDebt].sumOfDebt =
-          lastDebtPart + Number(arrDebts[indexDebt].paidPartOfDebt);
-        arrDebts[indexDebt].debtClosed = "частично";
+        arrDebts[indexDebt].sumOfDebt = lastDebtPart + Number(arrDebts[indexDebt].paidPartOfDebt);
+        arrDebts[indexDebt].debtClosed = 'частично';
         setDriverDebts(arrDebts);
         setShowBtn(true);
         setIsDebtsChosen(true);
       }
     } else {
       if (partialDebt.id != debtId) {
-        let index = arr.findIndex((elem) => elem.id == debtId);
+        let index = arr.findIndex(elem => elem.id == debtId);
         arr.splice(index, 1);
         setCurrentDriverSumOfDebts(sum - sumOfDebt);
       } else {
-        let index = arr.findIndex((elem) => elem.id == debtId);
+        let index = arr.findIndex(elem => elem.id == debtId);
         arr.splice(index, 1);
         setCurrentDriverSumOfDebts(sum - sumOfDebt);
         let [...arrDebts] = driverDebts;
-        let indexDebt = arrDebts.findIndex((elem) => elem.id == debtId);
+        let indexDebt = arrDebts.findIndex(elem => elem.id == debtId);
         arrDebts[indexDebt].sumOfDebt =
           Number(partialDebt.sum) + Number(arrDebts[indexDebt].paidPartOfDebt);
-        if (Number(arrDebts[indexDebt].paidPartOfDebt) == 0)
-          arrDebts[indexDebt].debtClosed = "нет";
+        if (Number(arrDebts[indexDebt].paidPartOfDebt) == 0) arrDebts[indexDebt].debtClosed = 'нет';
         setDriverDebts(arrDebts);
         setIsDebtsChosen(false);
       }
@@ -204,14 +189,7 @@ export const DriverPaymentForm = () => {
     setChosenDebts(arr);
   };
   const handleClickBtn = () => {
-    dispatch(
-      makePaymentDriver(
-        chosenDriverId,
-        chosenOders,
-        chosenDebts,
-        currentDriverSumOfOders
-      )
-    );
+    dispatch(makePaymentDriver(chosenDriverId, chosenOders, chosenDebts, currentDriverSumOfOders));
     setCurrentDriverSumOfDebts(null);
     setSumOfChosenDebt(null);
     setIsDebtsChosen(false);
@@ -226,11 +204,7 @@ export const DriverPaymentForm = () => {
         <div className="driverPaymentChoise">
           <p className="driverPaymentChoiseP">Перевозчик</p>
           {showInputFieldDriver ? (
-            <ChoiseList
-              name="driver"
-              arrlist={driverListWithoutPayment}
-              setValue={setValue}
-            />
+            <ChoiseList name="driver" arrlist={driverListWithoutPayment} setValue={setValue} />
           ) : (
             <div onClick={handleClickInputDriver}>{chosenDriver}</div>
           )}
@@ -246,14 +220,11 @@ export const DriverPaymentForm = () => {
             <p className="driverPaymentChoiseP">Выбрано для оплаты</p>
             <div>{currentDriverSumOfOders}</div>
             <div>
-              {trakDriverSum.map((trakDriver) => {
+              {trakDriverSum.map(trakDriver => {
                 return (
-                  <p
-                    className="trackDriverP"
-                    key={`keyTrackDriver${trakDriver.id}`}
-                  >
+                  <p className="trackDriverP" key={`keyTrackDriver${trakDriver.id}`}>
                     {trakDriver.name}
-                    {"   "}
+                    {'   '}
                     {trakDriver.sum}
                   </p>
                 );
@@ -273,9 +244,7 @@ export const DriverPaymentForm = () => {
             {showInputFieldOfDebt ? (
               <input type="Number" onKeyDown={handleEnter} />
             ) : (
-              <div onClick={handleClickInputDebt}>
-                {sumOfChosenDebt - currentDriverSumOfDebts}
-              </div>
+              <div onClick={handleClickInputDebt}>{sumOfChosenDebt - currentDriverSumOfDebts}</div>
             )}
           </div>
         )}
@@ -287,9 +256,7 @@ export const DriverPaymentForm = () => {
         )}
       </header>
       <div className="driverDebtTableDiv">
-        {showDebts && (
-          <span className="driverPaymentTableSpan">Долги перевозчика</span>
-        )}
+        {showDebts && <span className="driverPaymentTableSpan">Долги перевозчика</span>}
         {showDebts && (
           <div className="driverPaymentDebtsDiv">
             <table className="driverDebtMainTable">
@@ -314,7 +281,7 @@ export const DriverPaymentForm = () => {
                 </tr>
               </thead>
               <tbody>
-                {driverDebts.map((elem) => {
+                {driverDebts.map(elem => {
                   return (
                     <DriverPaymentDebtTr
                       key={elem.id}
@@ -361,14 +328,8 @@ export const DriverPaymentForm = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredOdersList.map((elem) => {
-                return (
-                  <DriverPaymentTr
-                    key={elem._id}
-                    elem={elem}
-                    choiseOders={choiseOders}
-                  />
-                );
+              {filteredOdersList.map(elem => {
+                return <DriverPaymentTr key={elem._id} elem={elem} choiseOders={choiseOders} />;
               })}
             </tbody>
           </table>

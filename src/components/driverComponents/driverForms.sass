@@ -152,9 +152,11 @@
    flex-direction: column
    height: 100%
    font-size: 14px
+=widthOfCol
+   grid-template-columns: 120px auto 200px 200px
 .virtualHeader
    display: grid
-   grid-template-columns: 120px auto 200px 100px
+   +widthOfCol
    padding: 0 23px 0 8px
    position: sticky
    top: 0
@@ -171,6 +173,10 @@
    text-overflow: ellipsis
    border-bottom: 1px solid #000
    border-left: 1px solid #000
+.lastCell
+   display: flex
+   flex-direction: row
+   justify-content: space-between
 .virtualBody
    height: 600px
    overflow: auto
@@ -181,7 +187,7 @@
    overflow: visible
 .virtualRowMain
    display: grid
-   grid-template-columns: 120px 1fr 200px 100px
+   +widthOfCol
    align-items: center
    min-height: 20px
    padding: 0 8px
@@ -191,3 +197,18 @@
    padding: 8px 12px
    font-size: 14px
    box-sizing: border-box
+.wrapperSvg
+   height: 17px
+   margin-left: auto
+   margin-right: 10px
+=widthOfColDetails
+   grid-template-columns: 120px auto 200px 100px 100px 100px
+.virtualHeaderDetails
+   display: grid
+   +widthOfColDetails
+   padding: 0 23px 0 8px
+   position: sticky
+   top: 0
+   z-index: 10
+   border-bottom: 1px solid #333
+   background-color: #ccc
