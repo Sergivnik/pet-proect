@@ -137,7 +137,7 @@ export const DriverPaymentListTr = (props: any) => {
                 <tr>
                   <td>Дата</td>
                   <td>Категория</td>
-                  <td>Суммк</td>
+                  <td>Сумма</td>
                   <td>Оплачено</td>
                   <td>Примечание</td>
                 </tr>

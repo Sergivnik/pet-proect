@@ -151,7 +151,7 @@
    display: flex
    flex-direction: column
    height: 100%
-   font-size: 14px
+   font-size: 16px
 =widthOfCol
    grid-template-columns: 120px auto 200px 200px
 .virtualHeader
@@ -163,6 +163,7 @@
    z-index: 10
    border-bottom: 1px solid #333
    background-color: #ccc
+   font-size: 18px
 .virtualHeader > .virtualCell:last-child
    border-right: 1px solid #000
 .virtualCell
@@ -194,21 +195,60 @@
 .virtualRowMain > .virtualCell:last-child
    border-right: 1px solid #000
 .virtualRowDetails
-   padding: 8px 12px
+   padding: 0px 12px
    font-size: 14px
    box-sizing: border-box
+   color: blue
+   font-style: italic
 .wrapperSvg
    height: 17px
    margin-left: auto
    margin-right: 10px
 =widthOfColDetails
-   grid-template-columns: 120px auto 200px 100px 100px 100px
+   grid-template-columns: 120px 200px auto 300px 100px 100px
 .virtualHeaderDetails
    display: grid
    +widthOfColDetails
-   padding: 0 23px 0 8px
-   position: sticky
+   margin: 0 23px 0 8px
    top: 0
    z-index: 10
-   border-bottom: 1px solid #333
    background-color: #ccc
+   font-size: 18px
+.virtualHeaderDetails > .virtualCell:last-child
+   border-right: 1px solid #000
+.virtualRowBodyDetails
+   display: grid
+   +widthOfColDetails
+   padding: 0 23px 0 8px
+   z-index: 10
+.virtualRowBodyDetails > .virtualCell:last-child
+   border-right: 1px solid #000
+.error
+   margin: 0 23px 0 8px
+   border-right: 1px solid #000
+   text-align: center
+=widthOfColDebtDetails
+   grid-template-columns: 120px 200px auto 300px 100px
+.virtualHeaderDebtDetails
+   display: grid
+   +widthOfColDebtDetails
+   margin: 0 23px 0 8px
+   top: 0
+   z-index: 10
+   background-color: #ccc
+   font-size: 18px
+.virtualHeaderDebtDetails > .virtualCell:last-child
+   border-right: 1px solid #000
+.virtualRowBodyBebtDetails
+   display: grid
+   +widthOfColDebtDetails
+   margin: 0 23px 0 8px
+   top: 0
+   z-index: 10
+.virtualRowBodyBebtDetails > .virtualCell:last-child
+   border-right: 1px solid #000
+.debtError
+   display: grid
+   grid-template-columns: auto 100px
+.debtError > .virtualCell:last-child
+   border-right: 1px solid #000

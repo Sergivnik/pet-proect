@@ -1,6 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { DriverPayment, Driver } from '../tsTypes.ts';
+import {
+  Driver,
+  DriverDebt,
+  DriverDebtInfo,
+  DriverPayment,
+  Point,
+  TrackDriver,
+  OrderType,
+} from '../tsTypes.js';
 import { findValueBy_Id, findValueById } from '../myLib/myLib.js';
 import './driverForms.sass';
 
@@ -11,6 +19,19 @@ type DriverPayTrProps = {
 
 export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
   const driverList: Driver[] = useSelector((state: any) => state.oderReducer.driverlist);
+  const orderList: number[] = payment.listOfOders;
+  let debtList: DriverDebtInfo[] = payment.listOfDebts;
+  const orderFullList: OrderType[] = useSelector((state: any) => state.oderReducer.originOdersList);
+  const trackDriverList: TrackDriver[] = useSelector(
+    (state: any) => state.oderReducer.trackdrivers
+  );
+  const pointList: Point[] = useSelector((state: any) => state.oderReducer.citieslist);
+  const driverDebtList: DriverDebt[] = useSelector(
+    (state: any) => state.oderReducer.driverDebtList
+  );
+
+  const dispatch = useDispatch();
+
   return (
     <React.Fragment>
       <div className="virtualRowMain">
@@ -47,6 +68,58 @@ export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
             <div className="virtualCell">Цена</div>
             <div className="virtualCell">Номер счета</div>
           </div>
+          {orderList.map((orderId: number) => {
+            const order: OrderType | null = findValueBy_Id(orderId, orderFullList) || null;
+            if (order != null) {
+              let trackdriver: TrackDriver = findValueBy_Id(order.idTrackDriver, trackDriverList);
+              let pointLoadList: string[] = order.idLoadingPoint.map((idPoint: number) => {
+                return findValueBy_Id(idPoint, pointList).value;
+              });
+              let pointUnloadList: string[] = order.idUnloadingPoint.map((idPoint: number) => {
+                return findValueBy_Id(idPoint, pointList).value;
+              });
+              return (
+                <div className="virtualRowBodyDetails">
+                  <div className="virtualCell">{new Date(order.date).toLocaleDateString()}</div>
+                  <div className="virtualCell">{trackdriver.value}</div>
+                  <div className="virtualCell">{pointLoadList.join(' - ')}</div>
+                  <div className="virtualCell">{pointUnloadList.join(' - ')}</div>
+                  <div className="virtualCell">{order.driverPrice}</div>
+                  <div className="virtualCell">{order.accountNumber}</div>
+                </div>
+              );
+            } else {
+              return <div className="virtualCell error">Заказ не найден или удален</div>;
+            }
+          })}
+          <div className="virtualHeaderDebtDetails">
+            <div className="virtualCell">Дата</div>
+            <div className="virtualCell">Категория</div>
+            <div className="virtualCell">Сумма</div>
+            <div className="virtualCell">Оплачено</div>
+            <div className="virtualCell">Примечание</div>
+          </div>
+          {debtList.map(debtInfo => {
+            let debt: DriverDebt | null = findValueById(debtInfo.id, driverDebtList) || null;
+            if (debt != null) {
+              return (
+                <div className="virtualRowBodyBebtDetails">
+                  <div className="virtualCell">{new Date(debt.date).toLocaleDateString()}</div>
+                  <div className="virtualCell">{debt.category}</div>
+                  <div className="virtualCell">{debt.sumOfDebt}</div>
+                  <div className="virtualCell">{debtInfo.sum}</div>
+                  <div className="virtualCell">{debt.addInfo}</div>
+                </div>
+              );
+            } else {
+              return (
+                <div className="debtError">
+                  <div className="virtualCell">Долг не найден или удален</div>
+                  <div className="virtualCell">{debtInfo.sum}</div>
+                </div>
+              );
+            }
+          })}
         </div>
       )}
     </React.Fragment>
