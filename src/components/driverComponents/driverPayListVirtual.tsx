@@ -7,7 +7,6 @@ import { findValueBy_Id, findValueById } from '../myLib/myLib.js';
 import { DriverPayTrVirtual } from './driverPayTrVirtual.tsx';
 import './driverForms.sass';
 
-
 export const DriverPayListVirtual = () => {
   const parentRef = React.useRef<HTMLDivElement>(null);
   const [statusRequest, setStatusRequest] = useState<string | null>(null);
@@ -23,7 +22,7 @@ export const DriverPayListVirtual = () => {
   const rowVirtualizer = useVirtualizer({
     count: driverPaymentList.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 25, // базовая высота строки
+    estimateSize: () => 30, // базовая высота строки
     overscan: 8,
   });
 
@@ -79,7 +78,7 @@ export const DriverPayListVirtual = () => {
                   }}
                   onClick={() => setOpenRowId(prev => (prev === payment.id ? null : payment.id))}
                 >
-                  <DriverPayTrVirtual payment={payment} isOpen={isOpen}/>
+                  <DriverPayTrVirtual payment={payment} isOpen={isOpen} />
                 </div>
               );
             })}

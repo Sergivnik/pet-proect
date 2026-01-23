@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { delDriverPayment } from '../../actions/driverActions.js';
 import {
   Driver,
   DriverDebt,
@@ -18,6 +19,9 @@ type DriverPayTrProps = {
 };
 
 export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
+  const [showOrderList, setShowOrderList] = useState<boolean>(false);
+  const [showDebtList, setShowDebtList] = useState<boolean>(false);
+
   const driverList: Driver[] = useSelector((state: any) => state.oderReducer.driverlist);
   const orderList: number[] = payment.listOfOders;
   let debtList: DriverDebtInfo[] = payment.listOfDebts;
@@ -32,16 +36,30 @@ export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
 
   const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (isOpen) {
+      if (payment.listOfOders.length > 0) setShowOrderList(!showOrderList);
+      if (payment.listOfDebts.length > 0) setShowDebtList(!showDebtList);
+    }
+  }, [isOpen]);
+
+  const handleClickDelete = () => {
+    let password = prompt('Подтвердите удаление', 'Пароль');
+    if (password == 'Пароль') {
+      dispatch(delDriverPayment(payment.id));
+    }
+  };
+
   return (
     <React.Fragment>
-      <div className="virtualRowMain">
+      <div className={isOpen ? 'virtualRowMain blueFont' : 'virtualRowMain'}>
         <div className="virtualCell">{new Date(payment.date).toLocaleDateString()}</div>
         <div className="virtualCell">{findValueBy_Id(payment.idDriver, driverList).value}</div>
         <div className="virtualCell">{payment.sumOfPayment} ₽</div>
         <div className="virtualCell lastCell">
           <div>{payment.sumOfDebts}</div>
           {isOpen && (
-            <div className="wrapperSvg">
+            <div className="wrapperSvg" onClick={handleClickDelete}>
               <svg width="17px" height="17px" viewBox="0 0 60 60">
                 <g transform="translate(232.000000, 228.000000)">
                   <polygon points="-207,-205 -204,-205 -204,-181 -207,-181    " />
@@ -60,66 +78,72 @@ export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
 
       {isOpen && (
         <div className="virtualRowDetails">
-          <div className="virtualHeaderDetails">
-            <div className="virtualCell">Дата</div>
-            <div className="virtualCell">Водитель</div>
-            <div className="virtualCell">Погрузка</div>
-            <div className="virtualCell">Выгрузка</div>
-            <div className="virtualCell">Цена</div>
-            <div className="virtualCell">Номер счета</div>
-          </div>
-          {orderList.map((orderId: number) => {
-            const order: OrderType | null = findValueBy_Id(orderId, orderFullList) || null;
-            if (order != null) {
-              let trackdriver: TrackDriver = findValueBy_Id(order.idTrackDriver, trackDriverList);
-              let pointLoadList: string[] = order.idLoadingPoint.map((idPoint: number) => {
-                return findValueBy_Id(idPoint, pointList).value;
-              });
-              let pointUnloadList: string[] = order.idUnloadingPoint.map((idPoint: number) => {
-                return findValueBy_Id(idPoint, pointList).value;
-              });
-              return (
-                <div className="virtualRowBodyDetails">
-                  <div className="virtualCell">{new Date(order.date).toLocaleDateString()}</div>
-                  <div className="virtualCell">{trackdriver.value}</div>
-                  <div className="virtualCell">{pointLoadList.join(' - ')}</div>
-                  <div className="virtualCell">{pointUnloadList.join(' - ')}</div>
-                  <div className="virtualCell">{order.driverPrice}</div>
-                  <div className="virtualCell">{order.accountNumber}</div>
-                </div>
-              );
-            } else {
-              return <div className="virtualCell error">Заказ не найден или удален</div>;
-            }
-          })}
-          <div className="virtualHeaderDebtDetails">
-            <div className="virtualCell">Дата</div>
-            <div className="virtualCell">Категория</div>
-            <div className="virtualCell">Сумма</div>
-            <div className="virtualCell">Оплачено</div>
-            <div className="virtualCell">Примечание</div>
-          </div>
-          {debtList.map(debtInfo => {
-            let debt: DriverDebt | null = findValueById(debtInfo.id, driverDebtList) || null;
-            if (debt != null) {
-              return (
-                <div className="virtualRowBodyBebtDetails">
-                  <div className="virtualCell">{new Date(debt.date).toLocaleDateString()}</div>
-                  <div className="virtualCell">{debt.category}</div>
-                  <div className="virtualCell">{debt.sumOfDebt}</div>
-                  <div className="virtualCell">{debtInfo.sum}</div>
-                  <div className="virtualCell">{debt.addInfo}</div>
-                </div>
-              );
-            } else {
-              return (
-                <div className="debtError">
-                  <div className="virtualCell">Долг не найден или удален</div>
-                  <div className="virtualCell">{debtInfo.sum}</div>
-                </div>
-              );
-            }
-          })}
+          {showOrderList && (
+            <div className="virtualHeaderDetails">
+              <div className="virtualCell">Дата</div>
+              <div className="virtualCell">Водитель</div>
+              <div className="virtualCell">Погрузка</div>
+              <div className="virtualCell">Выгрузка</div>
+              <div className="virtualCell">Цена</div>
+              <div className="virtualCell">Номер счета</div>
+            </div>
+          )}
+          {showOrderList &&
+            orderList.map((orderId: number) => {
+              const order: OrderType | null = findValueBy_Id(orderId, orderFullList) || null;
+              if (order != null) {
+                let trackdriver: TrackDriver = findValueBy_Id(order.idTrackDriver, trackDriverList);
+                let pointLoadList: string[] = order.idLoadingPoint.map((idPoint: number) => {
+                  return findValueBy_Id(idPoint, pointList).value;
+                });
+                let pointUnloadList: string[] = order.idUnloadingPoint.map((idPoint: number) => {
+                  return findValueBy_Id(idPoint, pointList).value;
+                });
+                return (
+                  <div className="virtualRowBodyDetails">
+                    <div className="virtualCell">{new Date(order.date).toLocaleDateString()}</div>
+                    <div className="virtualCell">{trackdriver.value}</div>
+                    <div className="virtualCell">{pointLoadList.join(' - ')}</div>
+                    <div className="virtualCell">{pointUnloadList.join(' - ')}</div>
+                    <div className="virtualCell">{order.driverPrice}</div>
+                    <div className="virtualCell">{order.accountNumber}</div>
+                  </div>
+                );
+              } else {
+                return <div className="virtualCell error">Заказ не найден или удален</div>;
+              }
+            })}
+          {showDebtList && (
+            <div className="virtualHeaderDebtDetails">
+              <div className="virtualCell">Дата</div>
+              <div className="virtualCell">Категория</div>
+              <div className="virtualCell">Сумма</div>
+              <div className="virtualCell">Оплачено</div>
+              <div className="virtualCell">Примечание</div>
+            </div>
+          )}
+          {showDebtList &&
+            debtList.map(debtInfo => {
+              let debt: DriverDebt | null = findValueById(debtInfo.id, driverDebtList) || null;
+              if (debt != null) {
+                return (
+                  <div className="virtualRowBodyBebtDetails">
+                    <div className="virtualCell">{new Date(debt.date).toLocaleDateString()}</div>
+                    <div className="virtualCell">{debt.category}</div>
+                    <div className="virtualCell">{debt.sumOfDebt}</div>
+                    <div className="virtualCell">{debtInfo.sum}</div>
+                    <div className="virtualCell">{debt.addInfo}</div>
+                  </div>
+                );
+              } else {
+                return (
+                  <div className="debtError">
+                    <div className="virtualCell">Долг не найден или удален</div>
+                    <div className="virtualCell">{debtInfo.sum}</div>
+                  </div>
+                );
+              }
+            })}
         </div>
       )}
     </React.Fragment>
