@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes';
-import { DOMENNAME } from '../../middlewares/initialState.js';
+import { DOMENNAME, VAT } from '../../middlewares/initialState.js';
 
 interface InvoiceProps {
   order: OrderType;
@@ -113,7 +113,7 @@ export const Invoice = ({
   const [editPrice, setEditPrice] = useState<boolean>(false);
   const [heighrEditInput, setHeightEditInput] = useState<number>(0);
   const [indexEditString, setIndexEditString] = useState<number>();
-  const [vatRate, setVatRate] = useState<number>(5);
+  const [vatRate, setVatRate] = useState<number>(VAT);
   const [paymentDocNumber, setPaymentDocNumber] = useState<string>('');
   const [shipmentDoc, setShipmentDoc] = useState<string>(
     `Акт выполненных работ № ${actNumberString}`
@@ -440,7 +440,7 @@ export const Invoice = ({
                         onKeyDown={handleEnterPrice}
                       />
                     ) : (
-                      string.customerPrice.toLocaleString('ru-RU', {
+                      (string.customerPrice / (1 + VAT / 100)).toLocaleString('ru-RU', {
                         minimumFractionDigits: 2,
                         maximumFractionDigits: 2,
                       })

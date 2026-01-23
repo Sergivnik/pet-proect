@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
 import { Act } from './act.tsx';
 import { Invoice } from './invoice';
+import { UPD } from './UPD';
 import { OrderType, TrackDriver } from '../tsTypes';
 import { findValueBy_Id } from '../myLib/myLib';
 import { createBill } from '../../actions/documentAction.js';
@@ -397,17 +398,30 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
       </div>
       <div className="wrapperTable">
         {choisenTypeDoc === 'Invoice' && (
-          <Invoice
-            order={order}
-            strings={strings}
-            currentTable={currentTable}
-            reason={checkBoxesValue.reason}
-            actNumberString={actNumberString}
-            getStringData={getStringData}
-            getTextReason={getTextReason}
-            textReason={textReaason}
-            invoiceSeal={invoiceSeal}
-          />
+          <>
+            <Invoice
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+              invoiceSeal={invoiceSeal}
+            />
+            <UPD
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+              invoiceSeal={invoiceSeal}
+            />
+          </>
         )}
         {choisenTypeDoc === 'Bill' && (
           <React.Fragment>
