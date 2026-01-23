@@ -38,6 +38,10 @@ export const DriverPayListVirtual = () => {
   useEffect(() => {
     setPaymentList(driverPaymentList);
   }, [driverPaymentList]);
+  useEffect(() => {
+    let div = document.getElementsByClassName('virtualBody')[0];
+    div.scrollTop = div.scrollHeight;
+  }, [driverPaymentList.length]);
 
   return (
     <div className="driverPaymentsListMainDiv">
