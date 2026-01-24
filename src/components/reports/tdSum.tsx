@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-import "./reports.sass";
+import './reports.sass';
 
 interface TdSumProps {
   sum: number | null;
@@ -19,9 +19,9 @@ export const TdSum = (props: TdSumProps) => {
 
   const styleTd = (isChoisen: boolean) => {
     if (isChoisen) {
-      return "cardReportTd grayTd";
+      return 'cardReportTd grayTd';
     } else {
-      return "cardReportTd";
+      return 'cardReportTd';
     }
   };
   const handleClickSumm = (e: any, sum: number) => {
@@ -39,9 +39,9 @@ export const TdSum = (props: TdSumProps) => {
     <td
       data-name="sumTd"
       className={styleTd(isChoisen)}
-      onClick={(e) => handleClickSumm(e, props.sum)}
+      onClick={e => handleClickSumm(e, props.sum)}
     >
-      {props.sum}
+      {Number(props.sum).toFixed(2)}
     </td>
   );
 };

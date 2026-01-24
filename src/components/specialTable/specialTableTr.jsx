@@ -32,7 +32,9 @@ export const SpecialTableTr = props => {
   useEffect(() => {
     if (withVAT) {
       setSum(
-        (((Number(orderPrice) - Number(elem.sum)) / (1 + VAT / 100)) * (100 - Number(elem.interest))) / 100
+        (((Number(orderPrice) - Number(elem.sum)) / (1 + VAT / 100)) *
+          (100 - Number(elem.interest))) /
+          100
       );
     } else {
       setSum(((Number(orderPrice) - Number(elem.sum)) * (100 - Number(elem.interest))) / 100);
@@ -41,7 +43,7 @@ export const SpecialTableTr = props => {
 
   useEffect(() => {
     const order = odersList.find(order => order._id == elem.orderId);
-    setwithVAT(new Date(order.date) >= new Date('2026-01-01'));
+    if (order) setwithVAT(new Date(order.date) >= new Date('2026-01-01'));
   }, [elem]);
 
   useEffect(() => {
@@ -121,7 +123,7 @@ export const SpecialTableTr = props => {
         showChoise={false}
       />
       <td className={classTd} onClick={handleClickSum}>
-        {sum}
+        {Number(sum).toFixed(2)}
       </td>
       <TdWithList
         name="safe"

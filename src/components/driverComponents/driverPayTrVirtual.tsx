@@ -51,7 +51,7 @@ export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
   };
 
   return (
-    <React.Fragment>
+    <React.Fragment key={`payment-${payment.id}`}>
       <div className={isOpen ? 'virtualRowMain blueFont' : 'virtualRowMain'}>
         <div className="virtualCell">{new Date(payment.date).toLocaleDateString()}</div>
         <div className="virtualCell">{findValueBy_Id(payment.idDriver, driverList).value}</div>
@@ -100,7 +100,7 @@ export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
                   return findValueBy_Id(idPoint, pointList).value;
                 });
                 return (
-                  <div className="virtualRowBodyDetails">
+                  <div key={`driverOrder${orderId}`} className="virtualRowBodyDetails">
                     <div className="virtualCell">{new Date(order.date).toLocaleDateString()}</div>
                     <div className="virtualCell">{trackdriver.value}</div>
                     <div className="virtualCell">{pointLoadList.join(' - ')}</div>
@@ -127,7 +127,7 @@ export const DriverPayTrVirtual = ({ payment, isOpen }: DriverPayTrProps) => {
               let debt: DriverDebt | null = findValueById(debtInfo.id, driverDebtList) || null;
               if (debt != null) {
                 return (
-                  <div className="virtualRowBodyBebtDetails">
+                  <div key={`driverDebt${debt.id}`} className="virtualRowBodyBebtDetails">
                     <div className="virtualCell">{new Date(debt.date).toLocaleDateString()}</div>
                     <div className="virtualCell">{debt.category}</div>
                     <div className="virtualCell">{debt.sumOfDebt}</div>
