@@ -28,7 +28,6 @@ import { MenuUser } from './taskBar/menuUser/menuUser.jsx';
 import { MenuAccount } from './taskBar/menuAccount/menuAccount.jsx';
 import { MenuMain } from './taskBar/menuAccount/menuMain/menuMain.jsx';
 import { PostForm } from '../postForm/postForm.tsx';
-import { DriverPaymentsList } from '../driverComponents/driverPaymentsList.tsx';
 import { DriverPayListVirtual } from '../driverComponents/driverPayListVirtual.tsx';
 import { VirtualizedDriverTable } from './virtualizedDriverTable.tsx';
 import './oders.sass';

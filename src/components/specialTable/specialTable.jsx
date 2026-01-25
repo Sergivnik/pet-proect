@@ -219,7 +219,7 @@ export const SpecialTable = () => {
               <>
                 <td></td>
                 <td>Сумма:</td>
-                <td>{selectSum}</td>
+                <td>{Number(selectSum).toFixed(2)}</td>
                 <td colSpan={3}></td>
               </>
             ) : (
