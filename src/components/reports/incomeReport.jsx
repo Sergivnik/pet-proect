@@ -87,7 +87,7 @@ export const IncomeReport = () => {
   useEffect(() => {
     let dateBegin = new Date(new Date().getFullYear(), 0, 1);
     let dateEnd = new Date();
-    let daysThisYear = (dateEnd.getTime() - dateBegin.getTime()) / (1000 * 3600 * 24);
+    let daysThisYear = Math.ceil((dateEnd.getTime() - dateBegin.getTime()) / (1000 * 3600 * 24));
     let sumIn = 0;
     let sumOut = 0;
     let sumVAT = 0;
@@ -251,7 +251,7 @@ export const IncomeReport = () => {
     <div className="incomeReportContainer">
       <header className="incomeReportHeader">
         <div className="incomeReportDivHeader">
-          <div className="incomeReportDivWraper">
+          <div className="incomeReportDivWraper" style={{ minWidth: '135px' }}>
             <span className="incomeReportSpan">Рас.сч.</span>
             <p className="incomeReportP">
               {sumAccount ? sumAccount.toLocaleString() + ' руб' : null}
@@ -269,7 +269,7 @@ export const IncomeReport = () => {
               {driverDebt ? driverDebt.toLocaleString() + ' руб' : null}
             </p>
           </div>
-          <div className="incomeReportDivWraper">
+          <div className="incomeReportDivWraper" style={{ minWidth: '110px' }}>
             <span className="incomeReportSpan">Долг по налогам прошлого года</span>
             {showEditLastYearTaxDebt ? (
               <input
@@ -285,7 +285,7 @@ export const IncomeReport = () => {
               </p>
             )}
           </div>
-          <div className="incomeReportDivWraper">
+          <div className="incomeReportDivWraper" style={{ minWidth: '135px' }}>
             <span className="incomeReportSpan">Аванм по налогам текущего года</span>
             {showEditTaxAdvance ? (
               <input
@@ -304,7 +304,12 @@ export const IncomeReport = () => {
           <div className="incomeReportDivWraper">
             <span className="incomeReportSpan">Налоги текущего года</span>
             <p className="incomeReportP">
-              {currentTax ? currentTax.toLocaleString() + ' руб' : null}
+              {currentTax
+                ? Number(currentTax).toLocaleString('ru-RU', {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                  }) + ' руб'
+                : null}
             </p>
           </div>
           <div className="incomeReportDivWraper">

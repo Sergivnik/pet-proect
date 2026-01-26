@@ -214,8 +214,10 @@ const styles = {
     alignItems: 'end',
   } as React.CSSProperties,
   bottomUnderline: {
+    position: 'relative',
     borderBottom: '1px solid black',
     height: '12px',
+    textAlign: 'center',
   } as React.CSSProperties,
   bottomHelp: {
     fontSize: '9px',
@@ -842,7 +844,9 @@ export const UPD = ({
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Дата отгрузки, передачи (сдачи)</div>
-                  <div style={styles.bottomUnderline}></div>
+                  <div style={styles.bottomUnderline}>
+                    {new Date(order.date).toLocaleDateString()}
+                  </div>
                 </div>
                 <div style={styles.rightIndex}>[11]</div>
               </div>
@@ -858,7 +862,11 @@ export const UPD = ({
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Ответственный за правильность оформления факта хозяйственной жизни</div>
-                  <div style={styles.bottomUnderline}></div>
+                  <div style={styles.bottomUnderline}>
+                    {invoiceSeal && (
+                      <img style={styles.signImg} src={`${DOMENNAME}/img/sign.png`} />
+                    )}
+                  </div>
                 </div>
                 <div style={styles.rightIndex}>[13]</div>
               </div>

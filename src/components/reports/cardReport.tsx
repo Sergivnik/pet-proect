@@ -232,7 +232,7 @@ export const CardReport = () => {
         </label>
         {isSelected && (
           <div className="cardReportTransactionWrap">
-            <p className="cardReportSumP">К переводу на карту {sumSelected}</p>
+            <p className="cardReportSumP">К переводу на карту {Number(sumSelected).toFixed(2)}</p>
             <button className="cardRepornTransactionBtn" onClick={handleClickBtn}>
               Провести
             </button>
