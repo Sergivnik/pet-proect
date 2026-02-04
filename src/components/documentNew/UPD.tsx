@@ -57,14 +57,14 @@ const styles = {
   } as React.CSSProperties,
   topRow: {
     display: 'grid',
-    gridTemplateColumns: '170px 1fr',
+    gridTemplateColumns: '120px 1fr',
     columnGap: '10px',
     alignItems: 'stretch',
   } as React.CSSProperties,
   leftTitle: {
     borderRight: 'none',
     padding: '10px 10px',
-    fontSize: '18px',
+    fontSize: '14px',
     fontWeight: 700,
     lineHeight: 1.1,
     display: 'flex',
@@ -93,7 +93,6 @@ const styles = {
     lineHeight: 1.3,
   } as React.CSSProperties,
   rightHead: {
-    border: '2px solid black',
     borderBottom: 'none',
     padding: '10px 10px 8px 10px',
   } as React.CSSProperties,
@@ -112,7 +111,7 @@ const styles = {
   } as React.CSSProperties,
   rowLabel4col: {
     display: 'grid',
-    gridTemplateColumns: '320px 1fr 10px 300px',
+    gridTemplateColumns: '320px 200px 10px 1fr',
     columnGap: '10px',
     alignItems: 'end',
   } as React.CSSProperties,
@@ -160,7 +159,6 @@ const styles = {
     fontWeight: 700,
   } as React.CSSProperties,
   signatureRow: {
-    border: '2px solid black',
     borderTop: 'none',
     padding: '8px 10px',
     display: 'grid',
@@ -195,7 +193,7 @@ const styles = {
     marginTop: '2px',
   } as React.CSSProperties,
   bottomBlocks: {
-    border: '2px solid black',
+    //border: '2px solid black',
     borderTop: 'none',
     padding: '10px 10px 12px 10px',
     fontSize: '10px',
@@ -376,27 +374,35 @@ export const UPD = ({
 
           <div>
             <div style={styles.rightHead}>
-              <div style={styles.rightHeadGrid}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr',
+                  gridTemplateRows: '1fr 1fr',
+                  columnGap: '10px',
+                  fontSize: '12px',
+                }}
+              >
                 <div style={styles.rowLabel4col}>
                   <div style={{ fontWeight: 700 }}>Счет-фактура №</div>
                   <div style={styles.underline}>{actNumberString}</div>
                   <div style={styles.rightIndex}>(1)</div>
-                  <div style={styles.smallTopNoteRight}>
-                    Приложение № 1 к постановлению Правительства
-                  </div>
                 </div>
-                <div style={styles.rightIndex}></div>
 
                 <div style={styles.rowLabel4col}>
                   <div style={{ fontWeight: 700 }}>Исправление №</div>
                   <div style={styles.underline}></div>
                   <div style={styles.rightIndex}>(1а)</div>
-                  <div style={styles.smallTopNoteRight}>
-                    Российской Федерации от 26 декабря 2011 г. № 1137
-                  </div>
                 </div>
-                <div style={styles.rightIndex}></div>
+                <div
+                  style={{ gridColumn: '2', gridRow: '1 / 3', fontSize: '10px', textAlign: 'end' }}
+                >
+                  Приложение N 1<br /> к постановлению Правительства РФ от 26.12.2011 N 1137
+                  <br /> (в редакции постановления Правительства РФ от 16.08.2024 N 1096)
+                </div>
+              </div>
 
+              <div style={styles.rightHeadGrid}>
                 <div style={styles.rowLabel}>
                   <div style={{ fontWeight: 700 }}>Продавец</div>
                   <div style={styles.underline}>{accountOwner?.name || ''}</div>
