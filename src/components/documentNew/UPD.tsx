@@ -635,10 +635,18 @@ export const UPD = ({
                   <td style={{ ...styles.td, ...styles.tdRight }}>
                     {formatMoney((string.customerPrice * 100) / (100 + VAT))}
                   </td>
-                  <td style={{ ...styles.td, ...styles.tdRight }}>{formatMoney(sum)}</td>
+                  <td style={{ ...styles.td, ...styles.tdRight }}>
+                    {formatMoney(
+                      (string.customerPrice * 100 * string.numberOfShipments) / (100 + VAT)
+                    )}
+                  </td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
-                  <td style={{ ...styles.td, ...styles.tdCenter }}>{VAT}</td>
-                  <td style={{ ...styles.td, ...styles.tdRight }}></td>
+                  <td style={{ ...styles.td, ...styles.tdCenter }}>{`${VAT}%`}</td>
+                  <td style={{ ...styles.td, ...styles.tdRight }}>
+                    {formatMoney(
+                      sum - (string.customerPrice * 100 * string.numberOfShipments) / (100 + VAT)
+                    )}
+                  </td>
                   <td style={{ ...styles.td, ...styles.tdRight }}>{formatMoney(sum)}</td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
