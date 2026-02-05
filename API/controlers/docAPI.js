@@ -96,18 +96,22 @@ module.exports.createAccountingDoc = async (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
   const { html, billNumber, year, customer, currentTable, orderId, stamp, typeDoc } = req.body;
+  console.log(billNumber, year, customer, currentTable, orderId, stamp, typeDoc);
+
   let dirPath, filePath;
   if (currentTable === 'oderslist') {
     dirPath = `./API/Bills/${year}/${customer}`;
     if (typeDoc === 'Bill') filePath = `${dirPath}/doc${billNumber}.pdf`;
     if (typeDoc === 'BillNoStamp') filePath = `${dirPath}/docWithoutStamp${billNumber}.pdf`;
-    if (typeDoc === 'Invoice') filePath = `${dirPath}/invoice${billNumber}.pdf`;
+    if (typeDoc === 'Invoice' && stamp) filePath = `${dirPath}/invoice${billNumber}.pdf`;
+    if (typeDoc === 'Invoice' && !stamp) filePath = `${dirPath}/invoiceNoSeal${billNumber}.pdf`;
   }
   if (currentTable === 'driverorderlist') {
     dirPath = `./API/DriverBills/${year}/${customer}`;
     if (typeDoc === 'Bill') filePath = `${dirPath}/doc${billNumber}.pdf`;
     if (typeDoc === 'BillNoStamp') filePath = `${dirPath}/docWithoutStamp${billNumber}.pdf`;
-    if (typeDoc === 'Invoice') filePath = `${dirPath}/invoice${billNumber}.pdf`;
+    if (typeDoc === 'Invoice' && stamp) filePath = `${dirPath}/invoice${billNumber}.pdf`;
+    if (typeDoc === 'Invoice' && !stamp) filePath = `${dirPath}/invoiceNoSeal${billNumber}.pdf`;
   }
   const orient = typeDoc === 'Invoice' ? true : false;
 

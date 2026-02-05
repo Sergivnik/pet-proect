@@ -146,7 +146,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         customer.value,
         currentTable,
         order._id,
-        true,
+        invoiceSeal,
         choisenTypeDoc
       )
     );
