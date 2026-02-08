@@ -80,7 +80,7 @@ const styles = {
     display: 'inline-block',
     width: '40px',
     height: '22px',
-    border: '2px solid black',
+    border: '1px solid black',
     verticalAlign: 'middle',
     marginLeft: '8px',
     textAlign: 'center',
@@ -98,26 +98,33 @@ const styles = {
   } as React.CSSProperties,
   rightHeadGrid: {
     display: 'grid',
-    gridTemplateColumns: '1fr 30px',
+    gridTemplateColumns: '1fr 20px 1fr 20px',
     columnGap: '6px',
-    fontSize: '12px',
+    fontSize: '11px',
     alignItems: 'end',
   } as React.CSSProperties,
   rowLabel: {
     display: 'grid',
-    gridTemplateColumns: '320px 1fr',
-    columnGap: '10px',
+    gridTemplateColumns: '200px 1fr',
+    alignItems: 'end',
+  } as React.CSSProperties,
+  rowLabel250: {
+    display: 'grid',
+    gridTemplateColumns: '250px 1fr',
     alignItems: 'end',
   } as React.CSSProperties,
   rowLabel4col: {
     display: 'grid',
-    gridTemplateColumns: '320px 200px 10px 1fr',
-    columnGap: '10px',
+    gridTemplateColumns: '200px 200px 10px 1fr',
     alignItems: 'end',
   } as React.CSSProperties,
   underline: {
-    borderBottom: '2px solid black',
+    borderBottom: '1px solid black',
     height: '16px',
+  } as React.CSSProperties,
+  adressUnderline: {
+    borderBottom: '1px solid black',
+    height: '30px',
   } as React.CSSProperties,
   rightIndex: {
     fontSize: '10px',
@@ -132,9 +139,9 @@ const styles = {
   goodsTable: {
     borderCollapse: 'collapse',
     tableLayout: 'fixed',
-    fontSize: '11px',
+    fontSize: '10px',
     marginTop: '0',
-    border: '2px solid black',
+    border: '1px solid black',
   } as React.CSSProperties,
   td: {
     border: '1px solid black',
@@ -151,7 +158,7 @@ const styles = {
     verticalAlign: 'top',
   } as React.CSSProperties,
   tableHeader: {
-    fontSize: '11px',
+    fontSize: '10px',
     fontWeight: 400,
   } as React.CSSProperties,
   colLetters: {
@@ -193,7 +200,6 @@ const styles = {
     marginTop: '2px',
   } as React.CSSProperties,
   bottomBlocks: {
-    //border: '2px solid black',
     borderTop: 'none',
     padding: '10px 10px 12px 10px',
     fontSize: '10px',
@@ -380,7 +386,7 @@ export const UPD = ({
                   gridTemplateColumns: '1fr 1fr',
                   gridTemplateRows: '1fr 1fr',
                   columnGap: '10px',
-                  fontSize: '12px',
+                  fontSize: '11px',
                 }}
               >
                 <div style={styles.rowLabel4col}>
@@ -395,7 +401,12 @@ export const UPD = ({
                   <div style={styles.rightIndex}>(1а)</div>
                 </div>
                 <div
-                  style={{ gridColumn: '2', gridRow: '1 / 3', fontSize: '10px', textAlign: 'end' }}
+                  style={{
+                    gridColumn: '2',
+                    gridRow: '1 / 3',
+                    fontSize: '8px',
+                    textAlign: 'end',
+                  }}
                 >
                   Приложение N 1<br /> к постановлению Правительства РФ от 26.12.2011 N 1137
                   <br /> (в редакции постановления Правительства РФ от 16.08.2024 N 1096)
@@ -410,10 +421,22 @@ export const UPD = ({
                 <div style={styles.rightIndex}>(2)</div>
 
                 <div style={styles.rowLabel}>
+                  <div style={{ fontWeight: 700 }}>Покупатель</div>
+                  <div style={styles.underline}>{customer?.companyName || ''}</div>
+                </div>
+                <div style={styles.rightIndex}>(6)</div>
+
+                <div style={styles.rowLabel}>
                   <div>Адрес</div>
-                  <div style={styles.underline}>{accountOwner?.address || ''}</div>
+                  <div style={styles.adressUnderline}>{accountOwner?.address || ''}</div>
                 </div>
                 <div style={styles.rightIndex}>(2а)</div>
+
+                <div style={styles.rowLabel}>
+                  <div>Адрес</div>
+                  <div style={styles.adressUnderline}>{customer?.address || ''}</div>
+                </div>
+                <div style={styles.rightIndex}>(6а)</div>
 
                 <div style={styles.rowLabel}>
                   <div>ИНН/КПП продавца</div>
@@ -424,40 +447,6 @@ export const UPD = ({
                 <div style={styles.rightIndex}>(2б)</div>
 
                 <div style={styles.rowLabel}>
-                  <div>Грузоотправитель и его адрес</div>
-                  <div style={styles.underline}>
-                    {accountOwner?.name ? `${accountOwner?.name}, ${accountOwner?.address}` : ''}
-                  </div>
-                </div>
-                <div style={styles.rightIndex}>(3)</div>
-
-                <div style={styles.rowLabel}>
-                  <div>Грузополучатель и его адрес</div>
-                  <div style={styles.underline}>
-                    {customer ? `${customer?.companyName}, ${customer?.address}` : ''}
-                  </div>
-                </div>
-                <div style={styles.rightIndex}>(4)</div>
-
-                <div style={styles.rowLabel}>
-                  <div>К платежно-расчетному документу</div>
-                  <div style={styles.underline}></div>
-                </div>
-                <div style={styles.rightIndex}>(5)</div>
-
-                <div style={styles.rowLabel}>
-                  <div style={{ fontWeight: 700 }}>Покупатель</div>
-                  <div style={styles.underline}>{customer?.companyName || ''}</div>
-                </div>
-                <div style={styles.rightIndex}>(6)</div>
-
-                <div style={styles.rowLabel}>
-                  <div>Адрес</div>
-                  <div style={styles.underline}>{customer?.address || ''}</div>
-                </div>
-                <div style={styles.rightIndex}>(6а)</div>
-
-                <div style={styles.rowLabel}>
                   <div>ИНН/КПП покупателя</div>
                   <div style={styles.underline}>
                     {customer?.TIN ? `${customer?.TIN} / ${customer?.KPP || ''}` : ''}
@@ -466,18 +455,69 @@ export const UPD = ({
                 <div style={styles.rightIndex}>(6б)</div>
 
                 <div style={styles.rowLabel}>
+                  <div>Грузоотправитель и его адрес</div>
+                  <div style={styles.adressUnderline}>
+                    {accountOwner?.name ? `${accountOwner?.name}, ${accountOwner?.address}` : ''}
+                  </div>
+                </div>
+                <div style={styles.rightIndex}>(3)</div>
+
+                <div style={styles.rowLabel}>
                   <div>Валюта: наименование, код</div>
                   <div style={styles.underline}>Российский рубль, 643</div>
                 </div>
                 <div style={styles.rightIndex}>(7)</div>
 
                 <div style={styles.rowLabel}>
+                  <div>Грузополучатель и его адрес</div>
+                  <div style={styles.adressUnderline}>
+                    {customer ? `${customer?.companyName}, ${customer?.address}` : ''}
+                  </div>
+                </div>
+                <div style={styles.rightIndex}>(4)</div>
+
+                <div style={styles.rowLabel250}>
                   <div>
                     Идентификатор государственного контракта, договора (соглашения) (при наличии)
                   </div>
                   <div style={styles.underline}>{reason ? textReasonIGC : '-'}</div>
                 </div>
                 <div style={styles.rightIndex}>(8)</div>
+
+                <div style={styles.rowLabel}>
+                  <div>К платежно-расчетному документу</div>
+                  <div style={styles.underline}></div>
+                </div>
+                <div style={styles.rightIndex}>(5)</div>
+                <div></div>
+                <div></div>
+
+                <div style={styles.rowLabel}>
+                  <div>Документ об отгрузке №</div>
+                  <div style={styles.underline}>УПД № {actNumberString}</div>
+                </div>
+                <div style={styles.rightIndex}>(5а)</div>
+                <div></div>
+                <div></div>
+
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr',
+                    alignItems: 'end',
+                    marginTop: '5px',
+                  }}
+                >
+                  <div>
+                    К счету-фактуре (счетам-фактурам), выставленному (выставленным) при получении
+                    оплаты, частичной оплаты и иных платежей в счет предстоящих поставок (выполнения
+                    работ, оказания услуг), передачи имущественных прав № ___ от _____
+                  </div>
+                  <div style={styles.underline}></div>
+                </div>
+                <div style={styles.rightIndex}>(5б)</div>
+                <div></div>
+                <div></div>
               </div>
             </div>
           </div>
