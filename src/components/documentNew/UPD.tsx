@@ -124,7 +124,7 @@ const styles = {
   } as React.CSSProperties,
   adressUnderline: {
     borderBottom: '1px solid black',
-    height: '30px',
+    //height: '30px',
   } as React.CSSProperties,
   rightIndex: {
     fontSize: '10px',
