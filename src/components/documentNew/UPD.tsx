@@ -816,7 +816,7 @@ export const UPD = ({
           <div style={styles.bottomRow}>
             <div style={styles.bottomLabel}>
               <div>Основание передачи (сдачи)/получения (приемки)</div>
-              <div style={styles.bottomUnderline}>{reason ? textReasonIGC : ''}</div>
+              <div style={styles.bottomUnderline}>{customer.contract?`договор № ${customer.contract}`:'-'}</div>
             </div>
             <div style={styles.rightIndex}>[8]</div>
             <div style={{ gridColumn: '1 / 2', marginLeft: '310px' }}></div>
