@@ -77,7 +77,7 @@ export const TdAccountVirtual = ({
     setShowContextMenu(true);
   };
   const getTypeOfDoc = (typeOfDoc: string) => {
-    if (typeOfDoc === 'Invoice') {
+    if (typeOfDoc === 'Invoice' || typeOfDoc === 'InvoiceNoSeal') {
       setWindowWidth(1300);
     } else {
       setWindowWidth(800);

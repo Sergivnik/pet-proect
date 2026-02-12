@@ -193,7 +193,7 @@ export const TdAccountNumber = props => {
     setShowDocForm(false);
   };
   const getTypeOfDoc = typeOfDoc => {
-    if (typeOfDoc === 'Invoice') {
+    if (typeOfDoc === 'Invoice' || typeOfDoc === 'InvoiceNoSeal') {
       setWindowWidth(1300);
     } else {
       setWindowWidth(800);

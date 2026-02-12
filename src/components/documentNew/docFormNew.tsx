@@ -17,7 +17,7 @@ interface checkBoxType {
   dateFromApp: boolean;
   reason: boolean;
 }
-const DOC_TYPES = ['Bill', 'BillNoStamp', 'Invoice'] as const;
+const DOC_TYPES = ['Bill', 'BillNoStamp', 'Invoice', 'InvoiceNoSeal'] as const;
 type DocType = (typeof DOC_TYPES)[number];
 
 interface DocFormNewProps {
@@ -147,13 +147,18 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         currentTable,
         order._id,
         invoiceSeal,
-        choisenTypeDoc
+        choisenTypeDoc === 'InvoiceNoSeal' ? 'Invoice' : choisenTypeDoc
       )
     );
   };
   useEffect(() => {
-    if (choisenTypeDoc === 'Invoice') {
+    if (choisenTypeDoc === 'Invoice' || choisenTypeDoc === 'InvoiceNoSeal') {
       setShowInvoiceSeal(true);
+      if (choisenTypeDoc === 'Invoice') {
+        setInvoiceSeal(true);
+      } else {
+        setInvoiceSeal(false);
+      }
     } else {
       setShowInvoiceSeal(false);
     }
@@ -397,7 +402,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         </div>
       </div>
       <div className="wrapperTable">
-        {choisenTypeDoc === 'Invoice' && (
+        {(choisenTypeDoc === 'Invoice' || choisenTypeDoc === 'InvoiceNoSeal') && (
           <>
             <Invoice
               order={order}
