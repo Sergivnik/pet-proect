@@ -217,6 +217,12 @@ const styles = {
     columnGap: '10px',
     alignItems: 'end',
   } as React.CSSProperties,
+  bottomLabel250: {
+    display: 'grid',
+    gridTemplateColumns: '250px 1fr',
+    columnGap: '10px',
+    alignItems: 'end',
+  } as React.CSSProperties,
   bottomUnderline: {
     position: 'relative',
     borderBottom: '1px solid black',
@@ -545,14 +551,14 @@ export const UPD = ({
           <thead>
             <tr style={styles.tableHeader}>
               <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
-                №
-                <br />
-                п/п
-              </td>
-              <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
                 Код товара/
                 <br />
                 работ, услуг
+              </td>
+              <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
+                №
+                <br />
+                п/п
               </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
                 Наименование товара (описание выполненных работ, оказанных услуг), имущественного
@@ -614,11 +620,19 @@ export const UPD = ({
                 Страна происхождения товара
               </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
-                Номер
+                Регистрационный
                 <br />
-                таможенной
+                номер декларации на
                 <br />
-                декларации
+                товары или
+                <br />
+                регистрационный
+                <br />
+                номер партии товара,
+                <br />
+                подлежащего
+                <br />
+                прослеживаемости
               </td>
             </tr>
             <tr style={styles.tableHeader}>
@@ -651,8 +665,8 @@ export const UPD = ({
             </tr>
             <tr style={styles.colLetters}>
               <td style={{ ...styles.td, ...styles.tdCenter }}>А</td>
-              <td style={{ ...styles.td, ...styles.tdCenter }}>Б</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>1</td>
+              <td style={{ ...styles.td, ...styles.tdCenter }}>1а</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>2</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>2а</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>3</td>
@@ -672,8 +686,8 @@ export const UPD = ({
               const sum = string.customerPrice * string.numberOfShipments;
               return (
                 <tr key={`updRow${index}`}>
-                  <td style={{ ...styles.td, ...styles.tdCenter }}>{index + 1}</td>
-                  <td style={styles.td}></td>
+                  <td style={{ ...styles.td, ...styles.tdCenter }}></td>
+                  <td style={styles.td}>{index + 1}</td>
                   <td style={{ ...styles.td, ...styles.tdTop }}>{string.mainPart}</td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
@@ -702,9 +716,15 @@ export const UPD = ({
             })}
 
             <tr style={{ fontWeight: 700 }}>
-              <td style={{ ...styles.td, ...styles.tdCenter }} colSpan={9}></td>
+              <td style={{ ...styles.td, ...styles.tdCenter }} colSpan={7}></td>
+              <td style={{ ...styles.td, ...styles.tdRight }}>
+                {formatMoney(totalSum / (1 + VAT / 100))}
+              </td>
+              <td style={{ ...styles.td, ...styles.tdCenter }}></td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>X</td>
-              <td style={{ ...styles.td, ...styles.tdRight }}></td>
+              <td style={{ ...styles.td, ...styles.tdRight }}>
+                {formatMoney((totalSum * VAT) / (100 + VAT))}
+              </td>
               <td style={{ ...styles.td, ...styles.tdRight }}>{formatMoney(totalSum)}</td>
               <td style={styles.td}></td>
               <td style={styles.td}></td>
@@ -800,12 +820,12 @@ export const UPD = ({
             </div>
 
             <div>
+              <div style={{ ...styles.signLine }}>
+                {accountOwner?.ogrn} от {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
+              </div>
               <div style={{ fontSize: '10px', marginTop: '2px' }}>
                 (реквизиты свидетельства о государственной регистрации индивидуального
                 предпринимателя)
-              </div>
-              <div style={{ ...styles.signLine, marginTop: '6px' }}>
-                {accountOwner?.ogrn} от {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
               </div>
             </div>
           </div>
@@ -816,7 +836,9 @@ export const UPD = ({
           <div style={styles.bottomRow}>
             <div style={styles.bottomLabel}>
               <div>Основание передачи (сдачи)/получения (приемки)</div>
-              <div style={styles.bottomUnderline}>{customer.contract?`договор № ${customer.contract}`:'-'}</div>
+              <div style={styles.bottomUnderline}>
+                {customer.contract ? `договор № ${customer.contract}` : '-'}
+              </div>
             </div>
             <div style={styles.rightIndex}>[8]</div>
             <div style={{ gridColumn: '1 / 2', marginLeft: '310px' }}></div>
@@ -832,7 +854,7 @@ export const UPD = ({
           </div>
 
           <div style={styles.bottomRow}>
-            <div style={styles.bottomLabel}>
+            <div style={styles.bottomLabel250}>
               <div>Данные о транспортировке и грузе</div>
               <div style={styles.bottomUnderline}></div>
             </div>
@@ -840,13 +862,14 @@ export const UPD = ({
           </div>
           <div
             style={{
-              marginLeft: '380px',
+              marginLeft: '270px',
               marginTop: '-8px',
               fontSize: '9px',
             }}
           >
             (транспортная накладная, поручение экспедитору, экспедиторская/складская расписка и
-            др./масса нетто/брутто груза...)
+            др./масса нетто/брутто груза, если не приведены ссылки на транспортные документы,
+            содержащие эти сведения)
           </div>
 
           <div style={styles.bottom2Col}>
@@ -869,7 +892,6 @@ export const UPD = ({
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr 1fr',
                   columnGap: '10px',
-                  marginBottom: '4px',
                 }}
               >
                 <div style={styles.bottomSmallLine}></div>
