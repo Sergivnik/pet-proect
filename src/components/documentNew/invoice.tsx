@@ -247,7 +247,7 @@ export const Invoice = ({
   const totalVat = totalSumWithVat - totalSumWithoutVat;
 
   return (
-    <div className="invoicePrintForm" style={styles.container}>
+    <div className="page page--landscape" style={styles.container}>
       <div style={styles.mainContent}>
         <div style={{ textAlign: 'right', fontSize: '10px', marginBottom: '5px' }}>
           Приложение № 1

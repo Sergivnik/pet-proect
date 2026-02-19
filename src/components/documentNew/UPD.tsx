@@ -355,7 +355,7 @@ export const UPD = ({
   }, [routeStrings]);
 
   return (
-    <div className="updPrintForm" style={styles.page}>
+    <div className="page page--landscape" style={styles.page}>
       <div style={styles.sheet}>
         <div style={styles.topRow}>
           <div style={styles.leftTitle}>

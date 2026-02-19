@@ -130,7 +130,6 @@ module.exports.createAccountingDoc = async (req, res) => {
       await page.pdf({
         path: filePath,
         format: 'a4',
-        landscape: orient,
         timeout: 0,
         printBackground: true,
         margin: {

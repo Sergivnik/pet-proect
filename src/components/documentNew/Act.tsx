@@ -231,7 +231,7 @@ export const Act = ({
   const totalCount = routeStrings.reduce((sum, item) => sum + item.numberOfShipments, 0);
 
   return (
-    <div className="invoicePrintForm" style={styles.container}>
+    <div className="page" style={styles.container}>
       <div style={styles.mainContent}>
         <div style={styles.titleRow}>Акт № {actNumberString}</div>
 

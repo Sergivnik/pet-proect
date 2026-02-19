@@ -134,13 +134,50 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
     setStrings(arr);
   };
   const handleSaveDoc = () => {
-    let htmlDoc = document.querySelector('.wrapperTable');
+    let wrapper = document.querySelector('.wrapperTable');
     let year = new Date(order.date).getFullYear();
     console.log('Hi');
 
+    const css = `
+      <style>
+        @page portrait {
+          size: A4;
+          margin: 10mm;
+        }
+  
+        @page landscape {
+          size: A4 landscape;
+          margin: 10mm;
+        }
+  
+        .page {
+          break-after: page;
+          page: portrait;
+          width: 800px;
+        }
+  
+        .page--landscape {
+          page: landscape;
+          width: 1200px;
+        }
+      </style>
+    `;
+
+    const html = `
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8" />
+        ${css}
+      </head>
+      <body>
+        ${wrapper.innerHTML}
+      </body>
+    </html>
+  `;
     dispatch(
       createBill(
-        htmlDoc.innerHTML,
+        html,
         isNaN(Number(actNumber)) ? actNumber : Number(actNumber),
         year,
         customer.value,
@@ -402,9 +439,48 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         </div>
       </div>
       <div className="wrapperTable">
-        {(choisenTypeDoc === 'Invoice' || choisenTypeDoc === 'InvoiceNoSeal') && (
+        {choisenTypeDoc === 'Invoice' && (
           <>
             <Invoice
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+              invoiceSeal={invoiceSeal}
+            />
+            <UPD
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+              invoiceSeal={invoiceSeal}
+            />
+          </>
+        )}
+        {choisenTypeDoc === 'InvoiceNoSeal' && (
+          <>
+            <Bill
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              stamp={invoiceSeal}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getActNumberString={getActNumberString}
+              withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+            />
+            <UPD
               order={order}
               strings={strings}
               currentTable={currentTable}

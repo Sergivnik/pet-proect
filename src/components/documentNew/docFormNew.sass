@@ -50,3 +50,19 @@
   transform: translate(-50%, -50%)
   font-size: 50px
   color: yellow
+@page portrait
+  size: A4
+  margin: 10mm
+
+@page landscape
+  size: A4 landscape
+  margin: 10mm
+
+.page
+  break-after: page
+  page: portrait
+  width: 800px
+
+.page--landscape
+  page: landscape
+  width: 1200px
