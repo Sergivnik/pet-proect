@@ -1047,9 +1047,6 @@ module.exports.taskSendEmail = (req, res) => {
           {
             path: `./API/Bills/${Year}/${customer}/doc${accountNumber}.pdf`,
           },
-          {
-            path: `./API/Bills/${Year}/${customer}/invoice${accountNumber}.pdf`,
-          },
         ];
         const fs = require('fs');
 
@@ -1066,6 +1063,12 @@ module.exports.taskSendEmail = (req, res) => {
             console.log('application added');
             attachmentFiles.push({
               path: `./API/Bills/${Year}/${customer}/app/app${req.body.id}.pdf`,
+            });
+          }
+          if (fs.existsSync(`./API/Bills/${Year}/${customer}/invoice${accountNumber}.pdf`)) {
+            console.log('invoice added');
+            attachmentFiles.push({
+              path: `./API/Bills/${Year}/${customer}/invoice${accountNumber}.pdf`,
             });
           }
         } catch (err) {
