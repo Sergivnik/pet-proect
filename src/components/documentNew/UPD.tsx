@@ -51,7 +51,7 @@ const styles = {
     boxSizing: 'border-box',
   } as React.CSSProperties,
   topRight: {
-    fontSize: '11px',
+    fontSize: '10px',
     textAlign: 'right',
     marginBottom: '6px',
   } as React.CSSProperties,
@@ -100,7 +100,7 @@ const styles = {
     display: 'grid',
     gridTemplateColumns: '1fr 20px 1fr 20px',
     columnGap: '6px',
-    fontSize: '11px',
+    fontSize: '10px',
     alignItems: 'end',
   } as React.CSSProperties,
   rowLabel: {
@@ -131,7 +131,7 @@ const styles = {
     textAlign: 'right',
   } as React.CSSProperties,
   smallTopNoteRight: {
-    fontSize: '11px',
+    fontSize: '10px',
     textAlign: 'right',
     marginTop: '-2px',
     marginBottom: '6px',
@@ -162,7 +162,7 @@ const styles = {
     fontWeight: 400,
   } as React.CSSProperties,
   colLetters: {
-    fontSize: '11px',
+    fontSize: '10px',
     fontWeight: 700,
   } as React.CSSProperties,
   signatureRow: {
@@ -174,14 +174,14 @@ const styles = {
     alignItems: 'start',
   } as React.CSSProperties,
   docOnSheets: {
-    fontSize: '11px',
+    fontSize: '10px',
     lineHeight: 1.2,
   } as React.CSSProperties,
   signGrid: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     columnGap: '18px',
-    fontSize: '11px',
+    fontSize: '10px',
   } as React.CSSProperties,
   signBlock: {
     display: 'grid',
@@ -195,7 +195,7 @@ const styles = {
     textAlign: 'center',
   } as React.CSSProperties,
   signHint: {
-    fontSize: '10px',
+    fontSize: '8px',
     textAlign: 'center',
     marginTop: '2px',
   } as React.CSSProperties,
@@ -219,7 +219,7 @@ const styles = {
   } as React.CSSProperties,
   bottomLabel250: {
     display: 'grid',
-    gridTemplateColumns: '250px 1fr',
+    gridTemplateColumns: '170px 1fr',
     columnGap: '10px',
     alignItems: 'end',
   } as React.CSSProperties,
@@ -392,7 +392,7 @@ export const UPD = ({
                   gridTemplateColumns: '1fr 1fr',
                   gridTemplateRows: '1fr 1fr',
                   columnGap: '10px',
-                  fontSize: '11px',
+                  fontSize: '10px',
                 }}
               >
                 <div style={styles.rowLabel4col}>
@@ -534,7 +534,7 @@ export const UPD = ({
           <colgroup>
             <col style={{ width: '40px' }} />
             <col style={{ width: '50px' }} />
-            <col style={{ width: '750px' }} />
+            <col style={{ width: '950px' }} />
             <col style={{ width: '50px' }} />
             <col style={{ width: '70px' }} />
             <col style={{ width: '80px' }} />
@@ -823,7 +823,12 @@ export const UPD = ({
               <div style={{ ...styles.signLine }}>
                 {accountOwner?.ogrn} от {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
               </div>
-              <div style={{ fontSize: '10px', marginTop: '2px' }}>
+              <div
+                style={{
+                  fontSize: '8px',
+                  textAlign: 'center',
+                }}
+              >
                 (реквизиты свидетельства о государственной регистрации индивидуального
                 предпринимателя)
               </div>
@@ -847,7 +852,8 @@ export const UPD = ({
             style={{
               marginLeft: '380px',
               marginTop: '-8px',
-              fontSize: '9px',
+              fontSize: '8px',
+              textAlign: 'center',
             }}
           >
             (договор; доверенность и др.)
@@ -862,9 +868,10 @@ export const UPD = ({
           </div>
           <div
             style={{
-              marginLeft: '270px',
+              marginLeft: '190px',
               marginTop: '-8px',
-              fontSize: '9px',
+              fontSize: '8px',
+              textAlign: 'center',
             }}
           >
             (транспортная накладная, поручение экспедитору, экспедиторская/складская расписка и
@@ -877,13 +884,6 @@ export const UPD = ({
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Товар (груз) передал/услуги, результаты работ, права сдал</div>
-                  <div style={styles.bottomUnderline}>
-                    <div style={styles.stampWrap}>
-                      {invoiceSeal && (
-                        <img style={styles.signImg} src={`${DOMENNAME}/img/sign.png`} />
-                      )}
-                    </div>
-                  </div>
                 </div>
                 <div style={styles.rightIndex}>[10]</div>
               </div>
@@ -894,7 +894,7 @@ export const UPD = ({
                   columnGap: '10px',
                 }}
               >
-                <div style={styles.bottomSmallLine}></div>
+                <div style={styles.bottomSmallLine}>Индивидуальный предприниматель</div>
                 <div style={styles.bottomSmallLine}>
                   <div style={styles.stampWrap}>
                     {invoiceSeal && (
@@ -938,15 +938,38 @@ export const UPD = ({
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Ответственный за правильность оформления факта хозяйственной жизни</div>
-                  <div style={styles.bottomUnderline}>
+                </div>
+                <div style={styles.rightIndex}>[13]</div>
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr',
+                  columnGap: '10px',
+                }}
+              >
+                <div style={styles.bottomSmallLine}>Индивидуальный предприниматель</div>
+                <div style={styles.bottomSmallLine}>
+                  <div style={styles.stampWrap}>
                     {invoiceSeal && (
                       <img style={styles.signImg} src={`${DOMENNAME}/img/sign.png`} />
                     )}
                   </div>
                 </div>
-                <div style={styles.rightIndex}>[13]</div>
+                <div style={styles.bottomSmallLine}>{shortName(accountOwner?.bossName)}</div>
               </div>
-
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr',
+                  columnGap: '10px',
+                  fontSize: '9px',
+                }}
+              >
+                <div style={{ textAlign: 'center' }}>(должность)</div>
+                <div style={{ textAlign: 'center' }}>(подпись)</div>
+                <div style={{ textAlign: 'center' }}>(ф.и.о.)</div>
+              </div>
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Наименование экономического субъекта - составителя документа</div>

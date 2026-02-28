@@ -45,7 +45,7 @@ const styles = {
     padding: '20px',
     marginTop: '19px',
     fontFamily: 'arial',
-    fontSize: '12px',
+    fontSize: '10px',
   } as React.CSSProperties,
   header: {
     textAlign: 'center',
@@ -56,7 +56,7 @@ const styles = {
   table: {
     borderCollapse: 'collapse',
     width: 'calc(100% - 40px)',
-    fontSize: '11px',
+    fontSize: '10px',
     border: '1px solid black',
   } as React.CSSProperties,
   tableCell: {
@@ -73,7 +73,7 @@ const styles = {
   infoTable: {
     borderCollapse: 'collapse',
     width: '100%',
-    fontSize: '11px',
+    fontSize: '10px',
     marginBottom: '10px',
   } as React.CSSProperties,
   infoCell: {
@@ -82,7 +82,7 @@ const styles = {
   } as React.CSSProperties,
   signatureBlock: {
     marginTop: '20px',
-    fontSize: '11px',
+    fontSize: '10px',
   } as React.CSSProperties,
 };
 
@@ -335,7 +335,7 @@ export const Invoice = ({
         <table style={styles.table}>
           <thead>
             <tr>
-              <td style={{ ...styles.headerCell, width: '24%', minWidth: '250px' }} rowSpan={2}>
+              <td style={{ ...styles.headerCell, width: '35%', minWidth: '350px' }} rowSpan={2}>
                 (1) Наименование товара (описание выполненных работ, оказанных услуг),
                 имущественного права
               </td>
