@@ -47,7 +47,7 @@ const styles = {
   sheet: {
     width: 'calc(100% - 40px)',
     margin: '0 auto',
-    padding: '20px',
+    padding: '5px',
     boxSizing: 'border-box',
   } as React.CSSProperties,
   topRight: {
@@ -94,7 +94,7 @@ const styles = {
   } as React.CSSProperties,
   rightHead: {
     borderBottom: 'none',
-    padding: '10px 10px 8px 10px',
+    padding: '0 10px 8px',
   } as React.CSSProperties,
   rightHeadGrid: {
     display: 'grid',
@@ -167,7 +167,7 @@ const styles = {
   } as React.CSSProperties,
   signatureRow: {
     borderTop: 'none',
-    padding: '8px 10px',
+    padding: '0 10px',
     display: 'grid',
     gridTemplateColumns: '170px 1fr',
     columnGap: '10px',
@@ -197,11 +197,10 @@ const styles = {
   signHint: {
     fontSize: '8px',
     textAlign: 'center',
-    marginTop: '2px',
   } as React.CSSProperties,
   bottomBlocks: {
     borderTop: 'none',
-    padding: '10px 10px 12px 10px',
+    padding: '0 12px',
     fontSize: '10px',
   } as React.CSSProperties,
   bottomRow: {
@@ -214,6 +213,12 @@ const styles = {
   bottomLabel: {
     display: 'grid',
     gridTemplateColumns: '350px 1fr',
+    columnGap: '10px',
+    alignItems: 'end',
+  } as React.CSSProperties,
+  bottomLabel150: {
+    display: 'grid',
+    gridTemplateColumns: '150px 150px',
     columnGap: '10px',
     alignItems: 'end',
   } as React.CSSProperties,
@@ -851,7 +856,7 @@ export const UPD = ({
           <div
             style={{
               marginLeft: '380px',
-              marginTop: '-8px',
+              marginTop: '-6px',
               fontSize: '8px',
               textAlign: 'center',
             }}
@@ -869,7 +874,7 @@ export const UPD = ({
           <div
             style={{
               marginLeft: '190px',
-              marginTop: '-8px',
+              marginTop: '-6px',
               fontSize: '8px',
               textAlign: 'center',
             }}
@@ -885,12 +890,12 @@ export const UPD = ({
                 <div style={styles.bottomLabel}>
                   <div>Товар (груз) передал/услуги, результаты работ, права сдал</div>
                 </div>
-                <div style={styles.rightIndex}>[10]</div>
+                <div style={styles.rightIndex}></div>
               </div>
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gridTemplateColumns: '180px 1fr 1fr 40px',
                   columnGap: '10px',
                 }}
               >
@@ -903,6 +908,7 @@ export const UPD = ({
                   </div>
                 </div>
                 <div style={styles.bottomSmallLine}>{shortName(accountOwner?.bossName)}</div>
+                <div style={styles.rightIndex}>[10]</div>
               </div>
               <div
                 style={{
@@ -918,7 +924,7 @@ export const UPD = ({
               </div>
 
               <div style={styles.bottomRow}>
-                <div style={styles.bottomLabel}>
+                <div style={styles.bottomLabel150}>
                   <div>Дата отгрузки, передачи (сдачи)</div>
                   <div style={styles.bottomUnderline}>
                     {new Date(order.date).toLocaleDateString()}
@@ -930,21 +936,28 @@ export const UPD = ({
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Иные сведения об отгрузке, передаче</div>
-                  <div style={styles.bottomUnderline}></div>
                 </div>
+                <div style={styles.rightIndex}></div>
+              </div>
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomUnderline}></div>
                 <div style={styles.rightIndex}>[12]</div>
+                <div style={styles.signHint}>
+                  (ссылки на неотъемлемые приложения, сопутствующие документы, иные документы и
+                  т.п.)
+                </div>
               </div>
 
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Ответственный за правильность оформления факта хозяйственной жизни</div>
                 </div>
-                <div style={styles.rightIndex}>[13]</div>
+                <div style={styles.rightIndex}></div>
               </div>
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: '1fr 1fr 1fr',
+                  gridTemplateColumns: '180px 1fr 1fr 40px',
                   columnGap: '10px',
                 }}
               >
@@ -957,6 +970,7 @@ export const UPD = ({
                   </div>
                 </div>
                 <div style={styles.bottomSmallLine}>{shortName(accountOwner?.bossName)}</div>
+                <div style={styles.rightIndex}>[13]</div>
               </div>
               <div
                 style={{
@@ -970,13 +984,25 @@ export const UPD = ({
                 <div style={{ textAlign: 'center' }}>(подпись)</div>
                 <div style={{ textAlign: 'center' }}>(ф.и.о.)</div>
               </div>
+
               <div style={styles.bottomRow}>
-                <div style={styles.bottomLabel}>
-                  <div>Наименование экономического субъекта - составителя документа</div>
-                  <div style={styles.bottomUnderline}></div>
+                <div>
+                  <div>
+                    Наименование экономического субъекта – составителя документа (в т.ч.
+                    комиссионера / агента)
+                  </div>
+                  <div></div>
                 </div>
-                <div style={styles.rightIndex}>[14]</div>
+                <div style={styles.rightIndex}></div>
               </div>
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomUnderline}></div>
+                <div style={styles.rightIndex}>[14]</div>
+                <div style={styles.signHint}>
+                  (может не заполняться при проставлении печати в М.П., может быть указан ИНН / КПП)
+                </div>
+              </div>
+
               <div style={{ textAlign: 'center' }}>М.П.</div>
               {invoiceSeal && (
                 <div style={styles.stampWrap}>
@@ -1000,8 +1026,22 @@ export const UPD = ({
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
                   <div>Товар (груз) получил/услуги, результаты работ, права принял</div>
-                  <div style={styles.bottomUnderline}></div>
+                  <div></div>
                 </div>
+                <div style={styles.rightIndex}></div>
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr 40px',
+                  columnGap: '10px',
+                }}
+              >
+                <div style={styles.bottomSmallLine}></div>
+                <div style={styles.bottomSmallLine}>
+                  <div style={styles.stampWrap}></div>
+                </div>
+                <div style={styles.bottomSmallLine}></div>
                 <div style={styles.rightIndex}>[15]</div>
               </div>
               <div
@@ -1009,11 +1049,56 @@ export const UPD = ({
                   display: 'grid',
                   gridTemplateColumns: '1fr 1fr 1fr',
                   columnGap: '10px',
+                  fontSize: '9px',
                 }}
               >
+                <div style={{ textAlign: 'center' }}>(должность)</div>
+                <div style={{ textAlign: 'center' }}>(подпись)</div>
+                <div style={{ textAlign: 'center' }}>(ф.и.о.)</div>
+              </div>
+
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomLabel150}>
+                  <div>Дата получения (приемки)</div>
+                  <div style={styles.bottomUnderline}></div>
+                </div>
+                <div style={styles.rightIndex}>[16]</div>
+              </div>
+
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomLabel}>
+                  <div>Иные сведения об отгрузке, передаче</div>
+                </div>
+                <div style={styles.rightIndex}></div>
+              </div>
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomUnderline}></div>
+                <div style={styles.rightIndex}>[17]</div>
+                <div style={styles.signHint}>
+                  (информация о наличии/отсутствии претензии; ссылки на неотъемлемые приложения, и
+                  другие документы и т.п.)
+                </div>
+              </div>
+
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomLabel}>
+                  <div>Ответственный за правильность оформления факта хозяйственной жизни</div>
+                </div>
+                <div style={styles.rightIndex}></div>
+              </div>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: '1fr 1fr 1fr 40px',
+                  columnGap: '10px',
+                }}
+              >
+                <div style={styles.bottomSmallLine}> </div>
+                <div style={styles.bottomSmallLine}>
+                  <div style={styles.stampWrap}></div>
+                </div>
                 <div style={styles.bottomSmallLine}></div>
-                <div style={styles.bottomSmallLine}></div>
-                <div style={styles.bottomSmallLine}></div>
+                <div style={styles.rightIndex}>[18]</div>
               </div>
               <div
                 style={{
@@ -1030,35 +1115,20 @@ export const UPD = ({
 
               <div style={styles.bottomRow}>
                 <div style={styles.bottomLabel}>
-                  <div>Дата получения (приемки)</div>
-                  <div style={styles.bottomUnderline}></div>
-                </div>
-                <div style={styles.rightIndex}>[16]</div>
-              </div>
-
-              <div style={styles.bottomRow}>
-                <div style={styles.bottomLabel}>
-                  <div>Иные сведения о получении, приемке</div>
-                  <div style={styles.bottomUnderline}></div>
-                </div>
-                <div style={styles.rightIndex}>[17]</div>
-              </div>
-
-              <div style={styles.bottomRow}>
-                <div style={styles.bottomLabel}>
-                  <div>Ответственный за правильность оформления факта хозяйственной жизни</div>
-                  <div style={styles.bottomUnderline}></div>
-                </div>
-                <div style={styles.rightIndex}>[18]</div>
-              </div>
-
-              <div style={styles.bottomRow}>
-                <div style={styles.bottomLabel}>
                   <div>Наименование экономического субъекта - составителя документа</div>
-                  <div style={styles.bottomUnderline}></div>
+                  <div></div>
                 </div>
-                <div style={styles.rightIndex}>[19]</div>
+                <div style={styles.rightIndex}></div>
               </div>
+              <div style={styles.bottomRow}>
+                <div style={styles.bottomUnderline}></div>
+                <div style={styles.rightIndex}>[19]</div>
+                <div style={styles.signHint}>
+                  (может не заполняться при проставлении печати в М.П., может быть указан ИНН / КПП)
+                </div>
+              </div>
+
+              <div style={{ textAlign: 'center' }}>М.П.</div>
             </div>
           </div>
         </div>
