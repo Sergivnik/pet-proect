@@ -47,6 +47,7 @@ export const getPdf = (id, typeDoc) => {
         const url = URL.createObjectURL(blob);
         let newWin = window.open();
         newWin.location.href = url;
+        dispatch(getPdfWithoutStampSuccess(id));
       })
       .catch(e => {
         console.log(e.message);

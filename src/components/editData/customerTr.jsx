@@ -128,6 +128,7 @@ export const CustomerTr = props => {
   };
   const handleLoadContract = () => {
     axios
+      .create({ withCredentials: true })
       .get(`${DOMENNAME}/API/getContractPDF?customer=${elem.value}`, {
         responseType: 'blob',
       })

@@ -11,6 +11,7 @@ var tasksAddData = require('../models/tasksAddData.js');
 var tasksUser = require('../models/taskUser.js');
 const puppeteer = require('puppeteer');
 var fs = require('fs');
+const path = require('path');
 
 const writeLogToFile = logData => {
   const logFilePath = './API/Bills/logfile.txt'; // Путь к файлу логов
@@ -102,110 +103,94 @@ module.exports.taskGetPdf = async (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.set('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Check if user is authenticated
   if (!req.session.userId) {
-    console.log(req.session.userId);
-
     return res.status(401).json({ message: 'Unauthorized - Please login first' });
   }
 
-  const path = require('path');
-  console.log(req.params);
-  if (req.params.typeDoc == 'contractor') {
+  const { id, typeDoc } = req.params;
+
+  if (typeDoc === 'contractor') {
     try {
-      let data = await tasksDoc.getDataFromTableByIdAsyhc(req.params.id, 'contractorspayments');
-      console.log(data);
-      let idContractor = data.idContractor;
-      let contractorData = await tasksDoc.getDataFromTableByIdAsyhc(idContractor, 'contractors');
-      let contractor = contractorData.value;
-      let date = new Date(data.date);
-      let year = date.getFullYear();
-      let month = date.getMonth() + 1;
-      let day = date.getDate();
-      let strDate = `${year}-${month}-${day}`;
-      fileName = `check ${strDate}`;
-      filePath = path.join(__dirname, `../contractors/${contractor}`, fileName);
-      res.sendFile(`${filePath}`);
-    } catch {
-      res.status(500);
+      const data = await tasksDoc.getDataFromTableByIdAsyhc(id, 'contractorspayments');
+      if (data.error) {
+        return res.status(500).json({ message: data.error });
+      }
+      const contractorData = await tasksDoc.getDataFromTableByIdAsyhc(data.idContractor, 'contractors');
+      if (contractorData.error) {
+        return res.status(500).json({ message: contractorData.error });
+      }
+      const date = new Date(data.date);
+      const strDate = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
+      const fileName = `check ${strDate}`;
+      const filePath = path.join(__dirname, '../contractors', contractorData.value, fileName);
+      return res.sendFile(filePath);
+    } catch (err) {
+      return res.status(500).json({ message: err && err.message ? err.message : 'Internal server error' });
     }
   }
-  if (req.params.typeDoc == 'ownerDoc') {
-    let pathBills = path.join(__dirname, '..', 'docs');
-    tasks.getDataFromTableById(req.params.id, 'drivers', data => {
+
+  if (typeDoc === 'ownerDoc') {
+    const pathBills = path.join(__dirname, '..', 'docs');
+    tasks.getDataFromTableById(id, 'drivers', data => {
       if (data.error) {
-        res.status(500);
-        res.json({ message: data.error });
-      } else {
-        console.log(data);
-        let owner = data.value;
-        res.sendFile(`${pathBills}/${owner}/docOwner.pdf`);
+        return res.status(500).json({ message: data.error });
       }
+      res.sendFile(`${pathBills}/${data.value}/docOwner.pdf`);
     });
+    return;
   }
-  if (
-    req.params.typeDoc != 'driver' &&
-    req.params.typeDoc != 'track' &&
-    req.params.typeDoc != 'ownerDoc' &&
-    req.params.typeDoc != 'contractor'
-  ) {
-    tasks.getDataById(req.params.id, 'oderslist', data => {
+
+  if (typeDoc === 'driver' || typeDoc === 'track') {
+    const pathBills = path.join(__dirname, '..', 'docs');
+    const table = typeDoc === 'driver' ? 'trackdrivers' : 'tracklist';
+    tasks.getDataFromTableById(id, table, data => {
       if (data.error) {
-        res.status(500);
-        res.json({ message: data.error });
-      } else {
-        let Year = data.date.getFullYear();
-        let customer = data.customer[0].value;
-        let pathBills = path.join(__dirname, '..', 'Bills');
-        let accountNumber = Number(data.accountNumber);
-        if (isNaN(accountNumber)) {
-          accountNumber = data.accountNumber;
+        return res.status(500).json({ message: data.error });
+      }
+      const trackDriver = typeDoc === 'driver' ? data.name : '';
+      const track = typeDoc === 'track' ? data.value : '';
+      tasks.getDataFromTableById(data.idOwner, 'drivers', ownerData => {
+        if (ownerData.error) {
+          return res.status(500).json({ message: ownerData.error });
         }
-        if (req.params.typeDoc == 'app') {
-          res.sendFile(
-            `${pathBills}/${Year}/${customer}/${req.params.typeDoc}/app${req.params.id}.pdf`
-          );
+        if (typeDoc === 'driver') {
+          res.sendFile(`${pathBills}/${ownerData.value}/${trackDriver}/docDriver.pdf`);
         } else {
-          res.sendFile(
-            `${pathBills}/${Year}/${customer}/${req.params.typeDoc}${accountNumber}.pdf`
-          );
+          res.sendFile(`${pathBills}/${ownerData.value}/${track}/docTrack.pdf`);
         }
-      }
+      });
     });
+    return;
   }
-  if (req.params.typeDoc == 'driver' || req.params.typeDoc == 'track') {
-    let pathBills = path.join(__dirname, '..', 'docs');
-    let table = '';
-    let trackDriver = '';
-    let track = '';
-    let owner = '';
-    if (req.params.typeDoc == 'driver') table = 'trackdrivers';
-    if (req.params.typeDoc == 'track') table = 'tracklist';
-    tasks.getDataFromTableById(req.params.id, table, data => {
-      if (data.error) {
-        res.status(500);
-        res.json({ message: data.error });
-      } else {
-        console.log(data);
-        if (req.params.typeDoc == 'driver') trackDriver = data.name;
-        if (req.params.typeDoc == 'track') track = data.value;
-        let idOwner = data.idOwner;
-        tasks.getDataFromTableById(idOwner, 'drivers', data => {
-          if (data.error) {
-            res.status(500);
-            res.json({ message: data.error });
-          } else {
-            console.log(data);
-            owner = data.value;
-            if (req.params.typeDoc == 'driver')
-              res.sendFile(`${pathBills}/${owner}/${trackDriver}/docDriver.pdf`);
-            if (req.params.typeDoc == 'track')
-              res.sendFile(`${pathBills}/${owner}/${track}/docTrack.pdf`);
-          }
-        });
-      }
-    });
-  }
+
+  // oderslist: app, invoiceNoSeal и др.
+  tasks.getDataById(id, 'oderslist', data => {
+    if (data.error) {
+      return res.status(500).json({ message: data.error });
+    }
+    const Year = data.date.getFullYear();
+    const customer = data.customer[0].value;
+    const pathBills = path.join(__dirname, '..', 'Bills');
+    let accountNumber = Number(data.accountNumber);
+    if (isNaN(accountNumber)) {
+      accountNumber = data.accountNumber;
+    }
+
+    if (typeDoc === 'app') {
+      res.sendFile(`${pathBills}/${Year}/${customer}/${typeDoc}/app${id}.pdf`);
+      return;
+    }
+    if (typeDoc === 'invoiceNoSeal') {
+      tasks.editField(id, 'oderslist', 'wasItPrinted', 1, editResult => {
+        if (editResult.error) {
+          return res.status(500).json({ message: editResult.error });
+        }
+        res.sendFile(`${pathBills}/${Year}/${customer}/${typeDoc}${accountNumber}.pdf`);
+      });
+      return;
+    }
+    res.sendFile(`${pathBills}/${Year}/${customer}/${typeDoc}${accountNumber}.pdf`);
+  });
 };
 module.exports.taskGetReportPdf = (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');
@@ -218,7 +203,6 @@ module.exports.taskGetReportPdf = (req, res) => {
     return res.status(401).json({ message: 'Unauthorized - Please login first' });
   }
 
-  const path = require('path');
   let pathBills = path.join(__dirname, '..', 'Bills');
   res.sendFile(`${pathBills}/tempDoc.pdf`);
 };
@@ -233,7 +217,6 @@ module.exports.taskGetPdfWithoutStamp = (req, res) => {
     return res.status(401).json({ message: 'Unauthorized - Please login first' });
   }
 
-  const path = require('path');
   tasks.getDataById(req.params.id, 'oderslist', data => {
     if (data.error) {
       res.status(500);
