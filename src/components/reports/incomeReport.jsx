@@ -89,19 +89,37 @@ export const IncomeReport = () => {
     let dateEnd = new Date();
     let daysThisYear = Math.ceil((dateEnd.getTime() - dateBegin.getTime()) / (1000 * 3600 * 24));
     let sumIn = 0;
+    let sumInWithVAT = 0;
     let sumOut = 0;
     let sumVAT = 0;
     customerPayments.forEach(elem => {
+      console.log(elem);
       let date = new Date(elem.date);
       if (date >= dateBegin && date <= dateEnd) {
         sumIn = sumIn + Number(elem.sumOfPayment);
+        let checkDateOfOrder = false;
+        elem.listOfOders.forEach(orderId => {
+          let order = ordersList.find(order => order._id == orderId.id);
+          let dateOfOrder = new Date(order.date);
+          if (dateOfOrder >= new Date('2026-01-01')) {
+            checkDateOfOrder = true;
+          }
+        });
+        if (checkDateOfOrder) {
+          sumInWithVAT = sumInWithVAT + (Number(elem.sumOfPayment) * 100) / (100 + VAT);
+        } else {
+          sumInWithVAT = sumInWithVAT + Number(elem.sumOfPayment);
+        }
       }
     });
     contractorsPayments.forEach(elem => {
       let date = new Date(elem.date);
       if (date >= dateBegin && date <= dateEnd && elem.category == 1) {
         if (Number(elem.sum) > 0) sumOut = sumOut + Number(elem.sum);
-        if (Number(elem.sum) < 0) sumIn = sumIn - Number(elem.sum);
+        if (Number(elem.sum) < 0) {
+          sumIn = sumIn - Number(elem.sum);
+          sumInWithVAT = sumInWithVAT - Number(elem.sum);
+        }
         if (elem.idContractor === 22) sumVAT = sumVAT + Number(elem.sum);
       }
     });
@@ -112,22 +130,23 @@ export const IncomeReport = () => {
         sumOut = sumOut + Number(elem.sumOfPayment) - Number(elem.sumOfDebts);
       }
     });
-    if (((sumIn - sumOut) * TAX) / 100 > sumIn / 100) {
+    if (((sumInWithVAT - sumOut) * TAX) / 100 > sumInWithVAT / 100) {
       setCurrentTax(
-        ((sumIn - sumOut) * TAX) / 100 +
+        ((sumInWithVAT - sumOut) * TAX) / 100 +
           (Number(yearconst.fixedincometax) / 365) * daysThisYear +
-          (sumIn - sumOut) / 100
+          (sumInWithVAT - sumOut) / 100
       );
     } else {
-      if (sumIn > sumOut) {
+      if (sumInWithVAT > sumOut) {
         let tax =
-          sumIn / 100 +
+          sumInWithVAT / 100 +
           (Number(yearconst.fixedincometax) / 365) * daysThisYear +
-          (sumIn - sumOut) / 100;
+          (sumInWithVAT - sumOut) / 100;
         setCurrentTax(tax);
       } else {
         let tax =
-          sumIn / 100 + (Number(yearconst ? yearconst.fixedincometax : 0) / 365) * daysThisYear;
+          sumInWithVAT / 100 +
+          (Number(yearconst ? yearconst.fixedincometax : 0) / 365) * daysThisYear;
         setCurrentTax(tax);
       }
     }
