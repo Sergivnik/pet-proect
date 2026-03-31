@@ -452,7 +452,7 @@ export const UPD = ({
                 <div style={styles.rowLabel}>
                   <div>ИНН/КПП продавца</div>
                   <div style={styles.underline}>
-                    {accountOwner?.inn ? `${accountOwner?.inn} / ${accountOwner?.kpp}` : ''}
+                    {accountOwner?.inn ? `${accountOwner?.inn} ` : ''}
                   </div>
                 </div>
                 <div style={styles.rightIndex}>(2б)</div>
@@ -569,6 +569,11 @@ export const UPD = ({
                 Наименование товара (описание выполненных работ, оказанных услуг), имущественного
                 права
               </td>
+              <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
+                Код вида
+                <br />
+                товара
+              </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} colSpan={2}>
                 Единица измерения
               </td>
@@ -672,6 +677,7 @@ export const UPD = ({
               <td style={{ ...styles.td, ...styles.tdCenter }}>А</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>1</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>1а</td>
+              <td style={{ ...styles.td, ...styles.tdCenter }}>1б</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>2</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>2а</td>
               <td style={{ ...styles.td, ...styles.tdCenter }}>3</td>
@@ -696,7 +702,10 @@ export const UPD = ({
                   <td style={{ ...styles.td, ...styles.tdTop }}>{string.mainPart}</td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}></td>
-                  <td style={{ ...styles.td, ...styles.tdCenter }}>{string.numberOfShipments}</td>
+                  <td style={{ ...styles.td, ...styles.tdCenter }}></td>
+                  <td style={{ ...styles.td, ...styles.tdCenter }}>
+                    {string.numberOfShipments > 1 ? `${string.numberOfShipments} шт` : '-'}
+                  </td>
                   <td style={{ ...styles.td, ...styles.tdRight }}>
                     {formatMoney((string.customerPrice * 100) / (100 + VAT))}
                   </td>
@@ -705,7 +714,7 @@ export const UPD = ({
                       (string.customerPrice * 100 * string.numberOfShipments) / (100 + VAT)
                     )}
                   </td>
-                  <td style={{ ...styles.td, ...styles.tdCenter }}></td>
+                  <td style={{ ...styles.td, ...styles.tdCenter }}>Без акциза</td>
                   <td style={{ ...styles.td, ...styles.tdCenter }}>{`${VAT}%`}</td>
                   <td style={{ ...styles.td, ...styles.tdRight }}>
                     {formatMoney(
@@ -721,7 +730,7 @@ export const UPD = ({
             })}
 
             <tr style={{ fontWeight: 700 }}>
-              <td style={{ ...styles.td, ...styles.tdCenter }} colSpan={7}></td>
+              <td style={{ ...styles.td, ...styles.tdCenter }} colSpan={8}></td>
               <td style={{ ...styles.td, ...styles.tdRight }}>
                 {formatMoney(totalSum / (1 + VAT / 100))}
               </td>

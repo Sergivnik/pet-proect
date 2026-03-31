@@ -18,13 +18,22 @@ export const ClientDetails = ({ client, onBack }: { client: ClientData; onBack: 
   const [prevTIN, setPrevTIN] = useState<string | undefined>(client.TIN);
 
   useEffect(() => {
+    let newClient: ClientData = {...client};
+    let dateOfReg = new Date(newClient.dateOfReg)
+    let year = dateOfReg.getFullYear();
+    let month = String(dateOfReg.getMonth() + 1).padStart(2, '0');
+    let day = String(dateOfReg.getDate()).padStart(2, '0');
+    newClient.dateOfReg = `${year}-${month}-${day}`;
+    setEditedClient(newClient);
+  }, [client]);
+
+  useEffect(() => {
     const data = {
       query: editedClient.TIN,
     };
     if (editedClient.TIN && (editedClient.TIN.length === 10 || editedClient.TIN.length === 12)) {
       // Проверяем, есть ли пустые поля для заполнения
       const hasEmptyFields =
-        !editedClient.KPP ||
         !editedClient.fullNameOwner ||
         !editedClient.OGRN ||
         !editedClient.bossName ||
