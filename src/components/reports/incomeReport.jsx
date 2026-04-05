@@ -54,7 +54,8 @@ export const IncomeReport = () => {
     const orderYearList = ordersList.filter(order => new Date(order.date) >= firstDateOfYear);
     let sumOfVAT = 0;
     orderYearList.forEach(order => {
-      sumOfVAT = sumOfVAT + (Number(order.customerPrice) * VAT) / (100 + VAT);
+      sumOfVAT =
+        sumOfVAT + Math.round((Number(order.customerPrice) * VAT * 100) / (100 + VAT)) / 100;
     });
     setYearVAT(sumOfVAT);
   }, [ordersList]);
@@ -106,9 +107,10 @@ export const IncomeReport = () => {
           }
         });
         if (checkDateOfOrder) {
-          sumInWithVAT = sumInWithVAT + (Number(elem.sumOfPayment) * 100) / (100 + VAT);
+          sumInWithVAT =
+            sumInWithVAT + Math.round((Number(elem.sumOfPayment) * 10000) / (100 + VAT)) / 100;
         } else {
-          sumInWithVAT = sumInWithVAT + Number(elem.sumOfPayment);
+          sumInWithVAT = sumInWithVAT + Math.round(Number(elem.sumOfPayment) * 100) / 100;
         }
       }
     });
@@ -156,7 +158,12 @@ export const IncomeReport = () => {
     addtable.forEach(elem => {
       if (elem.card == 0) {
         let price = Number(ordersList.find(order => order._id == elem.orderId).customerPrice);
-        sumPink = sumPink + ((price - Number(elem.sum)) * (100 - Number(elem.interest))) / 100;
+        sumPink =
+          sumPink +
+          Math.round(
+            (((price - Number(elem.sum)) / (100 + VAT)) * (100 - Number(elem.interest))) / 100
+          ) *
+            100;
       }
     });
     setSumPink(sumPink);

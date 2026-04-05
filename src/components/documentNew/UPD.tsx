@@ -537,21 +537,22 @@ export const UPD = ({
         {/* Основная таблица товаров/услуг */}
         <table style={styles.goodsTable}>
           <colgroup>
-            <col style={{ width: '40px' }} />
+            <col style={{ width: '20px' }} />
+            <col style={{ width: '30px' }} />
+            <col style={{ width: '1250px' }} />
             <col style={{ width: '50px' }} />
-            <col style={{ width: '950px' }} />
             <col style={{ width: '50px' }} />
-            <col style={{ width: '70px' }} />
-            <col style={{ width: '80px' }} />
+            <col style={{ width: '50px' }} />
+            <col style={{ width: '50px' }} />
             <col style={{ width: '90px' }} />
-            <col style={{ width: '120px' }} />
+            <col style={{ width: '90px' }} />
             <col style={{ width: '60px' }} />
             <col style={{ width: '60px' }} />
-            <col style={{ width: '110px' }} />
-            <col style={{ width: '120px' }} />
-            <col style={{ width: '55px' }} />
-            <col style={{ width: '85px' }} />
-            <col style={{ width: '70px' }} />
+            <col style={{ width: '80px' }} />
+            <col style={{ width: '60px' }} />
+            <col style={{ width: '45px' }} />
+            <col style={{ width: '45px' }} />
+            <col style={{ width: '50px' }} />
           </colgroup>
           <thead>
             <tr style={styles.tableHeader}>
@@ -594,7 +595,7 @@ export const UPD = ({
                 измерения
               </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
-                Стоимость товаров (работ, услуг), имущественных прав без налога - всего
+                Стоимость товаров (работ, услуг), имуществен- ных прав без налога - всего
               </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
                 В том
@@ -624,7 +625,7 @@ export const UPD = ({
                 покупателю
               </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} rowSpan={2}>
-                Стоимость товаров (работ, услуг), имущественных прав с налогом - всего
+                Стоимость товаров (работ, услуг), имуществен- ных прав с налогом - всего
               </td>
               <td style={{ ...styles.td, ...styles.tdCenter }} colSpan={2}>
                 Страна происхождения товара
