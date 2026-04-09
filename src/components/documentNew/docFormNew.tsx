@@ -222,7 +222,9 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
     updateVATByDate(order.date);
   }, [order]);
   useEffect(() => {
-    setActNumberString(`${actNumber} от ${new Date(order.date).toLocaleDateString()}`);
+    setActNumberString(
+      `${isNaN(Number(actNumber)) ? actNumber : Number(actNumber)} от ${new Date(order.date).toLocaleDateString()}`
+    );
   }, [actNumber]);
   useEffect(() => {
     let string = 'Перевозка по маршруту загрузка ';

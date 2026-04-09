@@ -60,7 +60,7 @@ export const reportReducer = (store = reportDataStore, action) => {
             orderSum.push({
               id: i++,
               date: elem.date,
-              textInfo: `Акт № ${elem.accountNumber}`,
+              textInfo: `Акт № ${isNaN(Number(elem.accountNumber)) ? elem.accountNumber : Number(elem.accountNumber)}`,
               sum: action.data.name == 'customer' ? elem.customerPrice : elem.driverPrice,
               type: 'outCome',
             });
