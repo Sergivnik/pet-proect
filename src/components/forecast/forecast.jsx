@@ -1,18 +1,17 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { VAT } from '../../middlewares/initialState.js';
 
 export const Forecast = () => {
-  const ordersList = useSelector((state) => state.oderReducer.originOdersList);
-  const addDataList = useSelector((state) => state.oderReducer.addtable);
-  const contractorsPaymentsList = useSelector(
-    (state) => state.oderReducer.contractorsPayments
-  );
+  const ordersList = useSelector(state => state.oderReducer.originOdersList);
+  const addDataList = useSelector(state => state.oderReducer.addtable);
+  const contractorsPaymentsList = useSelector(state => state.oderReducer.contractorsPayments);
 
   const [forecastIncome, setForecastIncome] = useState(0);
 
-  const getDayInMonth = (month) => {
+  const getDayInMonth = month => {
     const now = new Date();
-    const isLeapYear = (year) => {
+    const isLeapYear = year => {
       if (year % 4 == 0) {
         return true;
       } else {
@@ -52,21 +51,20 @@ export const Forecast = () => {
         return 0;
     }
   };
-  const directIncome = (now) => {
+  const directIncome = now => {
     let income = 0;
     let lastDate;
-    ordersList.forEach((elem) => {
+    ordersList.forEach(elem => {
       let date = new Date(elem.date);
       let elemYear = date.getFullYear();
       let elemMonth = date.getMonth();
       let nowYear = now.getFullYear();
       let nowMonth = now.getMonth();
       if (elemYear == nowYear && elemMonth == nowMonth) {
-        income = income + Number(elem.customerPrice) - Number(elem.driverPrice);
-        if (elem.colorTR == "hotpink") {
-          let addData = addDataList.find(
-            (addElem) => addElem.orderId == elem._id
-          );
+        income =
+          income + (Number(elem.customerPrice) * 100) / (100 + VAT) - Number(elem.driverPrice);
+        if (elem.colorTR == 'hotpink') {
+          let addData = addDataList.find(addElem => addElem.orderId == elem._id);
           let addExp = addData
             ? ((Number(elem.customerPrice) - Number(addData.sum)) *
                 (100 - Number(addData.interest))) /
@@ -80,13 +78,9 @@ export const Forecast = () => {
     let dateBegin = new Date(lastDate);
     dateBegin.setFullYear(dateBegin.getFullYear() - 1);
     let sumOPEX = 0;
-    contractorsPaymentsList.forEach((elem) => {
+    contractorsPaymentsList.forEach(elem => {
       let paymentDay = new Date(elem.date);
-      if (
-        paymentDay >= dateBegin &&
-        paymentDay <= lastDate &&
-        elem.category != 3
-      ) {
+      if (paymentDay >= dateBegin && paymentDay <= lastDate && elem.category != 3) {
         sumOPEX = sumOPEX + Number(elem.sum);
       }
     });
