@@ -1,5 +1,5 @@
 var tasksDoc = require('../models/taskDocs.js');
-const puppeteer = require('puppeteer');
+const { getSharedBrowser } = require('../puppeteerSharedBrowser.js');
 var fs = require('fs');
 const path = require('path');
 const { promisify } = require('util');
@@ -113,19 +113,21 @@ module.exports.createAccountingDoc = async (req, res) => {
     if (typeDoc === 'Invoice' && stamp) filePath = `${dirPath}/invoice${billNumber}.pdf`;
     if (typeDoc === 'Invoice' && !stamp) filePath = `${dirPath}/invoiceNoSeal${billNumber}.pdf`;
   }
-  const orient = typeDoc === 'Invoice' ? true : false;
+  if (!filePath || !dirPath) {
+    return res.status(400).json({ message: 'Неверные параметры документа' });
+  }
 
-  try {
-    await enqueueTask(async () => {
+  res.status(202).json({ ok: true, message: 'PDF поставлен в очередь' });
+
+  void enqueueTask(async () => {
+    let page;
+    try {
       if (!fs.existsSync(dirPath)) {
         fs.mkdirSync(dirPath, { recursive: true });
       }
 
-      const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-dev-shm-usage'],
-      });
-      const page = await browser.newPage();
+      const browser = await getSharedBrowser();
+      page = await browser.newPage();
       await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
       await page.pdf({
         path: filePath,
@@ -139,27 +141,34 @@ module.exports.createAccountingDoc = async (req, res) => {
           left: '5mm',
         },
       });
-      await browser.close();
       console.log('PDF создан');
-    });
-    if (typeDoc === 'Bill') {
-      tasksDoc.add([orderId], billNumber, currentTable, data => {
-        if (data.error) {
-          return res.status(500).json({ message: data.error });
-        }
-        console.log('socket.io');
 
+      if (typeDoc === 'Bill') {
+        tasksDoc.add([orderId], billNumber, currentTable, data => {
+          if (data.error) {
+            console.error('tasksDoc.add:', data.error);
+            writeLogToFile(String(data.error));
+            return;
+          }
+          console.log('socket.io');
+          req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber, typeDoc });
+        });
+      } else {
         req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber, typeDoc });
-        return res.json('Success!');
-      });
-    } else {
-      req.app.get('io').emit('createBillNew', { orderId, currentTable, billNumber, typeDoc });
-      return res.json('Success!');
+      }
+    } catch (error) {
+      console.error('Ошибка при создании PDF:', error);
+      writeLogToFile(String(error && error.message ? error.message : error));
+    } finally {
+      if (page) {
+        try {
+          await page.close();
+        } catch (closeErr) {
+          console.error('Ошибка при закрытии страницы:', closeErr);
+        }
+      }
     }
-  } catch (error) {
-    console.error('Ошибка при создании PDF:', error);
-    return res.status(500).json({ message: 'Ошибка создания PDF' });
-  }
+  }).catch(err => console.error('Очередь createAccountingDoc:', err));
 };
 module.exports.taskCreatePdfDocNew = async (req, res) => {
   res.set('Access-Control-Allow-Methods', 'GET, OPTIONS');

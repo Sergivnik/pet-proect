@@ -9,7 +9,7 @@ var tacksDocs = require('../models/taskDocs.js');
 var taskReports = require('../models/taskReports.js');
 var tasksAddData = require('../models/tasksAddData.js');
 var tasksUser = require('../models/taskUser.js');
-const puppeteer = require('puppeteer');
+const { getSharedBrowser } = require('../puppeteerSharedBrowser.js');
 var fs = require('fs');
 const path = require('path');
 
@@ -630,19 +630,19 @@ module.exports.taskCreateDoc = async (req, res) => {
         fs.mkdirSync(dirPath, { recursive: true });
       }
 
-      const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-dev-shm-usage'],
-      });
+      const browser = await getSharedBrowser();
       const page = await browser.newPage();
-      await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
-      await page.pdf({
-        path: filePath,
-        format: 'a4',
-        timeout: 0,
-        printBackground: true,
-      });
-      await browser.close();
+      try {
+        await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
+        await page.pdf({
+          path: filePath,
+          format: 'a4',
+          timeout: 0,
+          printBackground: true,
+        });
+      } finally {
+        await page.close().catch(() => {});
+      }
       console.log('PDF создан');
     });
 
@@ -676,19 +676,19 @@ module.exports.taskCreateDocWithoutStamp = async (req, res) => {
         fs.mkdirSync(dirPath, { recursive: true });
       }
 
-      const browser = await puppeteer.launch({
-        headless: 'new',
-        args: ['--no-sandbox', '--disable-dev-shm-usage'],
-      });
+      const browser = await getSharedBrowser();
       const page = await browser.newPage();
-      await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
-      await page.pdf({
-        path: filePath,
-        format: 'a4',
-        timeout: 0,
-        printBackground: true,
-      });
-      await browser.close();
+      try {
+        await page.setContent(html, { waitUntil: 'networkidle0', timeout: 60000 });
+        await page.pdf({
+          path: filePath,
+          format: 'a4',
+          timeout: 0,
+          printBackground: true,
+        });
+      } finally {
+        await page.close().catch(() => {});
+      }
       console.log('PDF без печати создан');
     });
 
@@ -770,16 +770,17 @@ module.exports.taskCreateApp = (req, res) => {
       if (error) throw error; // если возникла ошибка
       console.log('Асинхронная запись файла завершена. Содержимое файла:');
       (async () => {
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox'],
-        });
+        const browser = await getSharedBrowser();
         const page = await browser.newPage();
-        await page.setContent(req.body.body.html);
-        await page.pdf({
-          path: `./API/Bills/${req.body.body.year}/${req.body.body.customer}/app/app${req.body.body.id}.pdf`,
-          format: 'a4',
-        });
-        await browser.close();
+        try {
+          await page.setContent(req.body.body.html);
+          await page.pdf({
+            path: `./API/Bills/${req.body.body.year}/${req.body.body.customer}/app/app${req.body.body.id}.pdf`,
+            format: 'a4',
+          });
+        } finally {
+          await page.close().catch(() => {});
+        }
         let dataIo = {
           id: req.body.body.id,
           appNumber: req.body.body.appNumber,

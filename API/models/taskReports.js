@@ -61,17 +61,18 @@ let TasksReports = {
   },
   reconciliationSavePdf: async (data, callBack) => {
     console.log('save report to pdf');
-    const puppeteer = require('puppeteer');
+    const { getSharedBrowser } = require('../puppeteerSharedBrowser.js');
     let fs = require('fs');
     try {
       (async () => {
-        const browser = await puppeteer.launch({
-          args: ['--no-sandbox'],
-        });
+        const browser = await getSharedBrowser();
         const page = await browser.newPage();
-        await page.setContent(data);
-        await page.pdf({ path: `./API/Bills/tempDoc.pdf`, format: 'a4' });
-        await browser.close();
+        try {
+          await page.setContent(data);
+          await page.pdf({ path: `./API/Bills/tempDoc.pdf`, format: 'a4' });
+        } finally {
+          await page.close().catch(() => {});
+        }
         callBack('success!');
       })();
     } catch (err) {

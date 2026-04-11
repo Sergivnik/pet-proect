@@ -1,5 +1,5 @@
 const db = require('./db.js').promisePool;
-const puppeteer = require('puppeteer');
+const { getSharedBrowser } = require('../puppeteerSharedBrowser.js');
 const fs = require('fs');
 const util = require('util'); // Добавьте эту строку для подключения модуля util
 const path = require('path');
@@ -30,23 +30,26 @@ var TaskDocs = {
       const cssFilePath = path.join(__dirname, 'temp.css');
       await writeFileAsync(cssFilePath, css, 'utf8');
 
-      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+      const browser = await getSharedBrowser();
       const page = await browser.newPage();
-      await page.setContent(html);
-      await page.addStyleTag({ path: cssFilePath });
+      let pdfBuffer;
+      try {
+        await page.setContent(html);
+        await page.addStyleTag({ path: cssFilePath });
 
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        margin: {
-          top: '5mm',
-          bottom: '5mm',
-          left: '10mm',
-          right: '0mm',
-        },
-        printBackground: true,
-      });
-
-      await browser.close();
+        pdfBuffer = await page.pdf({
+          format: 'A4',
+          margin: {
+            top: '5mm',
+            bottom: '5mm',
+            left: '10mm',
+            right: '0mm',
+          },
+          printBackground: true,
+        });
+      } finally {
+        await page.close().catch(() => {});
+      }
 
       const exists = fs.existsSync(`./API/contracts/${customer.value}`);
       if (!exists) {
@@ -67,23 +70,26 @@ var TaskDocs = {
       const cssFilePath = path.join(__dirname, 'temp.css');
       await writeFileAsync(cssFilePath, css, 'utf8');
 
-      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
+      const browser = await getSharedBrowser();
       const page = await browser.newPage();
-      await page.setContent(html);
-      await page.addStyleTag({ path: cssFilePath });
+      let pdfBuffer;
+      try {
+        await page.setContent(html);
+        await page.addStyleTag({ path: cssFilePath });
 
-      const pdfBuffer = await page.pdf({
-        format: 'A4',
-        margin: {
-          top: '5mm',
-          bottom: '5mm',
-          left: '10mm',
-          right: '0mm',
-        },
-        printBackground: true,
-      });
-
-      await browser.close();
+        pdfBuffer = await page.pdf({
+          format: 'A4',
+          margin: {
+            top: '5mm',
+            bottom: '5mm',
+            left: '10mm',
+            right: '0mm',
+          },
+          printBackground: true,
+        });
+      } finally {
+        await page.close().catch(() => {});
+      }
 
       const exists = fs.existsSync(`./API/docs/${driver.value}`);
       if (!exists) {
