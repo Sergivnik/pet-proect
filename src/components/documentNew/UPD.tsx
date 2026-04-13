@@ -419,8 +419,11 @@ export const UPD = ({
                     textAlign: 'end',
                   }}
                 >
-                  Приложение N 1<br /> к постановлению Правительства РФ от 26.12.2011 N 1137
-                  <br /> (в редакции постановления Правительства РФ от 16.08.2024 N 1096)
+                  Приложение № 1 к постановлению Правительства Российской Федерации от 26 декабря
+                  2011 г. № 1137
+                  <br />
+                  (в редакции постановления Правительства Российской Федерации от 23 января 2026 г.
+                  № 26)
                 </div>
               </div>
 
@@ -836,7 +839,8 @@ export const UPD = ({
 
             <div>
               <div style={{ ...styles.signLine }}>
-                {accountOwner?.ogrn} от {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
+                ОГРНИП {accountOwner?.ogrn}, дата регистрации{' '}
+                {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
               </div>
               <div
                 style={{
