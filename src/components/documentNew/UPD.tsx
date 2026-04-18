@@ -463,7 +463,9 @@ export const UPD = ({
                 <div style={styles.rowLabel}>
                   <div>ИНН/КПП покупателя</div>
                   <div style={styles.underline}>
-                    {customer?.TIN ? `${customer?.TIN} / ${customer?.KPP || ''}` : ''}
+                    {customer?.TIN
+                      ? `${customer?.TIN} ${customer.TIN.length === 10 ? ` / ${customer?.KPP || ''}` : ''}  `
+                      : ''}
                   </div>
                 </div>
                 <div style={styles.rightIndex}>(6б)</div>
