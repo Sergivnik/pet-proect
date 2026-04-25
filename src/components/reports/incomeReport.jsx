@@ -115,6 +115,8 @@ export const IncomeReport = () => {
       }
     });
     contractorsPayments.forEach(elem => {
+      console.log(elem);
+
       let date = new Date(elem.date);
       if (date >= dateBegin && date <= dateEnd && elem.category == 1) {
         if (Number(elem.sum) > 0) sumOut = sumOut + Number(elem.sum);
@@ -122,8 +124,8 @@ export const IncomeReport = () => {
           sumIn = sumIn - Number(elem.sum);
           sumInWithVAT = sumInWithVAT - Number(elem.sum);
         }
-        if (elem.idContractor === 22) sumVAT = sumVAT + Number(elem.sum);
       }
+      if (elem.idContractor === 22) sumVAT = sumVAT + Number(elem.sum);
     });
     setPaidVAT(sumVAT);
     driverpayments.forEach(elem => {
@@ -299,6 +301,7 @@ export const IncomeReport = () => {
             <span className="incomeReportSpan">Долг по налогам прошлого года</span>
             {showEditLastYearTaxDebt ? (
               <input
+                className="incomeReportInput"
                 type="number"
                 name="lastYearTaxDebt"
                 value={lastYearTaxDebt}
@@ -315,6 +318,7 @@ export const IncomeReport = () => {
             <span className="incomeReportSpan">Аванм по налогам текущего года</span>
             {showEditTaxAdvance ? (
               <input
+                className="incomeReportInput"
                 type="Number"
                 name="taxAdvdnce"
                 value={taxAdvance}
@@ -350,6 +354,7 @@ export const IncomeReport = () => {
             <span className="incomeReportSpan">Предоплата</span>
             {showEditPrepayment ? (
               <input
+                className="incomeReportInput"
                 type="number"
                 name="prepayment"
                 value={prepayment}
