@@ -253,7 +253,14 @@ hr
 .divVrapper
     width: 100%
     height: 100%
+    display: flex
+    flex-direction: column
+    overflow: hidden
     background-color: #e0e07d
+.virtualTableHeaderWrap
+    flex-shrink: 0
+    overflow: hidden
+    width: calc(100% - 13px)
 .virtualTableVrapper
     width: calc(100% - 2px)
     height: calc(100% - 40px)
@@ -286,5 +293,7 @@ hr
     color: gray
 .virtualTableWrapper
     position: relative
+    flex: 1
+    min-height: 0
     overflow: auto
-    height: calc( 100% - 40px )
+    scrollbar-gutter: stable

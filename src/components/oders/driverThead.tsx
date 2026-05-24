@@ -6,7 +6,7 @@ interface Props {
 
 export const DriverThead: React.FC<Props> = ({ getColStyle }) => {
   return (
-    <thead style={{ position: 'sticky', top: 0, zIndex: 2 }} className="virtualTHead">
+    <thead className="virtualTHead">
       <tr>
         <th style={{ ...getColStyle(0), position: 'relative' }}>
           <span style={{ marginRight: '20px', display: 'inline-block' }}>Дата</span>

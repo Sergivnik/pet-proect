@@ -140,14 +140,16 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
     setEditOrder(false);
   };
 
-  const didAutoScroll = useRef(false);
+  const totalSize = rowVirtualizer.getTotalSize();
 
   useEffect(() => {
-    if (!didAutoScroll.current && parentRef.current && items.length > 0) {
-      rowVirtualizer.scrollToIndex(rows.length - 1, { align: 'end' });
-      didAutoScroll.current = true; // чтобы больше никогда не скроллило
-    }
-  }, [items]);
+    if (!rows.length) return;
+
+    const el = parentRef.current;
+    if (!el) return;
+
+    el.scrollTop = el.scrollHeight;
+  }, [totalSize]);
 
   return (
     <div className="divVrapper">
@@ -161,9 +163,13 @@ export const VirtualizedDriverTable: React.FC<Props> = ({ rows }) => {
           <CreateOderNew orderTable="driverorderlist" elem={newElem} addOder={addOder} />
         </UserWindow>
       )}
-      <div ref={parentRef} className="virtualTableWrapper">
+      <div className="virtualTableHeaderWrap">
         <table style={{ borderCollapse: 'collapse' }} className="virtualTable">
           <DriverThead getColStyle={getColStyle} />
+        </table>
+      </div>
+      <div ref={parentRef} className="virtualTableWrapper">
+        <table style={{ borderCollapse: 'collapse' }} className="virtualTable">
           <tbody
             style={{ position: 'relative', height: `${rowVirtualizer.getTotalSize()}px` }}
             className="virtualTbody"
