@@ -47,6 +47,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const [addData, setAddData] = useState({ checkBoxesValue, ttnData });
   const [requestMessage, setRequestMessage] = useState<string | null>(null);
   const [withVAT, setWithVAT] = useState<boolean>(false);
+  const [newDoc, setNewDoc] = useState<boolean>(true);
   const [invoiceSeal, setInvoiceSeal] = useState<boolean>(true);
   const [showInvoiceSeal, setShowInvoiceSeal] = useState<boolean>(false);
   const [strings, setStrings] = useState<DocString[]>([
@@ -407,6 +408,14 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
             onChange={e => setWithVAT(e.currentTarget.checked)}
           />
         </div>
+        <div className="wrapperCheckBox">
+          <span>New</span>
+          <input
+            type="checkbox"
+            checked={newDoc}
+            onChange={e => setNewDoc(e.currentTarget.checked)}
+          />
+        </div>
       </header>
       <div className="wrapperMenuDoc">
         <div className="wrapperTypeOfDoc">
@@ -441,8 +450,8 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         </div>
       </div>
       <div className="wrapperTable">
-        {choisenTypeDoc === 'Invoice' && (
-          <>
+        {choisenTypeDoc === 'Invoice' && !newDoc && (
+          <React.Fragment>
             <Invoice
               order={order}
               strings={strings}
@@ -465,10 +474,25 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               textReason={textReaason}
               invoiceSeal={invoiceSeal}
             />
-          </>
+          </React.Fragment>
+        )}
+        {choisenTypeDoc === 'Invoice' && newDoc && (
+          <React.Fragment>
+            <UPD
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+              invoiceSeal={invoiceSeal}
+            />
+          </React.Fragment>
         )}
         {choisenTypeDoc === 'InvoiceNoSeal' && (
-          <>
+          <React.Fragment>
             <Bill
               order={order}
               strings={strings}
@@ -504,9 +528,9 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               textReason={textReaason}
               invoiceSeal={invoiceSeal}
             />
-          </>
+          </React.Fragment>
         )}
-        {choisenTypeDoc === 'Bill' && (
+        {choisenTypeDoc === 'Bill' && !newDoc && (
           <React.Fragment>
             <Bill
               order={order}
@@ -535,7 +559,24 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
             />
           </React.Fragment>
         )}
-        {choisenTypeDoc === 'BillNoStamp' && (
+        {choisenTypeDoc === 'Bill' && newDoc && (
+          <React.Fragment>
+            <Bill
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              stamp={true}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getActNumberString={getActNumberString}
+              withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+            />
+          </React.Fragment>
+        )}
+        {choisenTypeDoc === 'BillNoStamp' && !newDoc && (
           <React.Fragment>
             <Bill
               order={order}
@@ -570,6 +611,23 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
               stamp={false}
               actNumberString={actNumberString}
               getStringData={getStringData}
+              withVAT={withVAT}
+              getTextReason={getTextReason}
+              textReason={textReaason}
+            />
+          </React.Fragment>
+        )}
+        {choisenTypeDoc === 'BillNoStamp' && newDoc && (
+          <React.Fragment>
+            <Bill
+              order={order}
+              strings={strings}
+              currentTable={currentTable}
+              reason={checkBoxesValue.reason}
+              stamp={false}
+              actNumberString={actNumberString}
+              getStringData={getStringData}
+              getActNumberString={getActNumberString}
               withVAT={withVAT}
               getTextReason={getTextReason}
               textReason={textReaason}

@@ -473,7 +473,8 @@ export const UPD = ({
                 <div style={styles.rowLabel}>
                   <div>Грузоотправитель и его адрес</div>
                   <div style={styles.adressUnderline}>
-                    {accountOwner?.name ? `${accountOwner?.name}, ${accountOwner?.address}` : ''}
+                    {/*  {accountOwner?.name ? `${accountOwner?.name}, ${accountOwner?.address}` : ''} */}
+                    -
                   </div>
                 </div>
                 <div style={styles.rightIndex}>(3)</div>
@@ -487,7 +488,7 @@ export const UPD = ({
                 <div style={styles.rowLabel}>
                   <div>Грузополучатель и его адрес</div>
                   <div style={styles.adressUnderline}>
-                    {customer ? `${customer?.companyName}, ${customer?.address}` : ''}
+                    {/* {customer ? `${customer?.companyName}, ${customer?.address}` : ''} */}-
                   </div>
                 </div>
                 <div style={styles.rightIndex}>(4)</div>
