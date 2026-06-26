@@ -699,7 +699,7 @@ export const UPD = ({
               <td style={{ ...styles.td, ...styles.tdCenter }}>11</td>
             </tr>
           </thead>
-          <tbody>
+          <tbody style={{ fontSize: routeStrings.length > 2 ? '9px' : '10px' }}>
             {routeStrings.slice(0, 8).map((string, index) => {
               const sum = string.customerPrice * string.numberOfShipments;
               return (
