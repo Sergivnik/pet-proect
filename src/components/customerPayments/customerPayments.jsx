@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useWindowSize } from '../../hooks/useWindowSize';
 import './customerPayments.sass';
 import { getPaymentsData, deletePaymentData } from '../../middlewares/initialState';
 import { CustomerPaymentsTr } from './customerPaymentsTr.jsx';
@@ -31,6 +30,13 @@ export const CustomerPayments = () => {
     customer: [],
     sumOfPayment: [],
   });
+  const colWidths = [10, 22, 15, 28, 25];
+
+  const getColStyle = index => ({
+    width: `${colWidths[index]}%`,
+    minWidth: 0,
+  });
+
   function compareNumeric(a, b) {
     if (Number(a) > Number(b)) return 1;
     if (Number(a) == Number(b)) return 0;
@@ -204,8 +210,8 @@ export const CustomerPayments = () => {
       <table className="customerPaymentsMainTable" style={{ borderCollapse: 'collapse' }}>
         <thead className="customerPaymentMainMainHeader">
           <tr className="customerPaymentHeaderTr">
-            <td className="customerPaymentHeaderTd">
-              <span className="customerPaymentHeaderSpan">Дата</span>
+            <td className="customerPaymentHeaderTd" style={getColStyle(0)}>
+              <span className="customerPaymentHeaderSpan">Дата</span>{' '}
               <button className="customerPaymentHeaderFilter" onClick={handleClickFilter}>
                 <svg width="100%" height="20">
                   <polygon
@@ -224,8 +230,8 @@ export const CustomerPayments = () => {
                 />
               )}
             </td>
-            <td className="customerPaymentHeaderTd">
-              <span className="customerPaymentHeaderSpan">Заказчик</span>
+            <td className="customerPaymentHeaderTd" style={getColStyle(1)}>
+              <span className="customerPaymentHeaderSpan">Заказчик</span>{' '}
               <button className="customerPaymentHeaderFilter" onClick={handleClickFilter}>
                 <svg width="100%" height="20">
                   <polygon
@@ -244,8 +250,8 @@ export const CustomerPayments = () => {
                 />
               )}
             </td>
-            <td className="customerPaymentHeaderTd">
-              <span className="customerPaymentHeaderSpan">Сумма платежа</span>
+            <td className="customerPaymentHeaderTd" style={getColStyle(2)}>
+              <span className="customerPaymentHeaderSpan">Сумма платежа</span>{' '}
               <button className="customerPaymentHeaderFilter" onClick={handleClickFilter}>
                 <svg width="100%" height="20">
                   <polygon
@@ -264,8 +270,12 @@ export const CustomerPayments = () => {
                 />
               )}
             </td>
-            <td className="customerPaymentHeaderTd">Сумма распределенная по заказам</td>
-            <td className="customerPaymentHeaderTd">Сумма переплаты</td>
+            <td className="customerPaymentHeaderTd" style={getColStyle(3)}>
+              Сумма распределенная по заказам
+            </td>
+            <td className="customerPaymentHeaderTd" style={getColStyle(4)}>
+              Сумма переплаты
+            </td>{' '}
           </tr>
         </thead>
         <tbody style={{ position: 'relative', height: `${rowVirtualizer.getTotalSize()}px` }}>
@@ -276,6 +286,7 @@ export const CustomerPayments = () => {
                 key={row.id}
                 ref={rowVirtualizer.measureElement}
                 paymentData={row}
+                colWidths={colWidths}
                 handleClickDelete={handleClickDelete}
                 isOpen={openedPaymentId === row.id}
                 onToggle={() => handleToggleDetails(row.id)}

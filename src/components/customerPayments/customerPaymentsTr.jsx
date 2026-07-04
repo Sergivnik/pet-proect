@@ -30,6 +30,9 @@ export const CustomerPaymentsTr = React.forwardRef((props, ref) => {
       props.handleClickDelete(props.paymentData.id);
     }
   };
+  const getTdStyle = index => ({
+    width: `${props.colWidths[index]}%`,
+  });
   return (
     <>
       <tr
@@ -39,11 +42,11 @@ export const CustomerPaymentsTr = React.forwardRef((props, ref) => {
         style={props.style}
         {...(props['data-index'] !== undefined ? { 'data-index': props['data-index'] } : {})}
       >
-        <td className="customerPaymentMainTd">{DateStr(elem.date)}</td>
-        <td className="customerPaymentMainTd">{nameOfCustomer}</td>
-        <td className="customerPaymentMainTd">{elem.sumOfPayment}</td>
-        <td className="customerPaymentMainTd">{sumOfOders}</td>
-        <td className="customerPaymentMainTd">
+        <td className="customerPaymentMainTd" style={getTdStyle(0)}>{DateStr(elem.date)}</td>
+        <td className="customerPaymentMainTd" style={getTdStyle(1)}>{nameOfCustomer}</td>
+        <td className="customerPaymentMainTd" style={getTdStyle(2)}>{elem.sumOfPayment}</td>
+        <td className="customerPaymentMainTd" style={getTdStyle(3)}>{sumOfOders}</td>
+        <td className="customerPaymentMainTd" style={getTdStyle(4)}>
           <span>{elem.sumExtraPayment}</span>
           {showDetails && (
             <div className="customerPaymentTrClose" onClick={handleClickDelete}>
