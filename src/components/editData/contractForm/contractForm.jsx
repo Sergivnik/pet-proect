@@ -405,6 +405,10 @@ export const ContractForm = props => {
                     </td>
                   </tr>
                   <tr className="contractBodyTr">
+                    <td className="contractTd">{`Email ${exp.email || ''}`}</td>
+                    <td className="contractTd">{`Email ${customer.email ? customer.email : ''} `}</td>
+                  </tr>
+                  <tr className="contractBodyTr">
                     <td className="signTd">
                       <p className="bossNameP">
                         {exp.shortFio || exp.bossName || exp.nameOwner || ''}
