@@ -80,6 +80,7 @@ export const App = () => {
           <Link to="/something">Something</Link>
           <Link to="/oders">Заказы</Link>
           <Link to="/customer">Клиент</Link>
+          <Link to="/stocks">Stocks</Link>
           <Link to="/auth">Вход</Link>
         </div>
       </header>

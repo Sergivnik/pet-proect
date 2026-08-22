@@ -1,15 +1,13 @@
-CREATE DATABASE  IF NOT EXISTS `pet_proect` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `pet_proect`;
--- MySQL dump 10.13  Distrib 8.0.27, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.4.10, for Linux (x86_64)
 --
 -- Host: localhost    Database: pet_proect
 -- ------------------------------------------------------
--- Server version	8.0.27
+-- Server version	8.4.10
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -660,68 +658,8 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('MeZSNsnZAHCkG_U0LFYUoUUPEGCMXg0H',1787413230,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-22T15:38:50.383Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('bp9DWCZHYqSUlNmVUwlTQ-mtn-m_AQuv',1787406110,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-18T07:59:26.755Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('gb35xyJKmvUH-VtOoRpxwEZ9PyFRPFbk',1787399438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-18T06:14:25.130Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}');
+INSERT INTO `sessions` VALUES ('0XdYLd2YrrEKVbAGMAcaxWb0K-_cqLs6',1786803617,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-11T08:03:25.056Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('14OhyM0cEDiKyvlqONc4Q27Vb-ABuJWr',1785593411,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-07-28T08:05:30.392Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}'),('4_WpTMJlQwBscOSpcZaQLjiKWc_a-l-2',1785345830,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-07-29T14:55:02.603Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('5kKp6oS-qaJ1SAnfpEq7AsMWAsWLaHbu',1786268585,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-08T15:36:31.815Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('9Q_oJHO4k7hwLAErEFmG8w5h9-eQ6dMf',1785661476,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-02T08:55:06.975Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('9ycssh8uW5rfAJfG8DQ-hc20ZohnIl9e',1786116606,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-05T16:53:52.807Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('CzMFCbGRzyMJOaB-_AKgHlr7zzndfuI7',1785427697,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-07-29T15:40:42.963Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('EK3_Uy1ui_De3fiuKWsqSQINp2gONgcb',1786543632,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-11T07:58:47.493Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}'),('HLVln8LzgbmvlFsPnVFcHG1XTkRcidtx',1787236948,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-20T14:37:24.961Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('MQCowrvjXy-9_1SRcyousbFFOAUgM-Nx',1786532816,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-12T11:06:38.748Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('MeZSNsnZAHCkG_U0LFYUoUUPEGCMXg0H',1787413230,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-22T15:38:50.383Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('OhKXc2HbEsUdGSd9ceWPakWB0OFGDw5o',1786187513,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-04T07:37:29.878Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}'),('bp9DWCZHYqSUlNmVUwlTQ-mtn-m_AQuv',1787406110,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-18T07:59:26.755Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('cGOxHnuBMYSed49X_CaF1_GmzprwRFsP',1785171760,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-07-27T13:21:56.647Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('gb35xyJKmvUH-VtOoRpxwEZ9PyFRPFbk',1787399438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-18T06:14:25.130Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}'),('i0jf1oE3h4Hx3HiSIcyLkHgrXnwuU0iF',1786197007,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-04T07:42:41.242Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('k2ESCg0Fcz_b3C4QzwFNzWGTlfaNEV52',1785591543,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-07-28T08:08:47.201Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('n5nNZVdB7smL9RNqgVU4uzKTgJWU5CXY',1785517733,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-07-31T16:58:51.976Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('tSaY_s_Txu2ZdZnY0ouHVmyNtEAUtoN6',1787071169,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-16T12:01:32.459Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('wzT_dzLPPP2hvNR6n7qLChVbf_11HfxR',1786459517,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-11T12:55:11.278Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `stock_transactions`
---
-
-DROP TABLE IF EXISTS `stock_transactions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `stock_transactions` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `ticker` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `action_type` enum('BUY','SELL') COLLATE utf8mb4_unicode_ci NOT NULL,
-  `quantity` int NOT NULL,
-  `price` decimal(10,2) NOT NULL,
-  `commission` decimal(10,2) NOT NULL,
-  `total_amount` decimal(10,2) GENERATED ALWAYS AS (((`quantity` * `price`) + `commission`)) STORED,
-  `trade_date` datetime NOT NULL,
-  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  PRIMARY KEY (`id`),
-  KEY `idx_ticker_date` (`ticker`,`trade_date`),
-  CONSTRAINT `chk_commission` CHECK ((`commission` >= 0)),
-  CONSTRAINT `chk_price` CHECK ((`price` >= 0)),
-  CONSTRAINT `chk_quantity` CHECK ((`quantity` > 0))
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `stock_transactions`
---
-
-LOCK TABLES `stock_transactions` WRITE;
-/*!40000 ALTER TABLE `stock_transactions` DISABLE KEYS */;
-/*!40000 ALTER TABLE `stock_transactions` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `stocks`
---
-
-DROP TABLE IF EXISTS `stocks`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `stocks` (
-  `idStocks` int NOT NULL AUTO_INCREMENT,
-  `shortNameStock` varchar(5) NOT NULL,
-  `fullNameStack` varchar(45) NOT NULL,
-  PRIMARY KEY (`idStocks`),
-  UNIQUE KEY `idstocks_UNIQUE` (`idStocks`),
-  UNIQUE KEY `shortNameStock_UNIQUE` (`shortNameStock`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `stocks`
---
-
-LOCK TABLES `stocks` WRITE;
-/*!40000 ALTER TABLE `stocks` DISABLE KEYS */;
-/*!40000 ALTER TABLE `stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -920,4 +858,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-22 11:33:21
+-- Dump completed on 2026-08-22  0:00:02
