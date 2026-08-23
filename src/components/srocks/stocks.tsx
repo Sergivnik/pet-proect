@@ -2,14 +2,46 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { DOMENNAME } from '../../middlewares/initialState.js';
-import './stocks.sass';
 import { authSignOut } from '../../actions/auth.js';
+import { AddStock } from './addStock.tsx';
+import { Window } from '../userWindow/window.tsx';
+import './stocks.sass';
 
 export const Stocks = () => {
+  const [showWindow, setShowWindow] = useState<boolean>(false);
+  const [children, setChildren] = useState<React.ReactNode | null>(null);
+  const [widthScreen, setWidthScreen] = useState<number>(window.innerWidth);
+  const [widthWindow, setWidthWindow] = useState<number>(800);
+
   const dispatch = useDispatch();
   const handleClickExit = () => {
     dispatch(authSignOut());
   };
+  const handleClickAddStock = () => {
+    setShowWindow(true);
+    setChildren(<AddStock />);
+    if (widthScreen < 800) {
+      setWidthWindow(widthScreen - 100);
+    } else {
+      setWidthWindow(800);
+    }
+  };
+  const handleClickBuyStock = () => {
+    console.log('Buy Stock');
+  };
+  const handleClickGetDividendsStock = () => {
+    console.log('Get Dividends Stock');
+  };
+  const handleClickDeposit = () => {
+    console.log('Deposit');
+  };
+
+  useEffect(() => {
+    const handleResize = () => setWidthScreen(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   return (
     <div className="stocksContainer">
       <header className="stocksHeader">
@@ -24,16 +56,35 @@ export const Stocks = () => {
           </Link>
         </div>
         <div className="stocksMenu">
-          <div className="stocksMenuButton">Add Stock</div>
-          <div className="stocksMenuButton">Buy Stock</div>
-          <div className="stocksMenuButton">Get Dividends Stock</div>
-          <div className="stocksMenuButton">Deposit</div>
+          <div className="stocksMenuButton" onClick={handleClickAddStock}>
+            Add Stock
+          </div>
+          <div className="stocksMenuButton" onClick={handleClickBuyStock}>
+            Buy Stock
+          </div>
+          <div className="stocksMenuButton" onClick={handleClickGetDividendsStock}>
+            Get Dividends Stock
+          </div>
+          <div className="stocksMenuButton" onClick={handleClickDeposit}>
+            Deposit
+          </div>
         </div>
         <div className="stocksExit" onClick={handleClickExit}>
           Exit
         </div>
       </header>
       <div className="stocksBody"></div>
+      {showWindow && (
+        <Window
+          title="Add Stock"
+          width={widthWindow}
+          startX={(widthScreen - widthWindow) / 2}
+          startY={200}
+          onClose={() => setShowWindow(false)}
+        >
+          {children}
+        </Window>
+      )}
     </div>
   );
 };
