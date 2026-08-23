@@ -660,7 +660,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('MeZSNsnZAHCkG_U0LFYUoUUPEGCMXg0H',1787413230,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-22T15:38:50.383Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('bp9DWCZHYqSUlNmVUwlTQ-mtn-m_AQuv',1787406110,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-18T07:59:26.755Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('gb35xyJKmvUH-VtOoRpxwEZ9PyFRPFbk',1787399438,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-18T06:14:25.130Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}');
+INSERT INTO `sessions` VALUES ('dQJNSk8YjLnNNqHI_9mlq_cDTjNCUAak',1787571426,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-23T13:00:51.634Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -673,6 +673,7 @@ DROP TABLE IF EXISTS `stock_transactions`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stock_transactions` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `stockId` int NOT NULL,
   `ticker` varchar(10) COLLATE utf8mb4_unicode_ci NOT NULL,
   `action_type` enum('BUY','SELL') COLLATE utf8mb4_unicode_ci NOT NULL,
   `quantity` int NOT NULL,
@@ -706,12 +707,12 @@ DROP TABLE IF EXISTS `stocks`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stocks` (
-  `idStocks` int NOT NULL AUTO_INCREMENT,
-  `shortNameStock` varchar(5) NOT NULL,
+  `idStock` int NOT NULL AUTO_INCREMENT,
+  `ticker` varchar(5) NOT NULL,
   `fullNameStack` varchar(45) NOT NULL,
-  PRIMARY KEY (`idStocks`),
-  UNIQUE KEY `idstocks_UNIQUE` (`idStocks`),
-  UNIQUE KEY `shortNameStock_UNIQUE` (`shortNameStock`)
+  PRIMARY KEY (`idStock`),
+  UNIQUE KEY `idstocks_UNIQUE` (`idStock`),
+  UNIQUE KEY `shortNameStock_UNIQUE` (`ticker`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -920,4 +921,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-22 11:33:21
+-- Dump completed on 2026-08-23 16:40:07
