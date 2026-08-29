@@ -1,15 +1,13 @@
-CREATE DATABASE  IF NOT EXISTS `pet_proect` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `pet_proect`;
--- MySQL dump 10.13  Distrib 8.0.27, for Win64 (x86_64)
+-- MySQL dump 10.13  Distrib 8.4.10, for Linux (x86_64)
 --
 -- Host: localhost    Database: pet_proect
 -- ------------------------------------------------------
--- Server version	8.0.27
+-- Server version	8.4.10
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!50503 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
 /*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
 /*!40103 SET TIME_ZONE='+00:00' */;
 /*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
@@ -660,7 +658,7 @@ CREATE TABLE `sessions` (
 
 LOCK TABLES `sessions` WRITE;
 /*!40000 ALTER TABLE `sessions` DISABLE KEYS */;
-INSERT INTO `sessions` VALUES ('48DDP9W-QTEd8TvvBKOAEWrV3mbYqVAM',1788108448,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-30T16:42:27.621Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}');
+INSERT INTO `sessions` VALUES ('BCeojhv7rtfqS0POJdfgCyF5CQyjOos8',1787991513,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-25T07:54:52.368Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}'),('BWgTVbNKdyEt3xLNmYZLC6xgEFNUSd3b',1788012387,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-25T07:18:09.131Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":5,\"login\":\"saver\",\"name\":\"Скальт Вячеслав\",\"role\":\"logist\",\"customerId\":null,\"managerID\":null}'),('uLQ2ghQHWq8tntUpFUP3Rcx69W5VXDoX',1788019192,'{\"cookie\":{\"originalMaxAge\":86400000,\"expires\":\"2026-08-29T15:14:39.386Z\",\"secure\":false,\"httpOnly\":true,\"path\":\"/\",\"sameSite\":\"lax\"},\"userId\":3,\"login\":\"SergI\",\"name\":\"Иванов Сергей\",\"role\":\"admin\",\"customerId\":null,\"managerID\":null}');
 /*!40000 ALTER TABLE `sessions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -674,6 +672,7 @@ DROP TABLE IF EXISTS `stock_transactions`;
 CREATE TABLE `stock_transactions` (
   `id` int NOT NULL AUTO_INCREMENT,
   `stockId` int NOT NULL,
+  `ticker` varchar(10) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `action_type` enum('BUY','SELL') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `quantity` int NOT NULL,
   `price` decimal(10,2) NOT NULL,
@@ -682,11 +681,11 @@ CREATE TABLE `stock_transactions` (
   `trade_date` datetime NOT NULL,
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `idx_ticker_date` (`trade_date`),
+  KEY `idx_ticker_date` (`ticker`,`trade_date`),
   CONSTRAINT `chk_commission` CHECK ((`commission` >= 0)),
   CONSTRAINT `chk_price` CHECK ((`price` >= 0)),
   CONSTRAINT `chk_quantity` CHECK ((`quantity` > 0))
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -695,7 +694,6 @@ CREATE TABLE `stock_transactions` (
 
 LOCK TABLES `stock_transactions` WRITE;
 /*!40000 ALTER TABLE `stock_transactions` DISABLE KEYS */;
-INSERT INTO `stock_transactions` (`id`, `stockId`, `action_type`, `quantity`, `price`, `commission`, `trade_date`, `created_at`) VALUES (1,2,'BUY',4,24.80,0.05,'2026-06-02 00:00:00','2026-08-29 16:51:30');
 /*!40000 ALTER TABLE `stock_transactions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -708,12 +706,12 @@ DROP TABLE IF EXISTS `stocks`;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `stocks` (
   `idStock` int NOT NULL AUTO_INCREMENT,
-  `ticker` varchar(8) NOT NULL,
+  `ticker` varchar(5) NOT NULL,
   `fullNameStack` varchar(45) NOT NULL,
   PRIMARY KEY (`idStock`),
   UNIQUE KEY `idstocks_UNIQUE` (`idStock`),
   UNIQUE KEY `shortNameStock_UNIQUE` (`ticker`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -722,7 +720,6 @@ CREATE TABLE `stocks` (
 
 LOCK TABLES `stocks` WRITE;
 /*!40000 ALTER TABLE `stocks` DISABLE KEYS */;
-INSERT INTO `stocks` VALUES (1,'BTI.US','British American Tobacco'),(2,'T.US','AT&T');
 /*!40000 ALTER TABLE `stocks` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -922,4 +919,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-08-29 19:52:14
+-- Dump completed on 2026-08-29  0:00:07

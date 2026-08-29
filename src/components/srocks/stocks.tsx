@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { DOMENNAME } from '../../middlewares/initialState.js';
 import { authSignOut } from '../../actions/auth.js';
@@ -9,6 +9,9 @@ import { getStockTransactions } from '../../actions/stockAction.js';
 import './stocks.sass';
 
 export const Stocks = () => {
+  const stockList = useSelector((state: any) => state.stockReducer.stocks);
+  const stockTransactions = useSelector((state: any) => state.stockReducer.stock_transactions);
+
   const [showWindow, setShowWindow] = useState<boolean>(false);
   const [children, setChildren] = useState<React.ReactNode | null>(null);
   const [widthScreen, setWidthScreen] = useState<number>(window.innerWidth);
@@ -25,10 +28,11 @@ export const Stocks = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
   useEffect(() => {
-    console.log('hi');
-
     dispatch(getStockTransactions());
   }, [dispatch]);
+  useEffect(() => {
+    console.log(stockList, stockTransactions);
+  }, [stockList]);
   const handleClickAddStock = () => {
     setShowWindow(true);
     setChildren(<AddStock />);

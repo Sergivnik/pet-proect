@@ -6,7 +6,6 @@ export const GET_STOCK_TRANSACTIONS_REQUEST = 'GET_STOCK_TRANSACTIONS_REQUEST';
 export const GET_STOCK_TRANSACTIONS_FAILURE = 'GET_STOCK_TRANSACTIONS_FAILURE';
 
 export const getStockTransactions = () => {
-  console.log('hi');
   return dispatch => {
     dispatch(getStockTransactionsRequest());
     axios
