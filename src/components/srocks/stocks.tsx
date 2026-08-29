@@ -1,10 +1,11 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { DOMENNAME } from '../../middlewares/initialState.js';
 import { authSignOut } from '../../actions/auth.js';
 import { AddStock } from './addStock.tsx';
 import { Window } from '../userWindow/window.tsx';
+import { getStockTransactions } from '../../actions/stockAction.js';
 import './stocks.sass';
 
 export const Stocks = () => {
@@ -17,6 +18,17 @@ export const Stocks = () => {
   const handleClickExit = () => {
     dispatch(authSignOut());
   };
+
+  useEffect(() => {
+    const handleResize = () => setWidthScreen(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+  useEffect(() => {
+    console.log('hi');
+
+    dispatch(getStockTransactions());
+  }, [dispatch]);
   const handleClickAddStock = () => {
     setShowWindow(true);
     setChildren(<AddStock />);
@@ -35,12 +47,6 @@ export const Stocks = () => {
   const handleClickDeposit = () => {
     console.log('Deposit');
   };
-
-  useEffect(() => {
-    const handleResize = () => setWidthScreen(window.innerWidth);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   return (
     <div className="stocksContainer">

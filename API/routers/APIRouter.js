@@ -10,6 +10,7 @@ const postAPI = require('../controlers/postAPI.js');
 const driverAPI = require('../controlers/driverAPI.js');
 const ownerLogistAPI = require('../controlers/ownerLogistAPI.js');
 const dadataAPI = require('../controlers/daDataAPI.js');
+const stockAPI = require('../controlers/stockAPI.js');
 
 const multer = require('multer');
 const storage = multer.memoryStorage();
@@ -35,6 +36,7 @@ router.get('/getLogTxt', tasksAPI.sendLog);
 router.get('/getDriverPayments', driverAPI.getDriverPayments);
 router.get('/sendReportEmail/:email', API.taskSendReportEmail);
 router.get('/ownerlogist', ownerLogistAPI.getOwnerLogist);
+router.get('/stock_transactions', stockAPI.getStockTransactions);
 router.post('/addNewOwnerLogist', ownerLogistAPI.addOwnerLogist);
 router.get('/*', (req, res) => {
   res.sendFile(path.resolve(__dirname, '../public/index.html'));
@@ -45,7 +47,7 @@ router.post('/addOrderApp', API.taskAddOrderApp);
 router.post('/proxy/:id', API.taskProxy);
 router.post('/addData', API.taskAddData);
 router.post('/addPdf/:id', API.taskAddPdfDoc);
-router.post('/createAccountingDoc', docAPI.createAccountingDoc)
+router.post('/createAccountingDoc', docAPI.createAccountingDoc);
 router.post('/createDoc', API.taskCreateDoc);
 router.post('/createDocWithoutStamp', API.taskCreateDocWithoutStamp);
 router.post('/createApp', API.taskCreateApp);
