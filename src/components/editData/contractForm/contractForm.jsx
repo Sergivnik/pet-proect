@@ -81,7 +81,7 @@ export const ContractForm = props => {
         <div className="contractContentWrapper">
           <header className="contractHeader">
             <h4 className="contractHeaderH4">Договор № {customer.contract}</h4>
-            <h4 className="contractHeaderH4">на перевозку грузов автомобильным транспортом.</h4>
+            <h4 className="contractHeaderH4">на оказание транспортно-экспидиционных услуг.</h4>
             <div className="wrapperPlaceDate">
               <span>г.Таганрог</span>
               {isEditDate ? (
