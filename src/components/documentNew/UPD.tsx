@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { OrderType, Driver } from '../tsTypes';
-import { sumInWords, shortName } from '../myLib/myLib';
+import { sumInWords, shortName } from '../myLib/myLib.js';
 import { DOMENNAME, VAT } from '../../middlewares/initialState.js';
 
 interface UPDProps {
@@ -122,6 +122,13 @@ const styles = {
     borderBottom: '1px solid black',
     height: '16px',
   } as React.CSSProperties,
+  customerName: {
+    display: 'flex',
+    alignItems: 'end',
+    fontSize: '10px',
+    borderBottom: '1px solid black',
+    height: '22px',
+  } as React.CSSProperties,
   adressUnderline: {
     borderBottom: '1px solid black',
     //height: '30px',
@@ -129,6 +136,12 @@ const styles = {
   rightIndex: {
     fontSize: '10px',
     textAlign: 'right',
+  } as React.CSSProperties,
+  UPDNumber: {
+    fontSize: '16px',
+    fontWeight: 700,
+    borderBottom: '1px solid black',
+    height: '16px',
   } as React.CSSProperties,
   smallTopNoteRight: {
     fontSize: '10px',
@@ -401,8 +414,8 @@ export const UPD = ({
                 }}
               >
                 <div style={styles.rowLabel4col}>
-                  <div style={{ fontWeight: 700 }}>Счет-фактура №</div>
-                  <div style={styles.underline}>{actNumberString}</div>
+                  <div style={{ fontWeight: 700}}>Счет-фактура №</div>
+                  <div style={styles.UPDNumber}>{actNumberString}</div>
                   <div style={styles.rightIndex}>(1)</div>
                 </div>
 
@@ -436,7 +449,7 @@ export const UPD = ({
 
                 <div style={styles.rowLabel}>
                   <div style={{ fontWeight: 700 }}>Покупатель</div>
-                  <div style={styles.underline}>{customer?.companyName || ''}</div>
+                  <div style={styles.customerName}>{customer?.companyName || ''}</div>
                 </div>
                 <div style={styles.rightIndex}>(6)</div>
 
@@ -843,7 +856,9 @@ export const UPD = ({
             <div>
               <div style={{ ...styles.signLine }}>
                 ОГРНИП {accountOwner?.ogrn}, дата регистрации{' '}
-                {new Date(accountOwner?.dateOfReg).toLocaleDateString()}
+                {accountOwner?.dateOfReg
+                  ? new Date(accountOwner.dateOfReg).toLocaleDateString()
+                  : ''}
               </div>
               <div
                 style={{

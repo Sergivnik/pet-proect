@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "outDir": "./dist",
     "noEmit": true,
+    "allowJs": true,
     "allowImportingTsExtensions": true
   },
   "include": [
