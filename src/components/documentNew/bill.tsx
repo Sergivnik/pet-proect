@@ -111,10 +111,10 @@ export const Bill = ({
   const [editPrice, setEditPrice] = useState<boolean>(false);
   const [editReason, setEditReason] = useState<boolean>(false);
   const [editActNumber, setEditActNumber] = useState<boolean>(false);
-  const [textActNumber, setTextActNumber] = useState<string>();
+  const [textActNumber, setTextActNumber] = useState<string>('');
   const [textReasonIGC, setTextReasonIGC] = useState<string>(`  ИГК ${IGC}`);
   const [heighrEditInput, setHeightEditInput] = useState<number>(0);
-  const [indexEditString, setIndexEditString] = useState<number>();
+  const [indexEditString, setIndexEditString] = useState<number>(0);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -385,7 +385,10 @@ export const Bill = ({
               }}
             >
               {accountOwner?.name}, ИНН {accountOwner?.inn}, свидетельство № {accountOwner?.ogrn} от
-              {new Date(accountOwner?.dateOfReg).toLocaleDateString()} {accountOwner?.address}
+              {new Date(
+                accountOwner?.dateOfReg ? accountOwner.dateOfReg : 0
+              ).toLocaleDateString()}{' '}
+              {accountOwner?.address}
             </div>
           </div>
           <div style={{ height: '60px' }}>

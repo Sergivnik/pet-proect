@@ -13,17 +13,25 @@ type Props = {
 
 export const Window = ({ title, startX, startY, width, onClose, children }: Props) => {
   const [collapsed, setCollapsed] = useState(false);
+  const [heightScreen, setHeightScreen] = useState<number>(window.innerHeight);
 
   const [state, setState] = useState({
     x: startX,
     y: startY,
     width: width,
-    height: 600,
+    height: startY + 600 < heightScreen ? 600 : heightScreen - startY-100,
   });
 
-  const handleBlockDblClick = e => {
+  const handleBlockDblClick = (e: any) => {
     e.stopPropagation();
   };
+
+  useEffect(() => {
+    const handleResize = () => setHeightScreen(window.innerHeight);
+    console.log(window.innerHeight);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     console.log(width);

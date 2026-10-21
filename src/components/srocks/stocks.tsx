@@ -6,18 +6,19 @@ import { authSignOut } from '../../actions/auth.js';
 import { AddStock } from './addStock.tsx';
 import { Window } from '../userWindow/window.tsx';
 import { getStockTransactions } from '../../actions/stockAction.js';
+import { stock } from './stockType.tsx';
 import './stocks.sass';
 
 export const Stocks = () => {
-  const stockList = useSelector((state: any) => state.stockReducer.stocks);
+  const stockList: stock[] = useSelector((state: any) => state.stockReducer.stocks);
   const stockTransactions = useSelector((state: any) => state.stockReducer.stock_transactions);
 
   const [showWindow, setShowWindow] = useState<boolean>(false);
-  const [children, setChildren] = useState<React.ReactNode | null>(null);
+
   const [widthScreen, setWidthScreen] = useState<number>(window.innerWidth);
   const [widthWindow, setWidthWindow] = useState<number>(800);
 
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const handleClickExit = () => {
     dispatch(authSignOut());
   };
@@ -27,30 +28,27 @@ export const Stocks = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
   useEffect(() => {
     dispatch(getStockTransactions());
   }, [dispatch]);
+
   useEffect(() => {
     console.log(stockList, stockTransactions);
   }, [stockList]);
+
   const handleClickAddStock = () => {
     setShowWindow(true);
-    setChildren(<AddStock />);
     if (widthScreen < 800) {
       setWidthWindow(widthScreen - 100);
     } else {
       setWidthWindow(800);
     }
   };
-  const handleClickBuyStock = () => {
-    console.log('Buy Stock');
-  };
-  const handleClickGetDividendsStock = () => {
-    console.log('Get Dividends Stock');
-  };
-  const handleClickDeposit = () => {
-    console.log('Deposit');
-  };
+
+  const handleClickBuyStock = () => console.log('Buy Stock');
+  const handleClickGetDividendsStock = () => console.log('Get Dividends Stock');
+  const handleClickDeposit = () => console.log('Deposit');
 
   return (
     <div className="stocksContainer">
@@ -84,6 +82,7 @@ export const Stocks = () => {
         </div>
       </header>
       <div className="stocksBody"></div>
+
       {showWindow && (
         <Window
           title="Add Stock"
@@ -92,7 +91,7 @@ export const Stocks = () => {
           startY={200}
           onClose={() => setShowWindow(false)}
         >
-          {children}
+          <AddStock stockList={stockList} />
         </Window>
       )}
     </div>

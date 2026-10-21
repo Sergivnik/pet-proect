@@ -100,7 +100,7 @@ export const Act = ({
   const [editReason, setEditReason] = useState<boolean>(false);
   const [textReasonIGC, setTextReasonIGC] = useState<string>(`  ИГК ${IGC}`);
   const [heighrEditInput, setHeightEditInput] = useState<number>(0);
-  const [indexEditString, setIndexEditString] = useState<number>();
+  const [indexEditString, setIndexEditString] = useState<number>(0);
 
   useEffect(() => {
     if (currentTable === 'oderslist' && currentOwner) {
@@ -241,7 +241,11 @@ export const Act = ({
               <td style={{ width: '12%', padding: '3px 5px' }}>Исполнитель:</td>
               <td style={{ padding: '3px 5px', fontWeight: 700 }}>
                 {accountOwner?.name}, ИНН {accountOwner?.inn}, свидетельство № {accountOwner?.ogrn}{' '}
-                от {new Date(accountOwner?.dateOfReg).toLocaleDateString()} {accountOwner?.address}
+                от{' '}
+                {new Date(
+                  accountOwner?.dateOfReg ? accountOwner?.dateOfReg : 0
+                ).toLocaleDateString()}{' '}
+                {accountOwner?.address}
               </td>
             </tr>
             <tr>

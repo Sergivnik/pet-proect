@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Bill } from './bill';
-import { Act } from './act.tsx';
+import { Act } from './Act.tsx';
 import { Invoice } from './invoice';
 import { UPD } from './UPD';
 import { OrderType, TrackDriver } from '../tsTypes';
@@ -32,7 +32,7 @@ interface DocString {
 }
 
 export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProps) => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const [checkBoxesValue, setCheckBoxesValue] = useState<checkBoxType>({
     ttn: false,
     contract: false,
@@ -68,7 +68,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
   const track = trackList.find((item: any) => item._id === order.idTrack);
   const application = appList.find((item: any) => item.orderId == order._id);
   const [actNumber, setActNumber] = useState<string | number>('');
-  const [actNumberString, setActNumberString] = useState<string | null>(null);
+  const [actNumberString, setActNumberString] = useState<string>('');
   const [textReaason, setTextReason] = useState<string>('');
 
   const updateVATByDate = (date: string | Date) => {
@@ -95,15 +95,15 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
       getTypeOfDoc(id as DocType);
     }
   };
-  const getTtnData = e => {
+  const getTtnData = (e: any) => {
     setTtnData(e.currentTarget.value);
   };
-  const handleEnterTtn = e => {
+  const handleEnterTtn = (e: any) => {
     if (e.code == 'Enter') {
       setEditTtn(false);
     }
   };
-  const handleDblClkTtn = e => {
+  const handleDblClkTtn = (e: any) => {
     e.stopPropagation();
     setEditTtn(true);
   };
@@ -172,7 +172,7 @@ export const DocFormNew = ({ order, currentTable, getTypeOfDoc }: DocFormNewProp
         ${css}
       </head>
       <body>
-        ${wrapper.innerHTML}
+        ${wrapper?.innerHTML}
       </body>
     </html>
   `;
