@@ -1,5 +1,5 @@
 import { stockStore } from './stockStore.js';
-import { ADD_DATA_SUCCESS } from '../../actions/editDataAction';
+import { ADD_DATA_SUCCESS, EDIT_DATA_SUCCESS } from '../../actions/editDataAction';
 
 export const stockReducer = (store = stockStore, action) => {
   switch (action.type) {
@@ -18,13 +18,21 @@ export const stockReducer = (store = stockStore, action) => {
       console.log('ADD_DATA_SUCCESS', action.data);
       const newStock = {
         ...action.data,
-        idStock: action.dataServer.insertId,
+        id: action.dataServer.insertId,
       };
       return {
         ...store,
         stocks: [...store.stocks, newStock],
         status: null,
       };
+    case EDIT_DATA_SUCCESS: {
+      if (action.editTable === 'stocks') {
+        let arrStocks = [...store.stocks];
+        let indexStock = arrStocks.findIndex(stock => stock.id == action.newData.id);
+        arrStocks[indexStock] = action.newData;
+        return { ...store, stocks: arrStocks };
+      }
+    }
     default:
       return store;
   }
