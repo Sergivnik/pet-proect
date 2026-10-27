@@ -81,17 +81,27 @@
   outline: none   
   background-color: #eae19c
 .buyStockTableHeaderDiv
-  width: 16.66%
   text-align: center
-  padding-left: 8px
   background-color: #ddc54c
   border-right: 1px solid #000
 .buyStockTableDiv
   text-align: start
-  width: 16.66%
   height: 18px
   border-bottom: 1px solid #000
   border-right: 1px solid #000
   background-color: #dddd4c
   display: flex      
   align-items: center
+.buyStockTableHeaderDiv, .buyStockTableDiv
+  &:nth-child(1) // Тикер
+    width: 12%
+  &:nth-child(2) // Количество
+    width: 12%
+  &:nth-child(3) // Цена
+    width: 12%
+  &:nth-child(4) // Комиссия
+    width: 12%
+  &:nth-child(5) // Сумма (total_amount)
+    width: 12%
+  &:nth-child(6) // Дата
+    width: 40%

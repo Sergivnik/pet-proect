@@ -47,7 +47,7 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
   const [editTradeDate, setEditTradeDate] = useState<string>('');
 
   const dispatch: any = useDispatch();
-  const buyList = stockTransactions.filter(transaction => transaction.action_type === 'BUY');
+  const buyList = stockTransactions;
 
   const getTicker = (id: number | null | undefined) =>
     stockList.find(item => item.id == id)?.ticker ?? '';
