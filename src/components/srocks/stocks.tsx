@@ -4,16 +4,20 @@ import { Link } from 'react-router-dom';
 import { DOMENNAME } from '../../middlewares/initialState.js';
 import { authSignOut } from '../../actions/auth.js';
 import { AddStock } from './addStock.tsx';
+import { BuyStock } from './buyStock.tsx';
 import { Window } from '../userWindow/window.tsx';
 import { getStockTransactions } from '../../actions/stockAction.js';
-import { stock } from './stockType.tsx';
+import { stock, stockTransaction } from './stockType.tsx';
 import './stocks.sass';
 
 export const Stocks = () => {
   const stockList: stock[] = useSelector((state: any) => state.stockReducer.stocks);
-  const stockTransactions = useSelector((state: any) => state.stockReducer.stock_transactions);
+  const stockTransactions: stockTransaction[] = useSelector(
+    (state: any) => state.stockReducer.stock_transactions
+  );
 
-  const [showWindow, setShowWindow] = useState<boolean>(false);
+  const [showWindowAddStock, setShowWindowAddStock] = useState<boolean>(false);
+  const [showWindowBuyStock, setShowWindowBuyStock] = useState<boolean>(false);
 
   const [widthScreen, setWidthScreen] = useState<number>(window.innerWidth);
   const [widthWindow, setWidthWindow] = useState<number>(800);
@@ -38,7 +42,7 @@ export const Stocks = () => {
   }, [stockList]);
 
   const handleClickAddStock = () => {
-    setShowWindow(true);
+    setShowWindowAddStock(true);
     if (widthScreen < 800) {
       setWidthWindow(widthScreen - 100);
     } else {
@@ -46,7 +50,14 @@ export const Stocks = () => {
     }
   };
 
-  const handleClickBuyStock = () => console.log('Buy Stock');
+  const handleClickBuyStock = () => {
+    setShowWindowBuyStock(true);
+    if (widthScreen < 800) {
+      setWidthWindow(widthScreen - 100);
+    } else {
+      setWidthWindow(800);
+    }
+  };
   const handleClickGetDividendsStock = () => console.log('Get Dividends Stock');
   const handleClickDeposit = () => console.log('Deposit');
 
@@ -83,15 +94,27 @@ export const Stocks = () => {
       </header>
       <div className="stocksBody"></div>
 
-      {showWindow && (
+      {showWindowAddStock && (
         <Window
           title="Add Stock"
           width={widthWindow}
           startX={(widthScreen - widthWindow) / 2}
           startY={200}
-          onClose={() => setShowWindow(false)}
+          onClose={() => setShowWindowAddStock(false)}
         >
           <AddStock stockList={stockList} />
+        </Window>
+      )}
+
+      {showWindowBuyStock && (
+        <Window
+          title="Buy Stock"
+          width={widthWindow}
+          startX={(widthScreen - widthWindow) / 2}
+          startY={200}
+          onClose={() => setShowWindowBuyStock(false)}
+        >
+          <BuyStock stockList={stockList} stockTransactions={stockTransactions} />
         </Window>
       )}
     </div>

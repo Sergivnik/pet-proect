@@ -13,7 +13,7 @@ export const AddStock = ({ stockList = [] }: AddStockProps) => {
   const [addNewStock, setAddNewStock] = useState<boolean>(false);
   const [fullNameStock, setFullNameStock] = useState<string | null>(null);
   const [ticker, setTicker] = useState<string | null>(null);
-  const [editingStockId, setEditingStockId] = useState<number | null>(null);
+  const [editingStockId, setEditingStockId] = useState<number | null | undefined>(null);
   const [editFullName, setEditFullName] = useState<string>('');
   const [editTicker, setEditTicker] = useState<string>('');
 
@@ -57,7 +57,7 @@ export const AddStock = ({ stockList = [] }: AddStockProps) => {
     setEditTicker(stock.ticker ?? '');
   };
 
-  const handleKeyDownEdit = (e: React.KeyboardEvent, stockId: number) => {
+  const handleKeyDownEdit = (e: React.KeyboardEvent, stockId: number | null | undefined) => {
     if (e.key === 'Enter') {
       dispatch(
         editData({ id: stockId, fullNameStock: editFullName, ticker: editTicker }, 'stocks')
@@ -110,6 +110,11 @@ export const AddStock = ({ stockList = [] }: AddStockProps) => {
 
   return (
     <div className="addStockContainer">
+      <div className="addStockTableHeader">
+        <div className="addStockTableHeaderDiv">Полное название</div>
+        <div className="addStockTableHeaderDiv">Тикер</div>
+        <div className="addStockTableHeaderDiv">Цена</div>
+      </div>
       {stockList.map((stock: stock) => {
         const isCurrentEditing = editingStockId === stock.id;
 
