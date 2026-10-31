@@ -15,3 +15,11 @@ export interface stockTransaction {
   trade_date: string | null | undefined;
   created_at?: string | null;
 }
+
+export interface dividend {
+  id: number | null | undefined;
+  stockId: number | null | undefined;
+  sumDividend: number | string | null | undefined;
+  sumTax: number | string | null | undefined;
+  dividendDate: string | null | undefined;
+}

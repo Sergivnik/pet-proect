@@ -11,6 +11,8 @@ let TaskStock = {
         stackData.stock_transactions = data;
         [data] = await db.query(`SELECT * FROM stocks`);
         stackData.stock = data;
+        [data] = await db.query(`SELECT * FROM stock_dividends`);
+        stackData.stock_dividends = data;
         callBack(stackData);
       } else {
         callBack({

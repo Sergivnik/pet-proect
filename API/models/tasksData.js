@@ -33,7 +33,11 @@ let TasksDada = {
       let [user] = await connection.query(`SELECT * FROM users WHERE _id=?`, userId);
 
       let ownerId = user[0].ownerId;
-      if (newData.editTable != 'cities' && newData.editTable != 'stock_transactions') {
+      if (
+        newData.editTable != 'cities' &&
+        newData.editTable != 'stock_transactions' &&
+        newData.editTable != 'stock_dividends'
+      ) {
         newData.newData.ownerId = ownerId;
       }
       console.log(`INSERT INTO ${newData.editTable} SET ?`, newData.newData);
