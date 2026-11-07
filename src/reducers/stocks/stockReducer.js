@@ -10,6 +10,7 @@ export const stockReducer = (store = stockStore, action) => {
         stock_transactions: action.data.stock_transactions,
         stocks: action.data.stock,
         stock_dividends: action.data.stock_dividends || [],
+        deposit: action.data.deposit || [],
         status: null,
       };
     case 'GET_STOCK_TRANSACTIONS_REQUEST':
@@ -51,6 +52,10 @@ export const stockReducer = (store = stockStore, action) => {
           status: null,
         };
       }
+      if (action.editTable === 'deposit') {
+        const newDeposit = { ...action.data, id: action.dataServer.insertId };
+        return { ...store, deposit: [...store.deposit, newDeposit], status: null };
+      }
     }
     case EDIT_DATA_SUCCESS: {
       console.log('EDIT_DATA_SUCCESS', action.newData);
@@ -75,6 +80,12 @@ export const stockReducer = (store = stockStore, action) => {
         let indexDividend = arrDividends.findIndex(item => item.id == action.newData.id);
         arrDividends[indexDividend] = action.newData;
         return { ...store, stock_dividends: arrDividends };
+      }
+      if (action.editTable === 'deposit') {
+        let arrDeposit = [...store.deposit];
+        let indexDeposit = arrDeposit.findIndex(deposit => deposit.id == action.newData.id);
+        arrDeposit[indexDeposit] = action.newData;
+        return { ...store, deposit: arrDeposit };
       }
     }
     default:

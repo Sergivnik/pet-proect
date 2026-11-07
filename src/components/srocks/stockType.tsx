@@ -23,3 +23,13 @@ export interface dividend {
   sumTax: number | string | null | undefined;
   dividendDate: string | null | undefined;
 }
+
+export type CurrencySymbol = '$' | '€' | '₽';
+
+export interface deposit {
+  id: number | null | undefined;
+  date: string | null | undefined;
+  sumDeposit: number | string | null | undefined;
+  sumInterest: number | string | null | undefined;
+  currencySymbol: CurrencySymbol;
+}

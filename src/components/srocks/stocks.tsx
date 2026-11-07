@@ -6,9 +6,10 @@ import { authSignOut } from '../../actions/auth.js';
 import { AddStock } from './addStock.tsx';
 import { BuyStock } from './buyStock.tsx';
 import { DividendsStock } from './dividendsStock.tsx';
+import { Deposit } from './deposit.tsx';
 import { Window } from '../userWindow/window.tsx';
 import { getStockTransactions } from '../../actions/stockAction.js';
-import { stock, stockTransaction, dividend } from './stockType.tsx';
+import { stock, stockTransaction, dividend, deposit } from './stockType.tsx';
 import './stocks.sass';
 
 export const Stocks = () => {
@@ -17,10 +18,12 @@ export const Stocks = () => {
     (state: any) => state.stockReducer.stock_transactions
   );
   const dividends: dividend[] = useSelector((state: any) => state.stockReducer.stock_dividends);
+  const depositList: deposit[] = useSelector((state: any) => state.stockReducer.deposit);
 
   const [showWindowAddStock, setShowWindowAddStock] = useState<boolean>(false);
   const [showWindowBuyStock, setShowWindowBuyStock] = useState<boolean>(false);
   const [showWindowDividends, setShowWindowDividends] = useState<boolean>(false);
+  const [showWindowDeposit, setShowWindowDeposit] = useState<boolean>(false);
 
   const [widthScreen, setWidthScreen] = useState<number>(window.innerWidth);
   const [widthWindow, setWidthWindow] = useState<number>(800);
@@ -69,7 +72,14 @@ export const Stocks = () => {
       setWidthWindow(800);
     }
   };
-  const handleClickDeposit = () => console.log('Deposit');
+  const handleClickDeposit = () => {
+    setShowWindowDeposit(true);
+    if (widthScreen < 800) {
+      setWidthWindow(widthScreen - 100);
+    } else {
+      setWidthWindow(800);
+    }
+  };
 
   return (
     <div className="stocksContainer">
@@ -137,6 +147,18 @@ export const Stocks = () => {
           onClose={() => setShowWindowDividends(false)}
         >
           <DividendsStock stockList={stockList} dividends={dividends} />
+        </Window>
+      )}
+
+      {showWindowDeposit && (
+        <Window
+          title="Deposit"
+          width={widthWindow}
+          startX={(widthScreen - widthWindow) / 2}
+          startY={200}
+          onClose={() => setShowWindowDeposit(false)}
+        >
+          <Deposit depositList={depositList} />
         </Window>
       )}
     </div>

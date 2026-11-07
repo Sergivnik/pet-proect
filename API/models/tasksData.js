@@ -36,7 +36,9 @@ let TasksDada = {
       if (
         newData.editTable != 'cities' &&
         newData.editTable != 'stock_transactions' &&
-        newData.editTable != 'stock_dividends'
+        newData.editTable != 'stock_dividends' &&
+        newData.editTable != 'deposit' &&
+        newData.editTable != 'stocks'
       ) {
         newData.newData.ownerId = ownerId;
       }
