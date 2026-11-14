@@ -9,7 +9,7 @@ import { DividendsStock } from './dividendsStock.tsx';
 import { Deposit } from './deposit.tsx';
 import { Window } from '../userWindow/window.tsx';
 import { getStockTransactions } from '../../actions/stockAction.js';
-import { stock, stockTransaction, dividend, deposit } from './stockType.tsx';
+import { stock, stockTransaction, dividend, deposit, holder } from './stockType.tsx';
 import './stocks.sass';
 
 export const Stocks = () => {
@@ -19,6 +19,7 @@ export const Stocks = () => {
   );
   const dividends: dividend[] = useSelector((state: any) => state.stockReducer.stock_dividends);
   const depositList: deposit[] = useSelector((state: any) => state.stockReducer.deposit);
+  const holders: holder[] = useSelector((state: any) => state.stockReducer.holders);
 
   const [showWindowAddStock, setShowWindowAddStock] = useState<boolean>(false);
   const [showWindowBuyStock, setShowWindowBuyStock] = useState<boolean>(false);

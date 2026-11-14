@@ -4,4 +4,5 @@ export const stockStore = {
   stock_dividends: [],
   deposit: [],
   status: null,
+  holders: [],
 };

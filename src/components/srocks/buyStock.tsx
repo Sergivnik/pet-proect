@@ -1,7 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { stock, stockTransaction } from './stockType';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { stock, stockTransaction, holder } from './stockType';
 import { addData, editData } from '../../actions/editDataAction';
-import { useDispatch } from 'react-redux';
+import { RenderSelect } from './standartComponents/renderSelect';
+
 import './stocks.sass';
 
 interface BuyStockProps {
@@ -9,231 +12,199 @@ interface BuyStockProps {
   stockTransactions: stockTransaction[];
 }
 
+interface BuyDraft {
+  stockId: number | null;
+  holderId: number | null;
+  quantity: string;
+  price: string;
+  commission: string;
+  trade_date: string;
+}
+
+interface EditDraft extends BuyDraft {}
+
+const emptyDraft = (): BuyDraft => ({
+  stockId: null,
+  holderId: null,
+  quantity: '',
+  price: '',
+  commission: '',
+  trade_date: '',
+});
+
 const toInputDateTime = (value: string | null | undefined) => {
   if (!value) return '';
+
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return '';
+
   const pad = (n: number) => String(n).padStart(2, '0');
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(
-    date.getHours()
-  )}:${pad(date.getMinutes())}`;
+
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+    date.getDate()
+  )}T${pad(date.getHours())}:${pad(date.getMinutes())}`;
 };
 
 const formatTradeDate = (value: string) => {
   if (!value) return value;
-  const withSeconds = value.length === 16 ? `${value}:00` : value;
-  return withSeconds.replace('T', ' ');
+
+  return (value.length === 16 ? `${value}:00` : value).replace('T', ' ');
 };
 
 const formatAmount = (value: number | string | null | undefined) => {
+  if (value == null || value === '') return '';
+
   const amount = Number(value);
-  if (Number.isNaN(amount)) return '';
-  return amount.toFixed(2);
+
+  return Number.isFinite(amount) ? amount.toFixed(2) : '';
 };
 
 export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockProps) => {
-  const [newBuy, setNewBuy] = useState<Partial<stockTransaction> | null>(null);
-  const [addNewBuy, setAddNewBuy] = useState<boolean>(false);
-  const [stockId, setStockId] = useState<number | null>(null);
-  const [quantity, setQuantity] = useState<string>('');
-  const [price, setPrice] = useState<string>('');
-  const [commission, setCommission] = useState<string>('');
-  const [tradeDate, setTradeDate] = useState<string>('');
-  const [editingId, setEditingId] = useState<number | null | undefined>(null);
-  const [editStockId, setEditStockId] = useState<number | null>(null);
-  const [editQuantity, setEditQuantity] = useState<string>('');
-  const [editPrice, setEditPrice] = useState<string>('');
-  const [editCommission, setEditCommission] = useState<string>('');
-  const [editTradeDate, setEditTradeDate] = useState<string>('');
-
   const dispatch: any = useDispatch();
-  const buyList = stockTransactions;
 
-  const getTicker = (id: number | null | undefined) =>
-    stockList.find(item => item.id == id)?.ticker ?? '';
+  const holders = useSelector((state: any) => state.stockReducer.holders ?? []) as holder[];
 
-  const handleAddBuy = () => setAddNewBuy(true);
+  // Добавление
+  const [addNewBuy, setAddNewBuy] = useState(false);
+  const [newBuy, setNewBuy] = useState<BuyDraft>(emptyDraft());
 
-  const handleKeyDownStock = (e: any) => {
-    if ((e.key === 'Enter' || e.key === 'Tab') && stockId) {
-      setNewBuy({
-        ...newBuy,
-        stockId,
-      });
-    }
+  // Редактирование
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editDraft, setEditDraft] = useState<EditDraft>(emptyDraft());
+
+  // Обновление полей
+  const updateNewBuy = (field: keyof BuyDraft, value: any) => {
+    setNewBuy(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleKeyDownQuantity = (e: any) => {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      setNewBuy({
-        ...newBuy,
-        quantity: Number(quantity),
-      });
-    }
+  const updateEditDraft = (field: keyof EditDraft, value: any) => {
+    setEditDraft(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleKeyDownPrice = (e: any) => {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      setNewBuy({
-        ...newBuy,
-        price: Number(price),
-      });
-    }
-  };
-
-  const handleKeyDownCommission = (e: any) => {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      setNewBuy({
-        ...newBuy,
-        commission: commission === '' ? 0 : Number(commission),
-      });
-    }
-  };
-
-  const handleKeyDownTradeDate = (e: any) => {
-    if (e.key === 'Enter' || e.key === 'Tab') {
-      setNewBuy({
-        ...newBuy,
-        trade_date: tradeDate,
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (newBuy?.stockId && newBuy?.quantity && newBuy?.price && newBuy?.trade_date) {
-      setAddNewBuy(false);
-      dispatch(
-        addData(
-          {
-            stockId: newBuy.stockId,
-            action_type: 'BUY',
-            quantity: newBuy.quantity,
-            price: newBuy.price,
-            commission: newBuy.commission ?? 0,
-            trade_date: formatTradeDate(String(newBuy.trade_date)),
-          },
-          'stock_transactions'
-        )
-      );
-      setNewBuy(null);
-      setStockId(null);
-      setQuantity('');
-      setPrice('');
-      setCommission('');
-      setTradeDate('');
-    }
-  }, [newBuy, dispatch]);
-
+  // Начало редактирования
   const handleStartEdit = (transaction: stockTransaction) => {
-    setEditingId(transaction.id);
-    setEditStockId(transaction.stockId ?? null);
-    setEditQuantity(String(transaction.quantity ?? ''));
-    setEditPrice(String(transaction.price ?? ''));
-    setEditCommission(String(transaction.commission ?? ''));
-    setEditTradeDate(toInputDateTime(transaction.trade_date));
+    setEditingId(transaction.id ?? null);
+
+    setEditDraft({
+      stockId: transaction.stockId ?? null,
+      holderId: transaction.holderId ?? null,
+      quantity: String(transaction.quantity ?? ''),
+      price: String(transaction.price ?? ''),
+      commission: String(transaction.commission ?? ''),
+      trade_date: toInputDateTime(transaction.trade_date),
+    });
   };
 
-  const handleKeyDownEdit = (e: React.KeyboardEvent, transactionId: number | null | undefined) => {
+  // Формирование данных для сохранения
+  const prepareData = (draft: BuyDraft | EditDraft) => ({
+    stockId: draft.stockId,
+    holderId: draft.holderId,
+    action_type: 'BUY',
+    quantity: Number(draft.quantity),
+    price: Number(draft.price),
+    commission: draft.commission === '' ? 0 : Number(draft.commission),
+    trade_date: formatTradeDate(draft.trade_date),
+  });
+
+  // Проверка заполнения
+  const isDraftValid = (draft: BuyDraft | EditDraft) =>
+    draft.stockId !== null &&
+    draft.holderId !== null &&
+    draft.quantity !== '' &&
+    draft.price !== '' &&
+    draft.trade_date !== '' &&
+    Number.isFinite(Number(draft.quantity)) &&
+    Number.isFinite(Number(draft.price)) &&
+    Number.isFinite(Number(draft.commission || 0));
+
+  // Сохранение новой покупки
+  const handleSaveNewBuy = () => {
+    if (!isDraftValid(newBuy)) return;
+
+    dispatch(addData(prepareData(newBuy), 'stock_transactions'));
+
+    setNewBuy(emptyDraft());
+    setAddNewBuy(false);
+  };
+
+  // Сохранение изменений
+  const handleSaveEdit = (id: number | null) => {
+    if (id == null || !isDraftValid(editDraft)) return;
+
+    dispatch(
+      editData(
+        {
+          id,
+          ...prepareData(editDraft),
+        },
+        'stock_transactions'
+      )
+    );
+
+    setEditingId(null);
+  };
+
+  // Enter / Escape для редактирования
+  const handleEditKeyDown = (
+    e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>,
+    id: number | null
+  ) => {
     if (e.key === 'Enter') {
-      dispatch(
-        editData(
-          {
-            id: transactionId,
-            stockId: editStockId,
-            action_type: 'BUY',
-            quantity: Number(editQuantity),
-            price: Number(editPrice),
-            commission: editCommission === '' ? 0 : Number(editCommission),
-            trade_date: formatTradeDate(editTradeDate),
-          },
-          'stock_transactions'
-        )
-      );
-      setEditingId(null);
+      e.preventDefault();
+      handleSaveEdit(id);
     }
+
     if (e.key === 'Escape') {
       setEditingId(null);
     }
   };
 
-  const renderCell = (config: {
-    isEditMode: boolean;
-    savedValue: string | null;
-    currentValue: string;
-    onChange: (val: string) => void;
-    onKeyDown: (e: any) => void;
-    placeholder: string;
-    isRowVisible?: boolean;
-    inputType?: string;
-  }) => {
-    const {
-      isEditMode,
-      savedValue,
-      currentValue,
-      onChange,
-      onKeyDown,
-      placeholder,
-      isRowVisible = true,
-      inputType = 'text',
-    } = config;
+  // Enter / Escape для добавления
+  const handleAddKeyDown = (e: React.KeyboardEvent<HTMLInputElement | HTMLSelectElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleSaveNewBuy();
+    }
 
+    if (e.key === 'Escape') {
+      setAddNewBuy(false);
+      setNewBuy(emptyDraft());
+    }
+  };
+
+  // Универсальная ячейка
+  const renderCell = ({
+    isEditMode,
+    value,
+    onChange,
+    onKeyDown,
+    placeholder,
+    inputType = 'text',
+    isRowVisible = true,
+  }: {
+    isEditMode: boolean;
+    value: string;
+    onChange: (value: string) => void;
+    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
+    placeholder: string;
+    inputType?: string;
+    isRowVisible?: boolean;
+  }) => {
     if (!isRowVisible) return <div className="buyStockTableDiv" />;
 
     return (
       <div className="buyStockTableDiv">
-        {isEditMode && !savedValue ? (
+        {isEditMode ? (
           <input
             className="addStockInput"
             type={inputType}
             placeholder={placeholder}
-            value={currentValue}
+            value={value}
             onChange={e => onChange(e.target.value)}
             onKeyDown={onKeyDown}
           />
         ) : (
-          <span className="addStockTableSpan">{savedValue || currentValue}</span>
-        )}
-      </div>
-    );
-  };
-
-  const renderStockSelect = (config: {
-    isEditMode: boolean;
-    savedValue: string | null;
-    currentValue: number | null;
-    onChange: (val: number | null) => void;
-    onKeyDown: (e: any) => void;
-    isRowVisible?: boolean;
-  }) => {
-    const {
-      isEditMode,
-      savedValue,
-      currentValue,
-      onChange,
-      onKeyDown,
-      isRowVisible = true,
-    } = config;
-
-    if (!isRowVisible) return <div className="buyStockTableDiv" />;
-
-    return (
-      <div className="buyStockTableDiv">
-        {isEditMode && !savedValue ? (
-          <select
-            className="addStockInput"
-            value={currentValue ?? ''}
-            onChange={e => onChange(e.target.value ? Number(e.target.value) : null)}
-            onKeyDown={onKeyDown}
-          >
-            <option value="">Тикер</option>
-            {stockList.map((item: stock) => (
-              <option key={`buyStockOption${item.id}`} value={item.id ?? ''}>
-                {item.ticker}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <span className="addStockTableSpan">{savedValue || getTicker(currentValue)}</span>
+          <span className="addStockTableSpan">{value}</span>
         )}
       </div>
     );
@@ -241,17 +212,22 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
 
   return (
     <div className="addStockContainer">
+      {/* Заголовок */}
       <div className="addStockTableHeader">
         <div className="buyStockTableHeaderDiv">Тикер</div>
-        <div className="buyStockTableHeaderDiv">Количество</div>
+        <div className="buyStockTableHeaderDiv">Кол-во</div>
         <div className="buyStockTableHeaderDiv">Цена</div>
         <div className="buyStockTableHeaderDiv">Комиссия</div>
         <div className="buyStockTableHeaderDiv">Сумма</div>
         <div className="buyStockTableHeaderDiv">Дата</div>
+        <div className="buyStockTableHeaderDiv">Держатель</div>
       </div>
-      {buyList.map((transaction: stockTransaction) => {
-        const isCurrentEditing = editingId === transaction.id;
-        const displayDate = transaction.trade_date
+
+      {/* Существующие покупки */}
+      {stockTransactions.map(transaction => {
+        const isEditing = editingId === transaction.id;
+
+        const currentDate = transaction.trade_date
           ? new Date(transaction.trade_date).toLocaleString()
           : '';
 
@@ -261,129 +237,161 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
             className="addStockTableString"
             onDoubleClick={() => handleStartEdit(transaction)}
           >
-            {renderStockSelect({
-              isEditMode: isCurrentEditing,
-              savedValue: null,
-              currentValue: isCurrentEditing ? editStockId : (transaction.stockId ?? null),
-              onChange: setEditStockId,
-              onKeyDown: e => handleKeyDownEdit(e, transaction.id),
-            })}
+            {/* Тикер */}
+            <RenderSelect
+              isEditMode={isEditing}
+              options={stockList}
+              valueKey="id"
+              labelKey="ticker"
+              currentValue={isEditing ? editDraft.stockId : (transaction.stockId ?? null)}
+              onChange={val => updateEditDraft('stockId', val !== null ? Number(val) : null)}
+              onKeyDown={e => handleEditKeyDown(e, transaction.id ?? null)}
+              placeholder="Тикер"
+            />
 
+            {/* Количество */}
             {renderCell({
-              isEditMode: isCurrentEditing,
-              savedValue: null,
-              currentValue: isCurrentEditing ? editQuantity : String(transaction.quantity ?? ''),
-              onChange: setEditQuantity,
-              onKeyDown: e => handleKeyDownEdit(e, transaction.id),
+              isEditMode: isEditing,
+              value: isEditing ? editDraft.quantity : String(transaction.quantity ?? ''),
+              onChange: val => updateEditDraft('quantity', val),
+              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
               placeholder: 'Количество',
               inputType: 'number',
             })}
 
+            {/* Цена */}
             {renderCell({
-              isEditMode: isCurrentEditing,
-              savedValue: null,
-              currentValue: isCurrentEditing ? editPrice : formatAmount(transaction.price),
-              onChange: setEditPrice,
-              onKeyDown: e => handleKeyDownEdit(e, transaction.id),
+              isEditMode: isEditing,
+              value: isEditing ? editDraft.price : formatAmount(transaction.price),
+              onChange: val => updateEditDraft('price', val),
+              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
               placeholder: 'Цена',
               inputType: 'number',
             })}
 
+            {/* Комиссия */}
             {renderCell({
-              isEditMode: isCurrentEditing,
-              savedValue: null,
-              currentValue: isCurrentEditing
-                ? editCommission
-                : formatAmount(transaction.commission),
-              onChange: setEditCommission,
-              onKeyDown: e => handleKeyDownEdit(e, transaction.id),
+              isEditMode: isEditing,
+              value: isEditing ? editDraft.commission : formatAmount(transaction.commission),
+              onChange: val => updateEditDraft('commission', val),
+              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
               placeholder: 'Комиссия',
               inputType: 'number',
             })}
 
+            {/* Сумма */}
             <div className="buyStockTableDiv">
               <span className="addStockTableSpan">{formatAmount(transaction.total_amount)}</span>
             </div>
 
+            {/* Дата */}
             {renderCell({
-              isEditMode: isCurrentEditing,
-              savedValue: null,
-              currentValue: isCurrentEditing ? editTradeDate : displayDate,
-              onChange: setEditTradeDate,
-              onKeyDown: e => handleKeyDownEdit(e, transaction.id),
+              isEditMode: isEditing,
+              value: isEditing ? editDraft.trade_date : currentDate,
+              onChange: val => updateEditDraft('trade_date', val),
+              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
               placeholder: 'Дата',
               inputType: 'datetime-local',
             })}
+
+            {/* Держатель */}
+            <RenderSelect
+              isEditMode={isEditing}
+              options={holders}
+              valueKey="id"
+              labelKey="holderName"
+              currentValue={isEditing ? editDraft.holderId : (transaction.holderId ?? null)}
+              onChange={val => updateEditDraft('holderId', val !== null ? Number(val) : null)}
+              onKeyDown={e => handleEditKeyDown(e, transaction.id ?? null)}
+              placeholder="Держатель"
+            />
           </div>
         );
       })}
 
-      <div className="addStockTableString" onDoubleClick={handleAddBuy}>
-        {renderStockSelect({
-          isEditMode: addNewBuy,
-          savedValue: newBuy?.stockId ? getTicker(newBuy.stockId) : null,
-          currentValue: stockId,
-          onChange: val => {
-            setStockId(val);
-            if (val) setNewBuy({ ...newBuy, stockId: val });
-          },
-          onKeyDown: handleKeyDownStock,
-          isRowVisible: addNewBuy,
-        })}
+      {/* Добавление новой покупки */}
+      <div className="addStockTableString" onDoubleClick={() => setAddNewBuy(true)}>
+        {/* Тикер */}
+        <RenderSelect
+          isEditMode={addNewBuy}
+          options={stockList}
+          valueKey="id"
+          labelKey="ticker"
+          currentValue={newBuy.stockId}
+          onChange={val => updateNewBuy('stockId', val !== null ? Number(val) : null)}
+          onKeyDown={handleAddKeyDown}
+          isRowVisible={addNewBuy}
+          placeholder="Тикер"
+        />
 
+        {/* Количество */}
         {renderCell({
           isEditMode: addNewBuy,
-          savedValue: newBuy?.quantity != null ? String(newBuy.quantity) : null,
-          currentValue: quantity,
-          onChange: setQuantity,
-          onKeyDown: handleKeyDownQuantity,
+          value: newBuy.quantity,
+          onChange: val => updateNewBuy('quantity', val),
+          onKeyDown: handleAddKeyDown,
           placeholder: 'Количество',
-          isRowVisible: addNewBuy,
           inputType: 'number',
+          isRowVisible: addNewBuy,
         })}
 
+        {/* Цена */}
         {renderCell({
           isEditMode: addNewBuy,
-          savedValue: newBuy?.price != null ? String(newBuy.price) : null,
-          currentValue: price,
-          onChange: setPrice,
-          onKeyDown: handleKeyDownPrice,
+          value: newBuy.price,
+          onChange: val => updateNewBuy('price', val),
+          onKeyDown: handleAddKeyDown,
           placeholder: 'Цена',
-          isRowVisible: addNewBuy,
           inputType: 'number',
+          isRowVisible: addNewBuy,
         })}
 
+        {/* Комиссия */}
         {renderCell({
           isEditMode: addNewBuy,
-          savedValue: newBuy?.commission != null ? String(newBuy.commission) : null,
-          currentValue: commission,
-          onChange: setCommission,
-          onKeyDown: handleKeyDownCommission,
+          value: newBuy.commission,
+          onChange: val => updateNewBuy('commission', val),
+          onKeyDown: handleAddKeyDown,
           placeholder: 'Комиссия',
-          isRowVisible: addNewBuy,
           inputType: 'number',
+          isRowVisible: addNewBuy,
         })}
 
+        {/* Сумма */}
         <div className="buyStockTableDiv">
-          {addNewBuy && (quantity || price) ? (
+          {addNewBuy && (newBuy.quantity || newBuy.price) && (
             <span className="addStockTableSpan">
               {formatAmount(
-                (Number(quantity) || 0) * (Number(price) || 0) + (Number(commission) || 0)
+                Number(newBuy.quantity || 0) * Number(newBuy.price || 0) +
+                  Number(newBuy.commission || 0)
               )}
             </span>
-          ) : null}
+          )}
         </div>
 
+        {/* Дата */}
         {renderCell({
           isEditMode: addNewBuy,
-          savedValue: newBuy?.trade_date ? String(newBuy.trade_date) : null,
-          currentValue: tradeDate,
-          onChange: setTradeDate,
-          onKeyDown: handleKeyDownTradeDate,
+          value: newBuy.trade_date,
+          onChange: val => updateNewBuy('trade_date', val),
+          onKeyDown: handleAddKeyDown,
           placeholder: 'Дата',
-          isRowVisible: addNewBuy,
           inputType: 'datetime-local',
+          isRowVisible: addNewBuy,
         })}
+
+        {/* Держатель */}
+        <RenderSelect
+          isEditMode={addNewBuy}
+          options={holders}
+          valueKey="id"
+          labelKey="holderName"
+          currentValue={newBuy.holderId}
+          onChange={val => updateNewBuy('holderId', val !== null ? Number(val) : null)}
+          onKeyDown={handleAddKeyDown}
+          isRowVisible={addNewBuy}
+          placeholder="Держатель"
+        />
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ export interface stockTransaction {
   total_amount?: number | string | null;
   trade_date: string | null | undefined;
   created_at?: string | null;
+  holderId: number | null | undefined;
 }
 
 export interface dividend {
@@ -22,6 +23,7 @@ export interface dividend {
   sumDividend: number | string | null | undefined;
   sumTax: number | string | null | undefined;
   dividendDate: string | null | undefined;
+  holderId: number | null | undefined;
 }
 
 export type CurrencySymbol = '$' | '€' | '₽';
@@ -32,4 +34,10 @@ export interface deposit {
   sumDeposit: number | string | null | undefined;
   sumInterest: number | string | null | undefined;
   currencySymbol: CurrencySymbol;
+  holderId: number | null | undefined;
+}
+
+export interface holder {
+  id: number | null | undefined;
+  holderName: string | null | undefined;
 }

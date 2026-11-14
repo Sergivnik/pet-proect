@@ -15,6 +15,8 @@ let TaskStock = {
         stackData.stock_dividends = data;
         [data] = await db.query(`SELECT * FROM deposit`);
         stackData.deposit = data;
+        [data] = await db.query(`SELECT * FROM holders`);
+        stackData.holders = data;
         callBack(stackData);
       } else {
         callBack({
