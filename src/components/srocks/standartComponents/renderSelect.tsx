@@ -17,6 +17,7 @@ interface RenderSelectProps<T extends SelectOption> {
   onBlur?: (e: React.FocusEvent<HTMLSelectElement>) => void;
   placeholder?: string;
   isRowVisible?: boolean;
+  cellClassName?: string;
 }
 
 export const RenderSelect = <T extends SelectOption>({
@@ -30,9 +31,10 @@ export const RenderSelect = <T extends SelectOption>({
   onBlur,
   placeholder = 'Выберите значение',
   isRowVisible = true,
+  cellClassName = 'buyStockTableDiv',
 }: RenderSelectProps<T>) => {
   if (!isRowVisible) {
-    return <div className="buyStockTableDiv" />;
+    return <div className={cellClassName} />;
   }
 
   const selectedOption = options.find(
@@ -40,7 +42,7 @@ export const RenderSelect = <T extends SelectOption>({
   );
 
   return (
-    <div className="buyStockTableDiv">
+    <div className={cellClassName}>
       {isEditMode ? (
         <select
           className="addStockInput"

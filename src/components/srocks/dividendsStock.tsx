@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { stock, dividend } from './stockType';
+import { stock, dividend, holder } from './stockType';
 import { addData, editData } from '../../actions/editDataAction';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { RenderSelect } from './standartComponents/renderSelect';
 import './stocks.sass';
 
 interface DividendsStockProps {
@@ -38,13 +39,17 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
   const [sumDividend, setSumDividend] = useState<string>('');
   const [sumTax, setSumTax] = useState<string>('');
   const [dividendDate, setDividendDate] = useState<string>('');
+  const [holderId, setHolderId] = useState<number | null>(null);
   const [editingId, setEditingId] = useState<number | null | undefined>(null);
   const [editStockId, setEditStockId] = useState<number | null>(null);
   const [editSumDividend, setEditSumDividend] = useState<string>('');
   const [editSumTax, setEditSumTax] = useState<string>('');
   const [editDividendDate, setEditDividendDate] = useState<string>('');
+  const [editHolderId, setEditHolderId] = useState<number | null>(null);
 
   const dispatch: any = useDispatch();
+
+  const holders = useSelector((state: any) => state.stockReducer.holders ?? []) as holder[];
 
   const getTicker = (id: number | null | undefined) =>
     stockList.find(item => item.id == id)?.ticker ?? '';
@@ -87,12 +92,22 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
     }
   };
 
+  const handleKeyDownHolder = (e: any) => {
+    if ((e.key === 'Enter' || e.key === 'Tab') && holderId) {
+      setNewDividend({
+        ...newDividend,
+        holderId,
+      });
+    }
+  };
+
   useEffect(() => {
     if (
       newDividend?.stockId &&
       newDividend?.sumDividend != null &&
       newDividend?.sumTax != null &&
-      newDividend?.dividendDate
+      newDividend?.dividendDate &&
+      newDividend?.holderId
     ) {
       setAddNewDividend(false);
       dispatch(
@@ -102,6 +117,7 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
             sumDividend: newDividend.sumDividend,
             sumTax: newDividend.sumTax,
             dividendDate: formatDividendDate(String(newDividend.dividendDate)),
+            holderId: newDividend.holderId,
           },
           'stock_dividends'
         )
@@ -111,6 +127,7 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
       setSumDividend('');
       setSumTax('');
       setDividendDate('');
+      setHolderId(null);
     }
   }, [newDividend, dispatch]);
 
@@ -120,10 +137,13 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
     setEditSumDividend(String(item.sumDividend ?? ''));
     setEditSumTax(String(item.sumTax ?? ''));
     setEditDividendDate(toInputDateTime(item.dividendDate));
+    setEditHolderId(item.holderId ?? null);
   };
 
   const handleKeyDownEdit = (e: React.KeyboardEvent, dividendId: number | null | undefined) => {
     if (e.key === 'Enter') {
+      if (editHolderId == null) return;
+
       dispatch(
         editData(
           {
@@ -132,6 +152,7 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
             sumDividend: Number(editSumDividend),
             sumTax: editSumTax === '' ? 0 : Number(editSumTax),
             dividendDate: formatDividendDate(editDividendDate),
+            holderId: editHolderId,
           },
           'stock_dividends'
         )
@@ -233,6 +254,7 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
         <div className="dividendStockTableHeaderDiv">Сумма дивиденда</div>
         <div className="dividendStockTableHeaderDiv">Сумма налога</div>
         <div className="dividendStockTableHeaderDiv">Дата</div>
+        <div className="dividendStockTableHeaderDiv">Держатель</div>
       </div>
       {dividends.map((item: dividend) => {
         const isCurrentEditing = editingId === item.id;
@@ -281,6 +303,18 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
               placeholder: 'Дата',
               inputType: 'datetime-local',
             })}
+
+            <RenderSelect
+              isEditMode={isCurrentEditing}
+              options={holders}
+              valueKey="id"
+              labelKey="holderName"
+              currentValue={isCurrentEditing ? editHolderId : (item.holderId ?? null)}
+              onChange={val => setEditHolderId(val !== null ? Number(val) : null)}
+              onKeyDown={e => handleKeyDownEdit(e, item.id)}
+              placeholder="Держатель"
+              cellClassName="dividendStockTableDiv"
+            />
           </div>
         );
       })}
@@ -330,6 +364,23 @@ export const DividendsStock = ({ stockList = [], dividends = [] }: DividendsStoc
           isRowVisible: addNewDividend,
           inputType: 'datetime-local',
         })}
+
+        <RenderSelect
+          isEditMode={addNewDividend}
+          options={holders}
+          valueKey="id"
+          labelKey="holderName"
+          currentValue={holderId}
+          onChange={val => {
+            const next = val !== null ? Number(val) : null;
+            setHolderId(next);
+            if (next) setNewDividend({ ...newDividend, holderId: next });
+          }}
+          onKeyDown={handleKeyDownHolder}
+          isRowVisible={addNewDividend}
+          placeholder="Держатель"
+          cellClassName="dividendStockTableDiv"
+        />
       </div>
     </div>
   );

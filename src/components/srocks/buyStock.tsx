@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { stock, stockTransaction, holder } from './stockType';
 import { addData, editData } from '../../actions/editDataAction';
 import { RenderSelect } from './standartComponents/renderSelect';
+import { RenderCell } from './standartComponents/renderCell';
 
 import './stocks.sass';
 
@@ -172,44 +173,6 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
     }
   };
 
-  // Универсальная ячейка
-  const renderCell = ({
-    isEditMode,
-    value,
-    onChange,
-    onKeyDown,
-    placeholder,
-    inputType = 'text',
-    isRowVisible = true,
-  }: {
-    isEditMode: boolean;
-    value: string;
-    onChange: (value: string) => void;
-    onKeyDown: (e: React.KeyboardEvent<HTMLInputElement>) => void;
-    placeholder: string;
-    inputType?: string;
-    isRowVisible?: boolean;
-  }) => {
-    if (!isRowVisible) return <div className="buyStockTableDiv" />;
-
-    return (
-      <div className="buyStockTableDiv">
-        {isEditMode ? (
-          <input
-            className="addStockInput"
-            type={inputType}
-            placeholder={placeholder}
-            value={value}
-            onChange={e => onChange(e.target.value)}
-            onKeyDown={onKeyDown}
-          />
-        ) : (
-          <span className="addStockTableSpan">{value}</span>
-        )}
-      </div>
-    );
-  };
-
   return (
     <div className="addStockContainer">
       {/* Заголовок */}
@@ -250,34 +213,34 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
             />
 
             {/* Количество */}
-            {renderCell({
-              isEditMode: isEditing,
-              value: isEditing ? editDraft.quantity : String(transaction.quantity ?? ''),
-              onChange: val => updateEditDraft('quantity', val),
-              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
-              placeholder: 'Количество',
-              inputType: 'number',
-            })}
+            <RenderCell
+              isEditMode={isEditing}
+              value={isEditing ? editDraft.quantity : String(transaction.quantity ?? '')}
+              onChange={val => updateEditDraft('quantity', val)}
+              onKeyDown={e => handleEditKeyDown(e, transaction.id ?? null)}
+              placeholder="Количество"
+              inputType="number"
+            />
 
             {/* Цена */}
-            {renderCell({
-              isEditMode: isEditing,
-              value: isEditing ? editDraft.price : formatAmount(transaction.price),
-              onChange: val => updateEditDraft('price', val),
-              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
-              placeholder: 'Цена',
-              inputType: 'number',
-            })}
+            <RenderCell
+              isEditMode={isEditing}
+              value={isEditing ? editDraft.price : formatAmount(transaction.price)}
+              onChange={val => updateEditDraft('price', val)}
+              onKeyDown={e => handleEditKeyDown(e, transaction.id ?? null)}
+              placeholder="Цена"
+              inputType="number"
+            />
 
             {/* Комиссия */}
-            {renderCell({
-              isEditMode: isEditing,
-              value: isEditing ? editDraft.commission : formatAmount(transaction.commission),
-              onChange: val => updateEditDraft('commission', val),
-              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
-              placeholder: 'Комиссия',
-              inputType: 'number',
-            })}
+            <RenderCell
+              isEditMode={isEditing}
+              value={isEditing ? editDraft.commission : formatAmount(transaction.commission)}
+              onChange={val => updateEditDraft('commission', val)}
+              onKeyDown={e => handleEditKeyDown(e, transaction.id ?? null)}
+              placeholder="Комиссия"
+              inputType="number"
+            />
 
             {/* Сумма */}
             <div className="buyStockTableDiv">
@@ -285,14 +248,14 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
             </div>
 
             {/* Дата */}
-            {renderCell({
-              isEditMode: isEditing,
-              value: isEditing ? editDraft.trade_date : currentDate,
-              onChange: val => updateEditDraft('trade_date', val),
-              onKeyDown: e => handleEditKeyDown(e, transaction.id ?? null),
-              placeholder: 'Дата',
-              inputType: 'datetime-local',
-            })}
+            <RenderCell
+              isEditMode={isEditing}
+              value={isEditing ? editDraft.trade_date : currentDate}
+              onChange={val => updateEditDraft('trade_date', val)}
+              onKeyDown={e => handleEditKeyDown(e, transaction.id ?? null)}
+              placeholder="Дата"
+              inputType="datetime-local"
+            />
 
             {/* Держатель */}
             <RenderSelect
@@ -325,37 +288,37 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
         />
 
         {/* Количество */}
-        {renderCell({
-          isEditMode: addNewBuy,
-          value: newBuy.quantity,
-          onChange: val => updateNewBuy('quantity', val),
-          onKeyDown: handleAddKeyDown,
-          placeholder: 'Количество',
-          inputType: 'number',
-          isRowVisible: addNewBuy,
-        })}
+        <RenderCell
+          isEditMode={addNewBuy}
+          value={newBuy.quantity}
+          onChange={val => updateNewBuy('quantity', val)}
+          onKeyDown={handleAddKeyDown}
+          placeholder="Количество"
+          inputType="number"
+          isRowVisible={addNewBuy}
+        />
 
         {/* Цена */}
-        {renderCell({
-          isEditMode: addNewBuy,
-          value: newBuy.price,
-          onChange: val => updateNewBuy('price', val),
-          onKeyDown: handleAddKeyDown,
-          placeholder: 'Цена',
-          inputType: 'number',
-          isRowVisible: addNewBuy,
-        })}
+        <RenderCell
+          isEditMode={addNewBuy}
+          value={newBuy.price}
+          onChange={val => updateNewBuy('price', val)}
+          onKeyDown={handleAddKeyDown}
+          placeholder="Цена"
+          inputType="number"
+          isRowVisible={addNewBuy}
+        />
 
         {/* Комиссия */}
-        {renderCell({
-          isEditMode: addNewBuy,
-          value: newBuy.commission,
-          onChange: val => updateNewBuy('commission', val),
-          onKeyDown: handleAddKeyDown,
-          placeholder: 'Комиссия',
-          inputType: 'number',
-          isRowVisible: addNewBuy,
-        })}
+        <RenderCell
+          isEditMode={addNewBuy}
+          value={newBuy.commission}
+          onChange={val => updateNewBuy('commission', val)}
+          onKeyDown={handleAddKeyDown}
+          placeholder="Комиссия"
+          inputType="number"
+          isRowVisible={addNewBuy}
+        />
 
         {/* Сумма */}
         <div className="buyStockTableDiv">
@@ -370,15 +333,15 @@ export const BuyStock = ({ stockList = [], stockTransactions = [] }: BuyStockPro
         </div>
 
         {/* Дата */}
-        {renderCell({
-          isEditMode: addNewBuy,
-          value: newBuy.trade_date,
-          onChange: val => updateNewBuy('trade_date', val),
-          onKeyDown: handleAddKeyDown,
-          placeholder: 'Дата',
-          inputType: 'datetime-local',
-          isRowVisible: addNewBuy,
-        })}
+        <RenderCell
+          isEditMode={addNewBuy}
+          value={newBuy.trade_date}
+          onChange={val => updateNewBuy('trade_date', val)}
+          onKeyDown={handleAddKeyDown}
+          placeholder="Дата"
+          inputType="datetime-local"
+          isRowVisible={addNewBuy}
+        />
 
         {/* Держатель */}
         <RenderSelect

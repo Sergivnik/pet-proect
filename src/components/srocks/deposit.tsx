@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { addData, editData } from '../../actions/editDataAction';
-import { useDispatch } from 'react-redux';
-import { deposit, CurrencySymbol } from './stockType.tsx';
+import { useDispatch, useSelector } from 'react-redux';
+import { deposit, CurrencySymbol, holder } from './stockType.tsx';
+import { RenderSelect } from './standartComponents/renderSelect';
 import './stocks.sass';
 
 interface DepositProps {
@@ -36,6 +37,8 @@ const currencies: CurrencySymbol[] = ['$', '€', '₽'];
 export const Deposit = ({ depositList = [] }: DepositProps) => {
   const dispatch: any = useDispatch();
 
+  const holders = useSelector((state: any) => state.stockReducer.holders ?? []) as holder[];
+
   const [addNew, setAddNew] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
 
@@ -44,12 +47,14 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
   const [newSumDeposit, setNewSumDeposit] = useState('');
   const [newSumInterest, setNewSumInterest] = useState('');
   const [newCurrency, setNewCurrency] = useState<CurrencySymbol>('$');
+  const [newHolderId, setNewHolderId] = useState<number | null>(null);
 
   // Редактирование
   const [editDate, setEditDate] = useState('');
   const [editSumDeposit, setEditSumDeposit] = useState('');
   const [editSumInterest, setEditSumInterest] = useState('');
   const [editCurrency, setEditCurrency] = useState<CurrencySymbol>('$');
+  const [editHolderId, setEditHolderId] = useState<number | null>(null);
 
   const resetAdd = () => {
     setAddNew(false);
@@ -57,6 +62,7 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
     setNewSumDeposit('');
     setNewSumInterest('');
     setNewCurrency('$');
+    setNewHolderId(null);
   };
 
   const handleAdd = () => {
@@ -70,10 +76,11 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
     setEditSumDeposit(String(item.sumDeposit ?? ''));
     setEditSumInterest(String(item['sumInterest'] ?? ''));
     setEditCurrency(item.currencySymbol);
+    setEditHolderId(item.holderId ?? null);
   };
 
   const handleAddSave = () => {
-    if (!newDate || !newCurrency) return;
+    if (!newDate || !newCurrency || newHolderId === null) return;
 
     if (
       (newSumDeposit !== '' && !Number.isFinite(Number(newSumDeposit))) ||
@@ -89,6 +96,7 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
           sumDeposit: newSumDeposit === '' ? null : Number(newSumDeposit),
           sumInterest: newSumInterest === '' ? null : Number(newSumInterest),
           currencySymbol: newCurrency,
+          holderId: newHolderId,
         },
         'deposit'
       )
@@ -98,7 +106,7 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
   };
 
   const handleEditSave = (id: number) => {
-    if (!editDate || !editCurrency) return;
+    if (!editDate || !editCurrency || editHolderId === null) return;
 
     if (
       (editSumDeposit !== '' && !Number.isFinite(Number(editSumDeposit))) ||
@@ -115,6 +123,7 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
           sumDeposit: editSumDeposit === '' ? null : Number(editSumDeposit),
           sumInterest: editSumInterest === '' ? null : Number(editSumInterest),
           currencySymbol: editCurrency,
+          holderId: editHolderId,
         },
         'deposit'
       )
@@ -196,6 +205,7 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
         <div className="depositTableHeaderDiv">Сумма вклада</div>
         <div className="depositTableHeaderDiv">Проценты по вкладу</div>
         <div className="depositTableHeaderDiv">Валюта</div>
+        <div className="depositTableHeaderDiv">Держатель</div>
       </div>
 
       {depositList.map(item => {
@@ -228,6 +238,21 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
                   if (!item.id) return;
                   handleKeyDownEdit(e, item.id);
                 })}
+
+                <RenderSelect
+                  isEditMode
+                  options={holders}
+                  valueKey="id"
+                  labelKey="holderName"
+                  currentValue={editHolderId}
+                  onChange={val => setEditHolderId(val !== null ? Number(val) : null)}
+                  onKeyDown={e => {
+                    if (!item.id) return;
+                    handleKeyDownEdit(e, item.id);
+                  }}
+                  placeholder="Держатель"
+                  cellClassName="depositTableDiv"
+                />
               </>
             ) : (
               <>
@@ -248,6 +273,17 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
                 <div className="depositTableDiv">
                   <span className="addStockTableSpan">{item.currencySymbol}</span>
                 </div>
+
+                <RenderSelect
+                  isEditMode={false}
+                  options={holders}
+                  valueKey="id"
+                  labelKey="holderName"
+                  currentValue={item.holderId ?? null}
+                  onChange={() => undefined}
+                  placeholder="Держатель"
+                  cellClassName="depositTableDiv"
+                />
               </>
             )}
           </div>
@@ -277,6 +313,18 @@ export const Deposit = ({ depositList = [] }: DepositProps) => {
             )}
 
             {renderCurrency(newCurrency, setNewCurrency, handleKeyDownAdd)}
+
+            <RenderSelect
+              isEditMode
+              options={holders}
+              valueKey="id"
+              labelKey="holderName"
+              currentValue={newHolderId}
+              onChange={val => setNewHolderId(val !== null ? Number(val) : null)}
+              onKeyDown={handleKeyDownAdd}
+              placeholder="Держатель"
+              cellClassName="depositTableDiv"
+            />
           </>
         ) : (
           <div className="addDepositDiv">
