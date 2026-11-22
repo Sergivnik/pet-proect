@@ -5,4 +5,5 @@ export const stockStore = {
   deposit: [],
   status: null,
   holders: [],
+  transactionType: [],
 };

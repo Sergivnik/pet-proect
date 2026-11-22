@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { addData, editData } from '../../actions/editDataAction';
 import { useDispatch, useSelector } from 'react-redux';
-import { deposit, CurrencySymbol, holder } from './stockType.tsx';
+import { deposit, CurrencySymbol, holder, transactionType } from './stockType.tsx';
 import { RenderSelect } from './standartComponents/renderSelect';
 import './stocks.sass';
 
 interface DepositProps {
   depositList: deposit[];
+  transactionType: transactionType[];
+  holders: holder[];
 }
 
 const toInputDateTime = (value: string | null | undefined) => {
@@ -32,12 +34,11 @@ const formatAmount = (value: number | string | null | undefined) => {
   return amount.toFixed(2);
 };
 
-const currencies: CurrencySymbol[] = ['$', '€', '₽'];
+const currencies: CurrencySymbol[] = ['$', '€', '₽', '₺'];
 
-export const Deposit = ({ depositList = [] }: DepositProps) => {
+export const Deposit = ({ depositList = [], transactionType = [], holders = [] }: DepositProps) => {
   const dispatch: any = useDispatch();
-
-  const holders = useSelector((state: any) => state.stockReducer.holders ?? []) as holder[];
+  console.log(transactionType);
 
   const [addNew, setAddNew] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);

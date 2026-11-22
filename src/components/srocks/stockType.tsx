@@ -26,7 +26,7 @@ export interface dividend {
   holderId: number | null | undefined;
 }
 
-export type CurrencySymbol = '$' | '€' | '₽';
+export type CurrencySymbol = '$' | '€' | '₽' | '₺';
 
 export interface deposit {
   id: number | null | undefined;
@@ -40,4 +40,9 @@ export interface deposit {
 export interface holder {
   id: number | null | undefined;
   holderName: string | null | undefined;
+}
+
+export interface transactionType {
+  id: number | null | undefined;
+  txType: string | null | undefined;
 }

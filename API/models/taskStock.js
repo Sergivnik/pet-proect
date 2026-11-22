@@ -17,6 +17,8 @@ let TaskStock = {
         stackData.deposit = data;
         [data] = await db.query(`SELECT * FROM holders`);
         stackData.holders = data;
+        [data] = await db.query('SELECT * FROM transactiontype');
+        stackData.transactiontype = data;
         callBack(stackData);
       } else {
         callBack({

@@ -12,6 +12,7 @@ export const stockReducer = (store = stockStore, action) => {
         stock_dividends: action.data.stock_dividends || [],
         deposit: action.data.deposit || [],
         holders: action.data.holders || [],
+        transactionType: action.data.transactiontype,
         status: null,
       };
     case 'GET_STOCK_TRANSACTIONS_REQUEST':
