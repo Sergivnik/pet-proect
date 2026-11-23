@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { addData, editData } from '../../actions/editDataAction';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { deposit, CurrencySymbol, holder, transactionType } from './stockType.tsx';
 import { RenderSelect } from './standartComponents/renderSelect';
 import './stocks.sass';
@@ -48,6 +48,7 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
   const [newSumDeposit, setNewSumDeposit] = useState('');
   const [newSumInterest, setNewSumInterest] = useState('');
   const [newCurrency, setNewCurrency] = useState<CurrencySymbol>('$');
+  const [newTxTypeId, setNewTxTypeId] = useState<number | null>(null);
   const [newHolderId, setNewHolderId] = useState<number | null>(null);
 
   // Редактирование
@@ -56,6 +57,7 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
   const [editSumInterest, setEditSumInterest] = useState('');
   const [editCurrency, setEditCurrency] = useState<CurrencySymbol>('$');
   const [editHolderId, setEditHolderId] = useState<number | null>(null);
+  const [editTxTypeId, setEditTxTypeId] = useState<number | null>(null);
 
   const resetAdd = () => {
     setAddNew(false);
@@ -97,6 +99,7 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
           sumDeposit: newSumDeposit === '' ? null : Number(newSumDeposit),
           sumInterest: newSumInterest === '' ? null : Number(newSumInterest),
           currencySymbol: newCurrency,
+          txTypeId: newTxTypeId,
           holderId: newHolderId,
         },
         'deposit'
@@ -124,6 +127,7 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
           sumDeposit: editSumDeposit === '' ? null : Number(editSumDeposit),
           sumInterest: editSumInterest === '' ? null : Number(editSumInterest),
           currencySymbol: editCurrency,
+          txTypeId: editTxTypeId,
           holderId: editHolderId,
         },
         'deposit'
@@ -206,6 +210,7 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
         <div className="depositTableHeaderDiv">Сумма вклада</div>
         <div className="depositTableHeaderDiv">Проценты по вкладу</div>
         <div className="depositTableHeaderDiv">Валюта</div>
+        <div className="depositTableHeaderDiv">Тип операции</div>
         <div className="depositTableHeaderDiv">Держатель</div>
       </div>
 
@@ -239,7 +244,20 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
                   if (!item.id) return;
                   handleKeyDownEdit(e, item.id);
                 })}
-
+                <RenderSelect
+                  isEditMode
+                  options={transactionType}
+                  valueKey="id"
+                  labelKey="txType"
+                  currentValue={editTxTypeId}
+                  onChange={val => setEditTxTypeId(val !== null ? Number(val) : null)}
+                  onKeyDown={e => {
+                    if (!item.id) return;
+                    handleKeyDownEdit(e, item.id);
+                  }}
+                  placeholder="Тип операции"
+                  cellClassName="depositTableDiv"
+                />
                 <RenderSelect
                   isEditMode
                   options={holders}
@@ -274,6 +292,17 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
                 <div className="depositTableDiv">
                   <span className="addStockTableSpan">{item.currencySymbol}</span>
                 </div>
+
+                <RenderSelect
+                  isEditMode={false}
+                  options={transactionType}
+                  valueKey="id"
+                  labelKey="txType"
+                  currentValue={item.txTypeId ?? null}
+                  onChange={() => undefined}
+                  placeholder="Тип операции"
+                  cellClassName="depositTableDiv"
+                />
 
                 <RenderSelect
                   isEditMode={false}
@@ -314,7 +343,17 @@ export const Deposit = ({ depositList = [], transactionType = [], holders = [] }
             )}
 
             {renderCurrency(newCurrency, setNewCurrency, handleKeyDownAdd)}
-
+            <RenderSelect
+              isEditMode
+              options={transactionType}
+              valueKey="id"
+              labelKey="txType"
+              currentValue={newTxTypeId}
+              onChange={val => setNewTxTypeId(val !== null ? Number(val) : null)}
+              onKeyDown={handleKeyDownAdd}
+              placeholder="Тип операции"
+              cellClassName="depositTableDiv"
+            />
             <RenderSelect
               isEditMode
               options={holders}

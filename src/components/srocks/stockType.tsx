@@ -34,6 +34,7 @@ export interface deposit {
   sumDeposit: number | string | null | undefined;
   sumInterest: number | string | null | undefined;
   currencySymbol: CurrencySymbol;
+  txTypeId: number | null | undefined;
   holderId: number | null | undefined;
 }
 
