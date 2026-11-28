@@ -8,6 +8,7 @@ import { BuyStock } from './buyStock.tsx';
 import { DividendsStock } from './dividendsStock.tsx';
 import { Deposit } from './deposit.tsx';
 import { Window } from '../userWindow/window.tsx';
+import { DepositCurrencies } from './summaryWidgets/depositCurrencies.tsx';
 import { getStockTransactions } from '../../actions/stockAction.js';
 import {
   stock,
@@ -123,7 +124,9 @@ export const Stocks = () => {
           Exit
         </div>
       </header>
-      <div className="stocksBody"></div>
+      <div className="stocksBody">
+        <DepositCurrencies depositList={depositList} holders={holders} />
+      </div>
 
       {showWindowAddStock && (
         <Window

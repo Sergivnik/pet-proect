@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../srocks/stocks.sass';
+import '../../stocks/stocks.sass';
 
 interface SelectOption {
   id?: number | string | null;

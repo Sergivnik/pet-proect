@@ -1,5 +1,5 @@
 import React from 'react';
-import '../../srocks/stocks.sass';
+import '../../stocks/stocks.sass';
 
 interface RenderCellProps {
   isEditMode: boolean;

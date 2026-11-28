@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { addData, editData } from '../../actions/editDataAction';
+import { addData, editData } from '../../actions/editDataAction.js';
 import { useDispatch } from 'react-redux';
 import { deposit, CurrencySymbol, holder, transactionType } from './stockType.tsx';
-import { RenderSelect } from './standartComponents/renderSelect';
+import { RenderSelect } from './standartComponents/renderSelect.tsx';
 import './stocks.sass';
 
 interface DepositProps {

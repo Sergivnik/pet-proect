@@ -7,7 +7,7 @@ import { Auth } from './auth/auth.jsx';
 import { useSelector, useDispatch } from 'react-redux';
 import { authGetUser } from '../actions/auth.js';
 import { CustomerOrders } from './customerPart/customerOrders/customerOrders.jsx';
-import { Stocks } from './srocks/stocks.tsx';
+import { Stocks } from './stocks/stocks.tsx';
 
 export const Router = () => {
   const dispatch = useDispatch();
